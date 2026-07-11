@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liquid Glass Blob — Gaming Site Demo</title>
+<style>
+  /* ============================================================
+     DEMO PAGE STYLES — this part is just to showcase the widget.
+     Your real site already has its own layout/CSS — ignore this.
+     ============================================================ */
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: #ffffff;
+    color: #16161a;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  section {
+    min-height: 100vh;
+    padding: 10vh 8vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-bottom: 1px solid #f0f0f2;
+  }
+  section h1 {
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    letter-spacing: -0.03em;
+    margin: 0 0 18px;
+    font-weight: 650;
+  }
+  section p {
+    max-width: 560px;
+    font-size: 1.08rem;
+    line-height: 1.6;
+    color: #52525b;
+  }
+  .eyebrow {
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    color: #a1a1aa;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .hero-section { background: radial-gradient(circle at 80% 20%, #eef2ff 0%, #ffffff 55%); }
+</style>
+</head>
+<body>
+
+<section class="hero-section" data-blob-hint="home">
+  <div class="eyebrow">Nexus Arena · Gaming Platform Demo</div>
+  <h1>Scroll around.<br>The blob is watching.</h1>
+  <p>This page exists to show off the floating assistant in the corner. It drifts on its own, reacts to what section you're reading, and turns into a full chat panel when you tap it. Everything runs locally in the browser — no server, no API key, works offline.</p>
+</section>
+
+<section data-blob-hint="library">
+  <div class="eyebrow">Game Library</div>
+  <h1>200+ titles, one launcher.</h1>
+  <p>From competitive shooters to cozy sims. Ask the blob for system requirements, download help, or install issues once you open the chat.</p>
+</section>
+
+<section data-blob-hint="tournaments">
+  <div class="eyebrow">Tournaments</div>
+  <h1>Ranked ladders every season.</h1>
+  <p>Ask about matchmaking, ranks, or how to register a team.</p>
+</section>
+
+<section data-blob-hint="store">
+  <div class="eyebrow">Store</div>
+  <h1>Simple, fair pricing.</h1>
+  <p>Ask the blob about subscriptions, refunds, or payment methods.</p>
+</section>
+
+<section data-blob-hint="support">
+  <div class="eyebrow">Support</div>
+  <h1>Talk to a human, or the blob.</h1>
+  <p>Either works. The blob is faster to reach at 3am.</p>
+</section>
+
+<!-- ============================================================
+     COPY EVERYTHING BELOW THIS LINE INTO YOUR OWN SITE
+     (right before the closing </body> tag). It's fully
+     self-contained: no external fonts, no CDN calls, no
+     dependencies. Configure it in the CONFIG block up top.
+     ============================================================ -->
+<script>
+(function () {
+  "use strict";
+
+  /* ============================================================
+     CONFIG — edit this to fit your site
+     ============================================================ */
+  const CONFIG = {
+    assistantName: "Nova",
+    // Black/blue tinted liquid glass — deep navy, electric blue, ice cyan, indigo
+    accentColors: ["#3B6BFF", "#00D4FF", "#0A0E2A", "#5C7CFA"],
+    greeting: "Hey, I'm Nova. Ask me about games, tournaments, downloads, or your account.",
+    idleMessages: [
+      "Need help finding a game?",
+      "I know the patch notes if you're curious.",
+      "Stuck on an install? Tap me.",
+      "Ask me about ranked matchmaking."
+    ],
+    // Messages shown when a section with matching data-blob-hint scrolls into view
+    sectionHints: {
+      home: "Welcome to Nexus Arena — scroll down whenever you're ready.",
+      library: "Browsing the library? I can check system requirements for any title.",
+      tournaments: "Thinking about ranked play? Ask me how matchmaking works.",
+      store: "Questions about pricing or refunds? Just ask.",
+      support: "Need a real fix fast? Tap me — I know the common issues."
+    },
+    /* ============================================================
+       KNOWLEDGE BASE — offline, rule-based Q&A for a gaming site.
+       Each entry: keywords (any match triggers it) + reply.
+       Add/edit freely — first match wins, so put specific
+       phrases before broad ones.
+       ============================================================ */
+    responses: [
+      // Account & access
+      { keywords: ["forgot password", "reset password", "can't log in", "cant log in", "login issue"], reply: "Go to Account → Security → \"Reset password.\" You'll get a reset link within a couple minutes — check spam if it's slow." },
+      { keywords: ["login", "log in", "sign in", "account"], reply: "You can manage your account, linked platforms, and security settings under the profile icon, top right." },
+      { keywords: ["2fa", "two factor", "two-factor"], reply: "Two-factor authentication is under Account → Security. We recommend an authenticator app over SMS for faster codes." },
+
+      // Downloads & technical
+      { keywords: ["system requirement", "specs", "spec", "run this game", "will it run"], reply: "Requirements are listed on each game's store page under \"Technical Details.\" Tell me a specific title and I'll point you there." },
+      { keywords: ["download", "install", "installing", "installation"], reply: "Downloads run through the launcher. If one's stuck, try Settings → Downloads → \"Verify files,\" which fixes most stalled installs." },
+      { keywords: ["crash", "crashing", "freeze", "freezing", "won't launch", "wont launch", "not launching"], reply: "Most crashes clear up with: verify game files, update your GPU driver, then restart the launcher. If it still crashes, tell me the error code." },
+      { keywords: ["lag", "ping", "latency", "fps", "frame rate", "stutter"], reply: "For performance issues: lower in-game graphics preset first, then check Settings → Network for the closest server region." },
+      { keywords: ["patch", "update", "changelog", "patch notes"], reply: "Patch notes are posted under News → Updates each time a title ships a new build." },
+
+      // Tournaments & multiplayer
+      { keywords: ["tournament", "esport", "compete", "register a team", "team registration"], reply: "Ranked tournaments run every season. Register a team from the Tournaments tab — you'll need at least 3 verified members." },
+      { keywords: ["rank", "ranked", "matchmaking", "mmr", "elo"], reply: "Matchmaking pairs you by recent rank plus performance in your last 10 matches, so it adjusts fast if you're on a streak." },
+      { keywords: ["multiplayer", "co-op", "coop", "party", "invite friend"], reply: "You can party up from a friend's profile card or invite by username in-game. Cross-platform play is on by default." },
+
+      // Store & payments
+      { keywords: ["price", "pricing", "cost", "subscription", "plan"], reply: "Most titles are pay-once; a few live-service games offer an optional monthly pass. Check the Store section for exact pricing per title." },
+      { keywords: ["refund"], reply: "Refunds are available within 14 days of purchase if you've played under 2 hours — request one from Store → Order History." },
+      { keywords: ["payment", "card", "paypal", "billing"], reply: "We accept major cards, PayPal, and regional wallets. Payment methods live under Account → Billing." },
+      { keywords: ["discount", "sale", "coupon", "promo"], reply: "Seasonal sales show up on the Store homepage — worth checking back around major holidays." },
+
+      // General / library
+      { keywords: ["library", "game list", "genre", "recommend a game", "recommend"], reply: "The library spans shooters, RPGs, strategy, and cozy sims — filter by genre from the Library tab, or tell me a genre and I'll point you to a category." },
+      { keywords: ["hi", "hello", "hey"], reply: "Hey! What can I help you find — games, tournaments, or account stuff?" },
+      { keywords: ["who are you", "what are you", "your name"], reply: "I'm Nova — a lightweight assistant built into this page. I run fully offline, right in your browser." },
+      { keywords: ["thanks", "thank you"], reply: "Anytime. GG — let me know if anything else comes up." },
+      { keywords: ["bye", "goodbye"], reply: "See you on the ladder — I'll be floating around if you need me." }
+    ],
+    fallback: "I don't have that one in my knowledge base yet, but I can help with games, downloads, tournaments, ranks, or your account — try rephrasing?"
+  };
+
+  /* ============================================================
+     STYLES
+     ============================================================ */
+  const style = document.createElement("style");
+  style.textContent = `
+  #ai-blob-root {
+    --accent-1: ${CONFIG.accentColors[0]};
+    --accent-2: ${CONFIG.accentColors[1]};
+    --accent-3: ${CONFIG.accentColors[2]};
+    --accent-4: ${CONFIG.accentColors[3]};
+    --panel-bg-1: #05070f;
+    --panel-bg-2: #0d1330;
+    --text-light: #f5f5f7;
+    --text-dim: rgba(245,245,247,0.5);
+    position: fixed;
+    left: 0; top: 0;
+    width: 77px; height: 77px;
+    z-index: 999999;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    will-change: left, top, width, height, border-radius;
+    transition: width .85s cubic-bezier(.22,1.2,.36,1), height .85s cubic-bezier(.22,1.2,.36,1),
+                left .85s cubic-bezier(.22,1.2,.36,1), top .85s cubic-bezier(.22,1.2,.36,1),
+                border-radius .85s cubic-bezier(.22,1.2,.36,1);
+  }
+  #ai-blob-root.dragging-off { transition: none; }
+  #ai-blob-root.expanded { border-radius: 26px !important; }
+
+  #ai-blob-frost {
+    position: absolute;
+    inset: 8%;
+    border-radius: 50%;
+    backdrop-filter: blur(22px) saturate(170%);
+    -webkit-backdrop-filter: blur(22px) saturate(170%);
+    pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  #ai-blob-root.expanded #ai-blob-frost { opacity: 0; }
+
+  #ai-blob-canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+    cursor: pointer;
+    transition: opacity .3s ease;
+  }
+  #ai-blob-root.expanded #ai-blob-canvas { opacity: 0; pointer-events: none; }
+
+  /* Speech bubble hint */
+  #ai-blob-bubble {
+    position: fixed;
+    max-width: 220px;
+    padding: 10px 14px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #26262b;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.9);
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(20,20,30,0.12);
+    opacity: 0;
+    transform: translateY(6px) scale(0.96);
+    transition: opacity .35s ease, transform .35s ease;
+    pointer-events: none;
+    z-index: 999998;
+  }
+  #ai-blob-bubble.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+  /* Panel content (dark, Apple-Intelligence-like, translucent glass) */
+  #ai-panel-content {
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(120% 140% at 20% 0%, rgba(20,28,60,0.72) 0%, rgba(4,6,15,0.82) 55%);
+    backdrop-filter: blur(36px) saturate(180%);
+    -webkit-backdrop-filter: blur(36px) saturate(180%);
+    opacity: 0;
+    transform: scale(0.98);
+    transition: opacity .4s ease .22s, transform .5s cubic-bezier(.22,1.2,.36,1) .22s;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  #ai-blob-root.expanded #ai-panel-content { opacity: 1; transform: scale(1); pointer-events: auto; }
+
+  #ai-panel-content::before {
+    content: "";
+    position: absolute; inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: conic-gradient(from 0deg, var(--accent-1), var(--accent-2), var(--accent-3), var(--accent-4), var(--accent-1));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.5;
+    animation: aura-spin 12s linear infinite;
+    pointer-events: none;
+  }
+
+  #ai-panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 18px 14px;
+    flex-shrink: 0;
+  }
+  #ai-panel-title { display: flex; align-items: center; gap: 10px; }
+  #ai-panel-title-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #fff, var(--accent-1) 70%);
+    box-shadow: 0 0 10px 1px rgba(59,107,255,0.6);
+  }
+  #ai-panel-title span {
+    color: var(--text-light);
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+  }
+  #ai-panel-close {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.06);
+    color: var(--text-dim);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+  }
+  #ai-panel-close:hover { background: rgba(255,255,255,0.14); color: var(--text-light); }
+
+  #ai-panel-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+  }
+  #ai-panel-messages::-webkit-scrollbar { width: 6px; }
+  #ai-panel-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+
+  .ai-msg {
+    max-width: 82%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    animation: msg-in .3s ease;
+  }
+  @keyframes msg-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .ai-msg.bot {
+    align-self: flex-start;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.09);
+    color: var(--text-light);
+    border-bottom-left-radius: 5px;
+  }
+  .ai-msg.user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: #fff;
+    border-bottom-right-radius: 5px;
+  }
+  .ai-typing { display: flex; gap: 4px; padding: 12px 14px; }
+  .ai-typing span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--text-dim);
+    animation: typing-bounce 1.2s infinite ease-in-out;
+  }
+  .ai-typing span:nth-child(2) { animation-delay: .15s; }
+  .ai-typing span:nth-child(3) { animation-delay: .3s; }
+  @keyframes typing-bounce { 0%,60%,100% { transform: translateY(0); opacity: .4; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+  #ai-panel-inputwrap {
+    flex-shrink: 0;
+    padding: 12px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  #ai-panel-input {
+    flex: 1;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 22px;
+    padding: 11px 16px;
+    color: var(--text-light);
+    font-size: 13.5px;
+    outline: none;
+    font-family: inherit;
+  }
+  #ai-panel-input::placeholder { color: var(--text-dim); }
+  #ai-panel-send {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform .15s ease;
+  }
+  #ai-panel-send:active { transform: scale(0.9); }
+
+  @media (max-width: 640px) {
+    #ai-blob-root.expanded {
+      left: 12px !important; top: 12px !important;
+      width: calc(100vw - 24px) !important;
+      height: calc(100vh - 24px) !important;
+    }
+  }
+  `;
+  document.head.appendChild(style);
+
+  /* ============================================================
+     MARKUP
+     ============================================================ */
+  const root = document.createElement("div");
+  root.id = "ai-blob-root";
+  root.innerHTML = `
+    <div id="ai-blob-frost"></div>
+    <canvas id="ai-blob-canvas"></canvas>
+    <div id="ai-panel-content">
+        <div id="ai-panel-header">
+          <div id="ai-panel-title"><div id="ai-panel-title-dot"></div><span>${CONFIG.assistantName}</span></div>
+          <div id="ai-panel-close" aria-label="Close chat">✕</div>
+        </div>
+        <div id="ai-panel-messages"></div>
+        <div id="ai-panel-inputwrap">
+          <input id="ai-panel-input" type="text" placeholder="Message ${CONFIG.assistantName}…" autocomplete="off" />
+          <button id="ai-panel-send" aria-label="Send">➤</button>
+        </div>
+    </div>
+  `;
+  document.body.appendChild(root);
+
+  const bubble = document.createElement("div");
+  bubble.id = "ai-blob-bubble";
+  document.body.appendChild(bubble);
+
+  const canvas = root.querySelector("#ai-blob-canvas");
+  const messagesEl = root.querySelector("#ai-panel-messages");
+  const inputEl = root.querySelector("#ai-panel-input");
+  const sendBtn = root.querySelector("#ai-panel-send");
+  const closeBtn = root.querySelector("#ai-panel-close");
+
+  /* ============================================================
+     WEBGL LIQUID GLASS RENDERER
+     Real-time metaball raymarch: multiple soft circles blended
+     with a smooth-min SDF, shaded with fake refraction/fresnel
+     lighting. This is what drives the actual "fluid" look —
+     no keyframes, every frame is computed from live physics.
+     ============================================================ */
+  const gl = canvas.getContext("webgl", { alpha: true, premultipliedAlpha: false, antialias: true })
+          || canvas.getContext("experimental-webgl", { alpha: true, premultipliedAlpha: false });
+
+  const VERT_SRC = `
+    attribute vec2 a_pos;
+    varying vec2 v_uv;
+    void main() {
+      v_uv = a_pos * 0.5 + 0.5;
+      gl_Position = vec4(a_pos, 0.0, 1.0);
+    }
+  `;
+
+  const FRAG_SRC = `
+    precision mediump float;
+    varying vec2 v_uv;
+    uniform float u_time;
+    uniform vec2 u_resolution;
+    uniform vec2 u_mouse;
+    uniform float u_hover;
+    uniform vec2 u_glideDir;
+    uniform float u_glideSpeed;
+    uniform vec3 u_colorDeep;
+    uniform vec3 u_colorGlass;
+    uniform vec3 u_colorHot;
+
+    // smooth-min that also reports how much blending occurred at this join —
+    // peaks exactly at the neck between two merging balls, used for AO.
+    vec2 sminAO(float a, float b, float k) {
+      float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
+      float d = mix(b, a, h) - k * h * (1.0 - h);
+      float ao = h * (1.0 - h) * 4.0; // 0..1, peaks at h=0.5
+      return vec2(d, ao);
+    }
+    float circle(vec2 p, vec2 c, float r) { return length(p - c) - r; }
+
+    // The full liquid field: a core ball, a trailing droplet biased by glide
+    // velocity, three orbiting satellites with independent noisy drift (so the
+    // silhouette never repeats), and an optional cursor-attraction ball.
+    // Returns (signedDistance, accumulatedAO).
+    vec2 field(vec2 p, float t) {
+      vec2 center = vec2(0.5, 0.5);
+      float ao = 0.0;
+
+      vec2 c0 = center + vec2(sin(t * 0.31), cos(t * 0.27)) * 0.012;
+      float breathe = sin(t * 0.5) * 0.012;
+      // smooth continuous edge wobble (low-frequency harmonics around the
+      // core, not separate balls) — organic, never repeats exactly, no
+      // extra blobs floating around the main shape
+      float ang = atan(p.y - c0.y, p.x - c0.x);
+      float wobble = sin(ang * 3.0 + t * 0.6) * 0.014
+                   + sin(ang * 5.0 - t * 0.42) * 0.009
+                   + sin(ang * 2.0 + t * 0.33) * 0.011;
+      float d = circle(p, c0, 0.275 + breathe + wobble);
+
+      vec2 trail = center - u_glideDir * (0.09 + u_glideSpeed * 0.13)
+                   + vec2(sin(t * 1.4), cos(t * 1.15)) * 0.008;
+      float rTrail = 0.15 + u_glideSpeed * 0.055;
+      vec2 r1 = sminAO(d, circle(p, trail, rTrail), 0.12); d = r1.x; ao += r1.y * 0.55;
+
+      if (u_hover > 0.01) {
+        vec2 cCursor = mix(center, u_mouse, clamp(u_hover * 0.88, 0.0, 0.88));
+        float rCursor = 0.09 + u_hover * 0.13;
+        vec2 r5 = sminAO(d, circle(p, cCursor, rCursor), 0.15 + u_hover * 0.08);
+        d = r5.x; ao += r5.y * 0.8;
+      }
+      return vec2(d, ao);
+    }
+
+    void main() {
+      vec2 p = v_uv;
+      float t = u_time;
+      vec2 fd = field(p, t);
+      float d = fd.x;
+      float aoField = fd.y;
+
+      // finite-difference gradient of the true field -> accurate normal,
+      // not an approximation from the nearest ball alone
+      float eps = 1.6 / u_resolution.x;
+      float dxp = field(p + vec2(eps, 0.0), t).x;
+      float dxm = field(p - vec2(eps, 0.0), t).x;
+      float dyp = field(p + vec2(0.0, eps), t).x;
+      float dym = field(p - vec2(0.0, eps), t).x;
+      vec2 grad = vec2(dxp - dxm, dyp - dym) / (2.0 * eps);
+
+      // treat the field as a height map (a dome bulging toward the viewer)
+      // to build a real pseudo-3D normal for lighting
+      float heightScale = 0.85;
+      vec3 normal = normalize(vec3(-grad.x * heightScale, -grad.y * heightScale, 1.0));
+      vec3 viewDir = vec3(0.0, 0.0, 1.0);
+      vec3 lightDir = normalize(vec3(-0.5, -0.55, 0.65));
+      vec3 halfVec = normalize(lightDir + viewDir);
+
+      float ndotl = max(dot(normal, lightDir), 0.0);
+      float ndoth = max(dot(normal, halfVec), 0.0);
+      float ndotv = max(dot(normal, viewDir), 0.0);
+      float specSharp = pow(ndoth, 46.0) * 1.1;
+      float specBroad = pow(ndoth, 6.0) * 0.3;
+      float fresnel = pow(1.0 - ndotv, 3.2);
+
+      float px = 1.5 / u_resolution.x;
+      float edge = smoothstep(px, -px, d);
+      float rim = 1.0 - smoothstep(0.0, 0.045, abs(d));
+      // a band hugging the true boundary — this becomes the visible "skin"
+      // of the gel, distinct from the near-fully-clear interior
+      float skin = 1.0 - smoothstep(0.0, 0.1, abs(d));
+      float skinSharp = 1.0 - smoothstep(0.0, 0.03, abs(d)); // crisp inner edge line
+      float ao = clamp(1.0 - aoField * 0.55, 0.35, 1.0);
+
+      // depth into the gel, 0 at the boundary -> 1 deep in the core
+      float depth = clamp(-d / 0.24, 0.0, 1.0);
+
+      // gentle organic shimmer + top gloss, always moving, never static
+      float shimmer = sin((p.x * 6.0 + p.y * 4.0) + t * 0.9) * 0.03 + 0.03;
+      float gloss = smoothstep(0.15, 0.85, 1.0 - p.y) * 0.18;
+
+      // drifting caustic glints inside the gel — faint moving light
+      // refracting through the substance, only visible in the clear core
+      float caustic = sin(p.x * 14.0 + t * 1.1) * sin(p.y * 11.0 - t * 0.8);
+      caustic = pow(max(caustic, 0.0), 3.0) * depth * 0.5;
+
+      // subtle chromatic dispersion at the rim, like light splitting through glass
+      vec3 dispersion = vec3(fresnel * 1.2, fresnel * 1.0, fresnel * 0.82);
+
+      vec3 base = mix(u_colorDeep, u_colorGlass, 0.1 + 0.16 * skin);
+      base *= ao;
+      base += dispersion * mix(u_colorGlass, u_colorHot, u_hover) * (0.65 + u_hover * 0.55);
+      base += (specSharp + specBroad) * mix(vec3(0.7, 0.83, 1.0), vec3(1.0, 1.0, 1.0), u_hover);
+      base += gloss * vec3(0.72, 0.84, 1.0) * ao;
+      base += shimmer * vec3(0.5, 0.65, 1.0) * (0.35 + 0.65 * skin);
+      base += caustic * vec3(0.55, 0.78, 1.0);
+      base += skinSharp * vec3(0.6, 0.78, 1.0) * 0.35; // crisp bright contour line
+      base = mix(base, u_colorHot, u_hover * 0.32 * rim);
+
+      // gel look: interior is almost fully transparent, a clearly defined
+      // skin at the true boundary carries nearly all of the opacity
+      float coreAlpha = 0.025 + u_hover * 0.03 + caustic * 0.15;
+      float skinAlpha = skin * (0.5 + u_hover * 0.22) + skinSharp * 0.25;
+      float rimAlpha = rim * 0.3;
+      float alpha = edge * (coreAlpha + skinAlpha + rimAlpha + fresnel * 0.2);
+
+      gl_FragColor = vec4(base, alpha);
+    }
+  `;
+
+  let glReady = false;
+  let uniforms = {};
+  if (gl) {
+    function compile(type, src) {
+      const s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      return s;
+    }
+    const vs = compile(gl.VERTEX_SHADER, VERT_SRC);
+    const fs = compile(gl.FRAGMENT_SHADER, FRAG_SRC);
+    const program = gl.createProgram();
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+    if (gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      gl.useProgram(program);
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,-1, 1,1, -1,1]), gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(program, "a_pos");
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      uniforms = {
+        time: gl.getUniformLocation(program, "u_time"),
+        resolution: gl.getUniformLocation(program, "u_resolution"),
+        mouse: gl.getUniformLocation(program, "u_mouse"),
+        hover: gl.getUniformLocation(program, "u_hover"),
+        glideDir: gl.getUniformLocation(program, "u_glideDir"),
+        glideSpeed: gl.getUniformLocation(program, "u_glideSpeed"),
+        colorDeep: gl.getUniformLocation(program, "u_colorDeep"),
+        colorGlass: gl.getUniformLocation(program, "u_colorGlass"),
+        colorHot: gl.getUniformLocation(program, "u_colorHot")
+      };
+      gl.uniform3f(uniforms.colorDeep, 0.03, 0.05, 0.12);
+      gl.uniform3f(uniforms.colorGlass, 0.16, 0.30, 0.82);
+      gl.uniform3f(uniforms.colorHot, 0.42, 0.72, 1.0);
+      glReady = true;
+    }
+  }
+
+  function resizeCanvas() {
+    if (!gl) return;
+    const dpr = Math.max(2, window.devicePixelRatio || 1);
+    const size = Math.round(BLOB_SIZE_REF * dpr);
+    if (canvas.width !== size) {
+      canvas.width = size;
+      canvas.height = size;
+      gl.viewport(0, 0, size, size);
+    }
+  }
+
+  function renderBlob(time, mouseLocalX, mouseLocalY, hoverAmt, glideDirX, glideDirY, glideSpeedAmt) {
+    if (!glReady || expanded) return;
+    resizeCanvas();
+    gl.uniform1f(uniforms.time, time);
+    gl.uniform2f(uniforms.resolution, canvas.width, canvas.height);
+    gl.uniform2f(uniforms.mouse, mouseLocalX, mouseLocalY);
+    gl.uniform1f(uniforms.hover, hoverAmt);
+    gl.uniform2f(uniforms.glideDir, glideDirX, glideDirY);
+    gl.uniform1f(uniforms.glideSpeed, glideSpeedAmt);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+  }
+
+  /* ============================================================
+     FLOATING / GLIDE BEHAVIOR
+     ============================================================ */
+  const BLOB_SIZE = 77;
+  const BLOB_SIZE_REF = 77;
+  const MARGIN = 24;
+  const HOVER_RADIUS = 150; // ferrofluid magnetic reach, in px from blob center
+  let pos = { x: window.innerWidth - 120, y: window.innerHeight - 160 };
+  let target = { ...pos };
+  let prevPos = { x: pos.x, y: pos.y }; // tracks pure glide motion, excludes bob wobble
+  let expanded = false;
+  let rafId = null;
+  let lastTargetTime = 0;
+  let bobPhase = Math.random() * Math.PI * 2;
+  let squashSmooth = 0; // smoothed speed for gentle transitions
+  let glideDirSmooth = { x: 0, y: -1 }; // smoothed travel direction, avoids snapping
+  let pullSmooth = 0;   // smoothed magnetic pull toward cursor
+  let mouse = { x: -9999, y: -9999 };
+  let isHovering = false;
+
+  window.addEventListener("mousemove", (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+  window.addEventListener("mouseleave", () => {
+    mouse.x = -9999;
+    mouse.y = -9999;
+  });
+
+  function pickNewTarget() {
+    const maxX = window.innerWidth - BLOB_SIZE - MARGIN;
+    const maxY = window.innerHeight - BLOB_SIZE - MARGIN;
+    target.x = MARGIN + Math.random() * Math.max(1, maxX - MARGIN);
+    target.y = MARGIN + Math.random() * Math.max(1, maxY - MARGIN);
+  }
+
+  function floatLoop(ts) {
+    if (expanded) { rafId = requestAnimationFrame(floatLoop); return; }
+    if (!lastTargetTime || ts - lastTargetTime > 5200 + Math.random() * 2600) {
+      pickNewTarget();
+      lastTargetTime = ts;
+    }
+    // ease toward target — slightly springy for a fluid glide
+    pos.x += (target.x - pos.x) * 0.02;
+    pos.y += (target.y - pos.y) * 0.02;
+    // gentle bob for a "liquid" feel — purely visual, kept out of the stretch calc below
+    bobPhase += 0.011;
+    const bobY = Math.sin(bobPhase) * 4;
+    const bobX = Math.cos(bobPhase * 0.7) * 3;
+
+    const renderX = pos.x + bobX;
+    const renderY = pos.y + bobY;
+    root.style.left = renderX + "px";
+    root.style.top = renderY + "px";
+
+    // velocity for glide trail direction — derived only from the target-chasing
+    // motion (not the bob wobble), so the trail eases in/out smoothly instead
+    // of pulsing every time the bob's oscillation crosses zero
+    const dx = pos.x - prevPos.x;
+    const dy = pos.y - prevPos.y;
+    prevPos.x = pos.x;
+    prevPos.y = pos.y;
+    const rawSpeed = Math.hypot(dx, dy);
+    const speed = Math.min(rawSpeed * 9, 1); // 0..1
+    squashSmooth += (speed - squashSmooth) * 0.08;
+    if (rawSpeed > 0.0008) {
+      const invLen = 1 / rawSpeed;
+      glideDirSmooth.x += (dx * invLen - glideDirSmooth.x) * 0.06;
+      glideDirSmooth.y += (dy * invLen - glideDirSmooth.y) * 0.06;
+      const norm = Math.hypot(glideDirSmooth.x, glideDirSmooth.y) || 1;
+      glideDirSmooth.x /= norm;
+      glideDirSmooth.y /= norm;
+    }
+    const glideDirX = glideDirSmooth.x;
+    const glideDirY = glideDirSmooth.y;
+
+    // ferrofluid magnetic pull toward the cursor
+    const cx = renderX + BLOB_SIZE / 2;
+    const cy = renderY + BLOB_SIZE / 2;
+    const mdx = mouse.x - cx;
+    const mdy = mouse.y - cy;
+    const dist = Math.hypot(mdx, mdy);
+    const rawPull = dist < HOVER_RADIUS ? 1 - dist / HOVER_RADIUS : 0;
+    pullSmooth += (rawPull - pullSmooth) * 0.18;
+
+    const nowHovering = pullSmooth > 0.05;
+    if (nowHovering !== isHovering) {
+      isHovering = nowHovering;
+      root.classList.toggle("hovering", isHovering);
+    }
+
+    // mouse position local to the blob canvas, normalized 0..1 (y flipped for GL space)
+    const mouseLocalX = (mouse.x - renderX) / BLOB_SIZE;
+    const mouseLocalY = 1.0 - (mouse.y - renderY) / BLOB_SIZE;
+
+    renderBlob(ts / 1000, mouseLocalX, mouseLocalY, pullSmooth, glideDirX, -glideDirY, squashSmooth);
+
+    updateBubblePosition();
+    rafId = requestAnimationFrame(floatLoop);
+  }
+  root.style.width = BLOB_SIZE + "px";
+  root.style.height = BLOB_SIZE + "px";
+  root.style.left = pos.x + "px";
+  root.style.top = pos.y + "px";
+  rafId = requestAnimationFrame(floatLoop);
+
+  window.addEventListener("resize", () => {
+    if (!expanded) pickNewTarget();
+  });
+
+  /* ============================================================
+     SPEECH BUBBLE HINTS
+     ============================================================ */
+  let bubbleTimeout = null;
+  function updateBubblePosition() {
+    if (!bubble.classList.contains("visible")) return;
+    const r = root.getBoundingClientRect();
+    bubble.style.left = Math.min(window.innerWidth - 236, r.left) + "px";
+    bubble.style.top = (r.top - bubble.offsetHeight - 10) + "px";
+  }
+  function showBubble(text) {
+    if (expanded) return;
+    bubble.textContent = text;
+    bubble.classList.add("visible");
+    requestAnimationFrame(updateBubblePosition);
+    clearTimeout(bubbleTimeout);
+    bubbleTimeout = setTimeout(() => bubble.classList.remove("visible"), 4200);
+  }
+
+  // idle chatter
+  setInterval(() => {
+    if (expanded) return;
+    const msg = CONFIG.idleMessages[Math.floor(Math.random() * CONFIG.idleMessages.length)];
+    showBubble(msg);
+  }, 14000);
+
+  // contextual hints based on scroll position
+  const hintTargets = document.querySelectorAll("[data-blob-hint]");
+  if (hintTargets.length) {
+    const seen = new Set();
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const key = entry.target.getAttribute("data-blob-hint");
+          if (key && CONFIG.sectionHints[key] && !seen.has(key)) {
+            seen.add(key);
+            showBubble(CONFIG.sectionHints[key]);
+          }
+        }
+      });
+    }, { threshold: 0.5 });
+    hintTargets.forEach((el) => io.observe(el));
+  }
+
+  /* ============================================================
+     EXPAND / COLLAPSE (liquid morph)
+     ============================================================ */
+  function expand() {
+    if (expanded) return;
+    expanded = true;
+    root.classList.remove("hovering");
+    bubble.classList.remove("visible");
+    const isMobile = window.innerWidth <= 640;
+    const w = isMobile ? window.innerWidth - 24 : 380;
+    const h = isMobile ? window.innerHeight - 24 : Math.min(560, window.innerHeight - 48);
+    const left = isMobile ? 12 : Math.max(MARGIN, pos.x + BLOB_SIZE - w);
+    const top = isMobile ? 12 : Math.max(MARGIN, pos.y + BLOB_SIZE - h);
+    root.classList.add("expanded");
+    root.style.left = left + "px";
+    root.style.top = top + "px";
+    root.style.width = w + "px";
+    root.style.height = h + "px";
+    if (!messagesEl.childElementCount) {
+      addMessage(CONFIG.greeting, "bot");
+    }
+    setTimeout(() => inputEl.focus(), 500);
+  }
+
+  function collapse() {
+    if (!expanded) return;
+    expanded = false;
+    root.classList.remove("expanded");
+    root.style.width = BLOB_SIZE + "px";
+    root.style.height = BLOB_SIZE + "px";
+    root.style.left = pos.x + "px";
+    root.style.top = pos.y + "px";
+    lastTargetTime = 0; // pick a fresh drift target soon
+  }
+
+  canvas.addEventListener("click", (e) => {
+    if (expanded) return; // clicks inside panel shouldn't re-trigger
+    expand();
+  });
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    collapse();
+  });
+
+  /* ============================================================
+     CHAT LOGIC — smarter offline responder.
+     Instead of "first keyword found wins," this scores every rule,
+     tolerates punctuation/typos, remembers the last topic so short
+     follow-ups ("how much?", "and refunds?") still resolve, and can
+     answer messages that touch more than one topic at once.
+     ============================================================ */
+  function addMessage(text, who) {
+    const div = document.createElement("div");
+    div.className = "ai-msg " + who;
+    div.textContent = text;
+    messagesEl.appendChild(div);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    return div;
+  }
+
+  function normalize(str) {
+    return str.toLowerCase().replace(/[^\w\s'?]/g, " ").replace(/\s+/g, " ").trim();
+  }
+
+  // cheap fuzzy check: exact substring, or a word within 1 edit of a keyword
+  // (catches "pasword", "refnd", "tornament" style typos without a dictionary)
+  function levenshteinLE1(a, b) {
+    if (Math.abs(a.length - b.length) > 1) return false;
+    let i = 0, j = 0, edits = 0;
+    while (i < a.length && j < b.length) {
+      if (a[i] === b[j]) { i++; j++; continue; }
+      edits++;
+      if (edits > 1) return false;
+      if (a.length > b.length) i++;
+      else if (b.length > a.length) j++;
+      else { i++; j++; }
+    }
+    edits += (a.length - i) + (b.length - j);
+    return edits <= 1;
+  }
+  function fuzzyIncludes(text, phrase) {
+    if (text.includes(phrase)) return true;
+    if (phrase.includes(" ")) return false; // fuzzy only for single words
+    return text.split(" ").some((w) => w.length > 3 && levenshteinLE1(w, phrase));
+  }
+
+  let lastRule = null; // conversation memory for short follow-up questions
+
+  function scoreRule(rule, lower) {
+    let score = 0;
+    for (const kw of rule.keywords) {
+      if (fuzzyIncludes(lower, kw)) score += kw.split(" ").length; // longer phrases weigh more
+    }
+    return score;
+  }
+
+  function bestMatch(lower) {
+    let best = null, bestScore = 0;
+    for (const rule of CONFIG.responses) {
+      const s = scoreRule(rule, lower);
+      if (s > bestScore) { bestScore = s; best = rule; }
+    }
+    return bestScore > 0 ? best : null;
+  }
+
+  function respond(userText) {
+    const lower = normalize(userText);
+    const wordCount = lower.split(" ").filter(Boolean).length;
+    let match = bestMatch(lower);
+
+    // short, contextless follow-ups ("how much?", "and refunds", "what about ranks")
+    // fall back to re-scoring against the last topic's own keyword set first
+    if (!match && lastRule && wordCount <= 4) {
+      const followUpSignals = ["it", "that", "those", "them", "and", "what about", "how much", "how about"];
+      if (followUpSignals.some((s) => lower.includes(s)) || wordCount <= 2) {
+        match = lastRule;
+      }
+    }
+
+    let reply;
+    if (match) {
+      reply = match.reply;
+      lastRule = match;
+    } else {
+      // smarter fallback: surface the topics it actually recognizes instead
+      // of a flat "I don't understand"
+      const topics = ["games & downloads", "tournaments & ranks", "pricing & refunds", "account & login"];
+      reply = CONFIG.fallback + " I can help with: " + topics.join(", ") + ".";
+    }
+
+    const typingEl = document.createElement("div");
+    typingEl.className = "ai-msg bot ai-typing";
+    typingEl.innerHTML = "<span></span><span></span><span></span>";
+    messagesEl.appendChild(typingEl);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    // typing delay scales gently with reply length, feels less robotic
+    const delay = 350 + Math.random() * 350 + Math.min(reply.length * 4, 500);
+    setTimeout(() => {
+      typingEl.remove();
+      addMessage(reply, "bot");
+    }, delay);
+  }
+
+  function submit() {
+    const val = inputEl.value.trim();
+    if (!val) return;
+    addMessage(val, "user");
+    inputEl.value = "";
+    respond(val);
+  }
+  sendBtn.addEventListener("click", submit);
+  inputEl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") submit();
+  });
+
+})();
+</script>
+</body>
+</html>
