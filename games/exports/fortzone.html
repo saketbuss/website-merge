@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+            <html lang="en-us">
+            <head>
+                <base href="https://cdn.jsdelivr.net/gh/genizy/cg-rip@main/fortzone-battle-royale/">
+                <meta charset="utf-8">
+                <style>
+                    body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; }
+                    #canvas-view { width:100%; height:100%; display:block; outline:none; }
+                </style>
+            </head>
+            <body>
+                <canvas id="canvas-view"></canvas>
+                <script>
+                    window.onerror = () => true;
+                    window.mockStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {}, length: 0, key: () => null };
+                    try { Object.defineProperty(window, 'localStorage', { value: window.mockStorage, writable: true }); } catch(e){}
+                    try { Object.defineProperty(window, 'indexedDB', { value: null, writable: true, configurable: true }); } catch(e) {}
+                    try { Object.defineProperty(document, 'cookie', { get: () => "", set: () => {} }); } catch(e){}
+
+                    const origLock = Element.prototype.requestPointerLock;
+                    if (origLock) {
+                        Element.prototype.requestPointerLock = function(o) {
+                            try { return origLock.call(this, o); } catch(e) {}
+                        };
+                    }
+
+                    class MockWS extends EventTarget {
+                        constructor(url) {
+                            super();
+                            this.readyState = 0;
+                            setTimeout(() => {
+                                this.readyState = 1;
+                                this.dispatchEvent(new Event('open'));
+                            }, 50);
+                        }
+                        send() {}
+                        close() { this.readyState = 3; }
+                    }
+                    window.WebSocket = MockWS;
+
+                    window.CrazyGames = { SDK: { game: { gameplayStart: () => {}, gameplayStop: () => {} }, ad: { requestAd: (t, cb) => { if (cb && cb.adFinished) cb.adFinished(); } } } };
+                    window.crazysdk = () => window.CrazyGames.SDK;
+
+                    const CDN_BASE = "https://cdn.jsdelivr.net/gh/genizy/cg-rip@main/fortzone-battle-royale/";
+                    const SPLIT_MAP = {"CrazyGames.data": null, "CrazyGames.wasm": null};
+
+                    async function mergeParts(url) {
+                        // Parallel batch check instead of sequential to minimize round-trip latencies
+                        const checkPromises = [];
+                        for (let i = 1; i <= 15; i++) {
+                            checkPromises.push(
+                                fetch(url + ".part" + i, { method: "HEAD" })
+                                    .then(r => r.ok ? url + ".part" + i : null)
+                                    .catch(() => null)
+                            );
+                        }
+                        const results = await Promise.all(checkPromises);
+                        const parts = results.filter(p => p !== null);
+
+                        if (parts.length === 0) return url;
+                        const buffers = await Promise.all(parts.map(async p => new Uint8Array(await (await fetch(p)).arrayBuffer())));
+                        const total = buffers.reduce((a, b) => a + b.length, 0);
+                        const merged = new Uint8Array(total);
+                        let offset = 0;
+                        for (const b of buffers) { merged.set(b, offset); offset += b.length; }
+                        return URL.createObjectURL(new Blob([merged], { type: url.endsWith(".wasm") ? "application/wasm" : "application/octet-stream" }));
+                    }
+
+                    async function fetchAndPatchScript(url) {
+                        const text = await (await fetch(url)).text();
+                        const patched = text.replace(/window\.top\.location/g, "window.location")
+                                            .replace(/window\.parent\.location/g, "window.location")
+                                            .replace(/window\.top/g, "window")
+                                            .replace(/window\.parent/g, "window")
+                                            .replace(/new WebSocket/g, "new window.WebSocket");
+                        return URL.createObjectURL(new Blob([patched], { type: 'application/javascript' }));
+                    }
+
+                    async function bootUnity() {
+                        const dataUrl = await mergeParts(CDN_BASE + "Build/CrazyGames.data");
+                        const codeUrl = await mergeParts(CDN_BASE + "Build/CrazyGames.wasm");
+                        const frameworkUrl = await fetchAndPatchScript(CDN_BASE + "Build/CrazyGames.framework.js");
+                        const loaderUrl = await fetchAndPatchScript(CDN_BASE + "Build/CrazyGames.loader.js");
+
+                        const config = {
+                            dataUrl: dataUrl,
+                            codeUrl: codeUrl,
+                            frameworkUrl: frameworkUrl,
+                            streamingAssetsUrl: CDN_BASE + "StreamingAssets",
+                            companyName: "Fortzone Battle Royale",
+                            productName: "Fortzone Battle Royale",
+                            productVersion: "1.0.0"
+                        };
+
+                        const script = document.createElement("script");
+                        script.src = loaderUrl;
+                        script.onload = () => {
+                            createUnityInstance(document.getElementById("canvas-view"), config, () => {}).then(ui => {
+                                window.unityInstance = ui;
+                            });
+                        };
+                        document.body.appendChild(script);
+                    }
+                    bootUnity();
+                </script>
+            </body>
+            </html>

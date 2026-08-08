@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Vanguard: Arsenal Expansion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        body { margin: 0; overflow: hidden; background: #000810; font-family: 'Orbitron', sans-serif; }
+        canvas { display: block; }
+        #ui { position: absolute; inset: 0; pointer-events: none; color: #00f2ff; text-shadow: 0 0 5px rgba(0,242,255,0.5); }
+        .glass { background: rgba(0, 20, 40, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(0, 242, 255, 0.2); border-radius: 4px; }
+        .bar-container { height: 6px; background: rgba(0,0,0,0.4); border-radius: 3px; overflow: hidden; }
+        .bar-fill { height: 100%; transition: width 0.3s ease-out; }
+        .weapon-slot { transition: all 0.2s ease; border: 1px solid rgba(0, 242, 255, 0.1); white-space: nowrap; font-size: 9px; cursor: pointer; pointer-events: auto; }
+        .weapon-active { background: rgba(0, 242, 255, 0.3); border-color: #00f2ff; box-shadow: 0 0 10px rgba(0,242,255,0.4); transform: translateY(-2px); color: #fff; }
+    </style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+<div id="ui">
+    <div class="absolute top-6 left-6 flex flex-col gap-4">
+        <div class="glass p-4 min-w-[240px]">
+            <div class="flex justify-between items-center mb-1">
+                <span class="text-[10px] opacity-70 tracking-widest text-cyan-300">COMMANDER STATUS</span>
+                <span id="lvl-display" class="text-xs font-bold text-yellow-400">LVL 1</span>
+            </div>
+            <div class="text-xl font-bold tracking-widest text-white">VANGUARD-01</div>
+            <div class="mt-2">
+                <div class="bar-container"><div id="exp-bar" class="bar-fill bg-yellow-400" style="width: 0%"></div></div>
+            </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 w-72">
+            <div id="slot-1" class="glass px-2 py-1 weapon-slot weapon-active" onclick="switchWeapon(1)">1: PLASMA</div>
+            <div id="slot-2" class="glass px-2 py-1 weapon-slot" onclick="switchWeapon(2)">2: SEEKERS</div>
+            <div id="slot-3" class="glass px-2 py-1 weapon-slot" onclick="switchWeapon(3)">3: TITAN</div>
+            <div id="slot-4" class="glass px-2 py-1 weapon-slot" onclick="switchWeapon(4)">4: DRONES</div>
+            <div id="slot-5" class="glass px-2 py-1 weapon-slot border-yellow-500/50 text-yellow-300" onclick="switchWeapon(5)">5: JUDGMENT</div>
+            <div id="slot-6" class="glass px-2 py-1 weapon-slot" onclick="switchWeapon(6)">6: CHRONO</div>
+            <div id="slot-7" class="glass px-2 py-1 weapon-slot" onclick="switchWeapon(7)">7: SWARM</div>
+            <div id="slot-8" class="glass px-2 py-1 weapon-slot" onclick="switchWeapon(8)">8: VOLT</div>
+            <div id="slot-9" class="glass px-2 py-1 weapon-slot" onclick="switchWeapon(9)">9: NOVA</div>
+        </div>
+    </div>
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-10 w-full max-w-4xl px-10">
+        <div class="flex-1 text-right">
+            <div class="text-[10px] mb-1">SHIELD INTEGRITY</div>
+            <div class="bar-container"><div id="hull-bar" class="bar-fill bg-cyan-400" style="width: 100%"></div></div>
+        </div>
+        <div class="glass p-4 px-8 text-center border-t-2 border-cyan-500">
+            <div id="score-val" class="text-2xl font-bold text-white">000000</div>
+            <div class="text-[8px] opacity-50 uppercase tracking-widest">Sector Score</div>
+        </div>
+        <div class="flex-1 text-left">
+            <div class="text-[10px] mb-1">REACTOR STABILITY</div>
+            <div class="bar-container"><div id="energy-bar" class="bar-fill bg-orange-500" style="width: 100%"></div></div>
+        </div>
+    </div>
+</div>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const GAME = { score:0, level:1, exp:0, expToNext:100, lastTime:0, shake:0, activeWeapon:1 };
+const player = { x:0, y:0, angle:0, velX:0, velY:0, hull:100, energy:100, lastFire:0, radius:15 };
+let stars=[],projectiles=[],enemies=[],particles=[],teammates=[],singularities=[],keys={};
+function init(){
+    resize(); player.x=canvas.width/2; player.y=canvas.height/2;
+    for(let i=0;i<250;i++) stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,size:Math.random()*2,speed:0.1+Math.random()*0.7});
+    for(let i=0;i<8;i++) spawnEnemy();
+    requestAnimationFrame(update);
+}
+function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+function spawnEnemy(){
+    const edge=Math.floor(Math.random()*4); let x,y; const pad=100;
+    if(edge===0){x=Math.random()*canvas.width;y=-pad;}
+    else if(edge===1){x=canvas.width+pad;y=Math.random()*canvas.height;}
+    else if(edge===2){x=Math.random()*canvas.width;y=canvas.height+pad;}
+    else{x=-pad;y=Math.random()*canvas.height;}
+    enemies.push({x,y,hp:50+(GAME.level*20),maxHp:50+(GAME.level*20),speed:1.0+Math.random()*1.5,baseSpeed:1.0+Math.random()*1.5,slowTimer:0,angle:0,radius:22,color:'#ff0044'});
+}
+function createExplosion(x,y,color,count=15,sizeMult=1){
+    for(let i=0;i<count;i++){const ang=Math.random()*Math.PI*2,spd=Math.random()*8*sizeMult;particles.push({x,y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,life:1.0,size:(Math.random()*4)*sizeMult,color:color||'#00f2ff'});}
+}
+function update(time){
+    const dt=Math.min((time-GAME.lastTime)/1000,0.1); GAME.lastTime=time;
+    for(let i=1;i<=9;i++){if(keys['Digit'+i])switchWeapon(i);}
+    const rs=5.5*dt;
+    if(keys['ArrowLeft']||keys['KeyA'])player.angle-=rs;
+    if(keys['ArrowRight']||keys['KeyD'])player.angle+=rs;
+    const thrust=20*dt;
+    if(keys['ArrowUp']||keys['KeyW']){
+        player.velX+=Math.cos(player.angle)*thrust; player.velY+=Math.sin(player.angle)*thrust;
+        if(Math.random()>0.3)particles.push({x:player.x-Math.cos(player.angle)*12,y:player.y-Math.sin(player.angle)*12,vx:-Math.cos(player.angle)*4+(Math.random()-0.5),vy:-Math.sin(player.angle)*4+(Math.random()-0.5),life:0.6,size:4,color:'#00ccff'});
+    }
+    player.x+=player.velX; player.y+=player.velY; player.velX*=0.985; player.velY*=0.985;
+    if(player.x<-40)player.x=canvas.width+40; if(player.x>canvas.width+40)player.x=-40;
+    if(player.y<-40)player.y=canvas.height+40; if(player.y>canvas.height+40)player.y=-40;
+    if((keys['MouseDown0']||keys['KeyF']||keys['Space'])&&time-player.lastFire>getFireRate()){fireWeapon();player.lastFire=time;}
+    updateTeammates(dt,time); updateProjectiles(dt); updateEnemies(dt); updateParticles(dt); updateSingularities(dt);
+    player.energy=Math.min(100,player.energy+20*dt);
+    if(GAME.shake>0)GAME.shake*=0.88;
+    draw(); requestAnimationFrame(update);
+}
+function switchWeapon(id){
+    GAME.activeWeapon=id;
+    document.querySelectorAll('.weapon-slot').forEach(el=>el.classList.remove('weapon-active'));
+    document.getElementById(`slot-${id}`).classList.add('weapon-active');
+}
+function getFireRate(){const r=[0,60,350,400,2000,3000,150,100,400,2500];return r[GAME.activeWeapon]||100;}
+function spawnDrone(x,y,angle,gen=0,isSwarmer=false){
+    if(gen>4)return;
+    const scale=isSwarmer?0.3:Math.max(0.3,1.0-(gen*0.2));
+    teammates.push({x,y,angle,hp:isSwarmer?15:(80/(gen+1)),lastFire:0,lerpFactor:isSwarmer?0.08:(0.01+(gen*0.02)),burstTimer:0.8,burstDir:angle,burstSpeed:isSwarmer?18:14,generation:gen,scale,radius:18*scale,isSwarmer,life:isSwarmer?8:Infinity});
+}
+function fireWeapon(){
+    const cos=Math.cos(player.angle),sin=Math.sin(player.angle);
+    if(GAME.activeWeapon===1){projectiles.push({x:player.x+cos*20,y:player.y+sin*20,vx:cos*18,vy:sin*18,life:1.2,size:10,type:'plasma',color:'#00f2ff'});GAME.shake=1.5;}
+    else if(GAME.activeWeapon===2){if(player.energy<15)return;player.energy-=15;for(let i=0;i<12;i++){const la=(Math.PI*2/12)*i;projectiles.push({x:player.x,y:player.y,vx:Math.cos(la)*12,vy:Math.sin(la)*12,life:10,size:7,type:'missile',state:'deploying',timer:0.6,angle:la,color:'#ff3300'});}GAME.shake=4;}
+    else if(GAME.activeWeapon===3){if(player.energy<20)return;player.energy-=20;GAME.shake=15;createExplosion(player.x,player.y,'#00f2ff',80,5);enemies.forEach(e=>{if(Math.hypot(e.x-player.x,e.y-player.y)<450)e.hp-=200;});}
+    else if(GAME.activeWeapon===4){if(player.energy<60)return;player.energy-=60;for(let i=0;i<7;i++)spawnDrone(player.x,player.y,(Math.PI*2/7)*i,0);GAME.shake=10;}
+    else if(GAME.activeWeapon===5){if(player.energy<100)return;player.energy-=100;singularities.push({x:player.x+cos*100,y:player.y+sin*100,vx:cos*4,vy:sin*4,life:6,radius:0,maxRadius:350});GAME.shake=25;}
+    else if(GAME.activeWeapon===6){projectiles.push({x:player.x+cos*20,y:player.y+sin*20,vx:cos*22,vy:sin*22,life:1.5,size:6,type:'chrono',color:'#cc00ff'});}
+    else if(GAME.activeWeapon===7){if(player.energy<10)return;player.energy-=10;spawnDrone(player.x,player.y,player.angle+(Math.random()-0.5),0,true);}
+    else if(GAME.activeWeapon===8){if(player.energy<15)return;player.energy-=15;spawnChainLightning(player.x,player.y);}
+    else if(GAME.activeWeapon===9){if(player.energy<80)return;player.energy-=80;projectiles.push({x:player.x,y:player.y,vx:cos*35,vy:sin*35,life:1.5,size:45,type:'nova',color:'#fff'});GAME.shake=15;}
+}
+function spawnChainLightning(sx,sy){
+    let cx=sx,cy=sy,hit=[];
+    for(let i=0;i<6;i++){let near=null,md=400;enemies.forEach(e=>{if(hit.includes(e))return;let d=Math.hypot(e.x-cx,e.y-cy);if(d<md){md=d;near=e;}});if(near){particles.push({type:'bolt',x1:cx,y1:cy,x2:near.x,y2:near.y,life:0.3});near.hp-=120;hit.push(near);cx=near.x;cy=near.y;}else break;}
+}
+function updateSingularities(dt){
+    for(let i=singularities.length-1;i>=0;i--){const s=singularities[i];s.life-=dt;s.x+=s.vx;s.y+=s.vy;s.vx*=0.96;s.vy*=0.96;s.radius=Math.min(s.maxRadius,s.radius+150*dt);enemies.forEach(e=>{const d=Math.hypot(e.x-s.x,e.y-s.y);if(d<s.radius){const pa=Math.atan2(s.y-e.y,s.x-e.x);e.x+=Math.cos(pa)*8;e.y+=Math.sin(pa)*8;e.hp-=80*dt;}});if(s.life<=0){createExplosion(s.x,s.y,'#6600ff',100,6);enemies.forEach(e=>{if(Math.hypot(e.x-s.x,e.y-s.y)<s.radius)e.hp-=500;});singularities.splice(i,1);}}
+}
+function updateTeammates(dt,time){
+    for(let i=teammates.length-1;i>=0;i--){const t=teammates[i];if(t.isSwarmer)t.life-=dt;let target=null,md=800;enemies.forEach(e=>{const d=Math.hypot(e.x-t.x,e.y-t.y);if(d<md){md=d;target=e;}});teammates.forEach(other=>{if(t===other)return;const dx=t.x-other.x,dy=t.y-other.y,dist=Math.hypot(dx,dy),minD=(t.radius+other.radius)*2;if(dist<minD&&dist>0){t.x+=(dx/dist)*4;t.y+=(dy/dist)*4;}});if(t.burstTimer>0){t.x+=Math.cos(t.burstDir)*t.burstSpeed*t.burstTimer;t.y+=Math.sin(t.burstDir)*t.burstSpeed*t.burstTimer;t.burstTimer-=dt*2;}else{const dx=target?target.x:player.x,dy=target?target.y:player.y,dist=Math.hypot(dx-t.x,dy-t.y);if(dist>(t.isSwarmer?20:120)){t.x+=(dx-t.x)*t.lerpFactor;t.y+=(dy-t.y)*t.lerpFactor;}}if(target){const ta=Math.atan2(target.y-t.y,target.x-t.x);t.angle+=(ta-t.angle)*0.15;if(time-t.lastFire>(t.isSwarmer?200:500)){projectiles.push({x:t.x,y:t.y,vx:Math.cos(t.angle)*15,vy:Math.sin(t.angle)*15,life:1,size:5*t.scale,type:'plasma',color:t.isSwarmer?'#ffcc00':'#00ff88'});t.lastFire=time;}}enemies.forEach(e=>{if(Math.hypot(e.x-t.x,e.y-t.y)<e.radius+t.radius)t.hp-=50*dt;});if(t.hp<=0||(t.isSwarmer&&t.life<=0)){if(!t.isSwarmer&&t.generation<4){spawnDrone(t.x,t.y,t.angle+1,t.generation+1);spawnDrone(t.x,t.y,t.angle-1,t.generation+1);}createExplosion(t.x,t.y,t.isSwarmer?'#ffcc00':'#00ff88',10,t.scale);teammates.splice(i,1);}}
+}
+function updateProjectiles(dt){
+    for(let i=projectiles.length-1;i>=0;i--){const p=projectiles[i];p.life-=dt;p.x+=p.vx;p.y+=p.vy;if(p.type==='missile'&&p.state==='engaging'&&enemies.length>0){const ta=Math.atan2(enemies[0].y-p.y,enemies[0].x-p.x);p.angle+=(ta-p.angle)*0.12;p.vx=Math.cos(p.angle)*8.5;p.vy=Math.sin(p.angle)*8.5;}enemies.forEach(e=>{const d=Math.hypot(e.x-p.x,e.y-p.y);if(d<e.radius+p.size){if(p.type==='chrono'){e.slowTimer=4;e.hp-=20;p.life=0;}else if(p.type==='nova'){e.hp-=400*dt;}else{e.hp-=(p.type==='missile'?80:40);p.life=0;}if(p.life<=0)createExplosion(p.x,p.y,p.color,12);}});if(p.life<=0)projectiles.splice(i,1);}
+}
+function updateEnemies(dt){
+    for(let i=enemies.length-1;i>=0;i--){const e=enemies[i];if(e.slowTimer>0){e.slowTimer-=dt;e.speed=e.baseSpeed*0.2;}else e.speed=e.baseSpeed;const angle=Math.atan2(player.y-e.y,player.x-e.x);e.x+=Math.cos(angle)*e.speed;e.y+=Math.sin(angle)*e.speed;e.angle=angle;if(Math.hypot(e.x-player.x,e.y-player.y)<player.radius+e.radius){player.hull-=1.0;GAME.shake=10;e.x-=Math.cos(angle)*40;e.y-=Math.sin(angle)*40;}if(e.hp<=0){createExplosion(e.x,e.y,'#ff0044',40,2);GAME.score+=250;GAME.exp+=40;enemies.splice(i,1);spawnEnemy();}}
+    if(GAME.exp>=GAME.expToNext){GAME.level++;GAME.exp=0;GAME.expToNext=Math.floor(GAME.expToNext*1.4);player.hull=Math.min(100,player.hull+40);spawnEnemy();}
+}
+function updateParticles(dt){for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.life-=dt;if(p.type==='bolt'){if(p.life<=0)particles.splice(i,1);continue;}p.x+=p.vx;p.y+=p.vy;if(p.life<=0)particles.splice(i,1);}
+}
+function draw(){
+    ctx.fillStyle='#000810'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.save();
+    if(GAME.shake>0)ctx.translate((Math.random()-0.5)*GAME.shake,(Math.random()-0.5)*GAME.shake);
+    stars.forEach(s=>{ctx.fillStyle=`rgba(255,255,255,${0.4+s.speed})`;ctx.beginPath();ctx.arc(s.x,s.y,s.size,0,Math.PI*2);ctx.fill();s.y+=s.speed;if(s.y>canvas.height)s.y=0;});
+    singularities.forEach(s=>{const g=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.radius);g.addColorStop(0,'#000');g.addColorStop(0.5,'rgba(102,0,255,0.8)');g.addColorStop(1,'transparent');ctx.fillStyle=g;ctx.beginPath();ctx.arc(s.x,s.y,s.radius,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();});
+    particles.forEach(p=>{if(p.type==='bolt'){ctx.strokeStyle=`rgba(200,255,255,${p.life*3})`;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(p.x1,p.y1);let cx=p.x1,cy=p.y1;for(let j=0;j<5;j++){cx+=(p.x2-p.x1)/5+(Math.random()-0.5)*30;cy+=(p.y2-p.y1)/5+(Math.random()-0.5)*30;ctx.lineTo(cx,cy);}ctx.lineTo(p.x2,p.y2);ctx.stroke();}else{ctx.globalAlpha=p.life;ctx.fillStyle=p.color;ctx.fillRect(p.x-p.size/2,p.y-p.size/2,p.size,p.size);}});
+    ctx.globalAlpha=1;
+    enemies.forEach(e=>{ctx.save();ctx.translate(e.x,e.y);ctx.rotate(e.angle);ctx.strokeStyle=e.slowTimer>0?'#cc00ff':'#ff0044';ctx.shadowBlur=15;ctx.shadowColor=ctx.strokeStyle;ctx.beginPath();ctx.moveTo(22,0);ctx.lineTo(-14,-16);ctx.lineTo(-8,0);ctx.lineTo(-14,16);ctx.closePath();ctx.stroke();ctx.restore();});
+    teammates.forEach(t=>{ctx.save();ctx.translate(t.x,t.y);ctx.rotate(t.angle);ctx.scale(t.scale,t.scale);ctx.strokeStyle=t.isSwarmer?'#ffcc00':'#00ff88';ctx.beginPath();ctx.moveTo(18,0);ctx.lineTo(-12,-12);ctx.lineTo(-6,0);ctx.lineTo(-12,12);ctx.closePath();ctx.stroke();ctx.restore();});
+    projectiles.forEach(p=>{ctx.fillStyle=p.color;ctx.shadowBlur=15;ctx.shadowColor=p.color;if(p.type==='missile'){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.angle);ctx.fillRect(-10,-5,20,10);ctx.restore();}else if(p.type==='nova'){const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size);g.addColorStop(0,'#fff');g.addColorStop(0.4,'rgba(0,242,255,0.6)');g.addColorStop(1,'transparent');ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();}else{ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();}});
+    ctx.save();ctx.translate(player.x,player.y);ctx.rotate(player.angle);ctx.strokeStyle='#00f2ff';ctx.lineWidth=4;ctx.shadowBlur=20;ctx.beginPath();ctx.moveTo(28,0);ctx.lineTo(-20,-22);ctx.lineTo(-12,0);ctx.lineTo(-20,22);ctx.closePath();ctx.stroke();ctx.restore();
+    ctx.restore();
+    document.getElementById('hull-bar').style.width=Math.max(0,player.hull)+'%';
+    document.getElementById('energy-bar').style.width=player.energy+'%';
+    document.getElementById('exp-bar').style.width=(GAME.exp/GAME.expToNext*100)+'%';
+    document.getElementById('score-val').innerText=GAME.score.toString().padStart(6,'0');
+    document.getElementById('lvl-display').innerText='LVL '+GAME.level;
+    if(player.hull<=0){ctx.fillStyle='rgba(0,0,0,0.8)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#fff';ctx.font='40px Orbitron';ctx.textAlign='center';ctx.fillText('MISSION FAILED',canvas.width/2,canvas.height/2);}
+}
+window.addEventListener('keydown',e=>{keys[e.code]=true;});
+window.addEventListener('keyup',e=>{keys[e.code]=false;});
+window.addEventListener('mousedown',e=>{if(e.button===0)keys['MouseDown0']=true;});
+window.addEventListener('mouseup',e=>{if(e.button===0)keys['MouseDown0']=false;});
+window.addEventListener('resize',resize);
+window.addEventListener('contextmenu',e=>e.preventDefault());
+init();
+</script>
+</body>
+</html>
