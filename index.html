@@ -597,6 +597,11 @@ body.light .landing-search-results{background:linear-gradient(180deg, rgba(255,2
 body.light .lsr-name{color:#182334}
 body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.5);border-color:rgba(0,0,0,.08)}
 @media (max-width:680px){#landing-ai-blob{right:16px;bottom:16px}.blob-shape{width:64px;height:64px}.landing-title{letter-spacing:3px}.blob-bars{top:26px;left:26px}}
+/* scroll-shrink heroes */
+#site-hero{transition:max-height .35s cubic-bezier(.4,0,.2,1),padding-top .35s cubic-bezier(.4,0,.2,1),padding-bottom .35s cubic-bezier(.4,0,.2,1);max-height:400px;overflow:hidden}
+#site-hero.hero-shrunk{max-height:0;padding-top:0!important;padding-bottom:0!important}
+.ports-hero{transition:max-height .35s cubic-bezier(.4,0,.2,1),padding-top .35s cubic-bezier(.4,0,.2,1),padding-bottom .35s cubic-bezier(.4,0,.2,1);max-height:400px;overflow:hidden}
+.ports-hero.hero-shrunk{max-height:0;padding-top:0!important;padding-bottom:0!important}
 </style>
 </head>
 <body>
@@ -662,9 +667,9 @@ body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.
   <div class="nav-tabs">
     <button class="nav-tab active" id="tab-landing" onclick="goLanding()"><span class="nav-tab-dot"></span>HOME</button>
     <button class="nav-tab" id="tab-home" onclick="goHome()"><span class="nav-tab-dot"></span>GAMES</button>
-    <button class="nav-tab" id="tab-arena" onclick="launchAROS()"><span class="nav-tab-dot"></span>AR.OS ARENA</button>
+    <button class="nav-tab" id="tab-arena" onclick="launchAROS()" style="display:none"><span class="nav-tab-dot"></span>AR.OS ARENA</button>
     <button class="nav-tab" id="tab-exports" onclick="goExports()"><span class="nav-tab-dot"></span>EXPORTS</button>
-    <button class="nav-tab" id="tab-ports" onclick="goWebPorts()"><span class="nav-tab-dot"></span>EXPERIMENTS</button>
+    <button class="nav-tab" id="tab-ports" onclick="goWebPorts()"><span class="nav-tab-dot"></span>MYSTERY</button>
   </div>
   <div class="nav-right">
     <button id="settings-btn" onclick="openSettings()">
@@ -733,12 +738,12 @@ body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.
             <div class="hero-desc">A cleaner command deck for Saket's arcade with bigger motion, stronger contrast, smoother hover feedback, and a more polished browse experience across the main lobby.</div>
             <div class="hero-actions">
               <button class="hero-play-btn" onclick="launchAROS()">PLAY NOW</button>
-              <button class="hero-alt-btn" onclick="goWebPorts()">OPEN EXPERIMENTS</button>
+              <button class="hero-alt-btn" onclick="goWebPorts()">OPEN MYSTERY</button>
             </div>
             <div class="hero-meta">
               <div class="hero-stat">WEAPONS <b>12</b></div>
               <div class="hero-stat">TITLES <b>14</b></div>
-              <div class="hero-stat">EXPERIMENTS <b>6</b></div>
+              <div class="hero-stat">MYSTERY <b>5</b></div>
               <div class="hero-stat">AI COACH <b>YES</b></div>
             </div>
           </div>
@@ -784,10 +789,6 @@ body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.
           <div class="gc-thumb"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
           <div class="gc-body"><div class="gc-name">Nebula Drift</div><div class="gc-foot"><div class="gc-tag">TACTICAL</div><div class="gc-author">Saket</div></div></div>
         </div>
-        <div class="gc" style="--gc-ac:#34C759" onclick="launchGame('krishiv')">
-          <div class="gc-thumb"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
-          <div class="gc-body"><div class="gc-name">Krishiv's Fun Shooter</div><div class="gc-foot"><div class="gc-tag">SHOOTER</div><div class="gc-author">Krishiv</div></div></div>
-        </div>
         <div class="gc" style="--gc-ac:#b00020" onclick="launchGame('escape')">
           <div class="gc-thumb" style="background:linear-gradient(135deg,#0a0005,#1a000a)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
           <div class="gc-body"><div class="gc-name">Escape The Nest</div><div class="gc-foot"><div class="gc-tag">HORROR</div><div class="gc-author">Saket</div></div></div>
@@ -796,29 +797,29 @@ body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.
           <div class="gc-thumb" style="background:linear-gradient(135deg,#050514,#0a1428)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
           <div class="gc-body"><div class="gc-name">Vitric Flow</div><div class="gc-foot"><div class="gc-tag">PUZZLE</div><div class="gc-author">Saket</div></div></div>
         </div>
-        <div class="gc" style="--gc-ac:#ff4500" onclick="launchGame('nitro')">
-          <div class="gc-thumb" style="background:linear-gradient(135deg,#1a0800,#200e00)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
-          <div class="gc-body"><div class="gc-name">Nitro Drift</div><div class="gc-foot"><div class="gc-tag">RACING</div><div class="gc-author">3D</div></div></div>
-        </div>
-        <div class="gc" style="--gc-ac:#00FF87" onclick="launchGame('obby')">
-          <div class="gc-thumb" style="background:linear-gradient(135deg,#0a1a0a,#0a1e2e)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
-          <div class="gc-body"><div class="gc-name">Neon Obby 3.0</div><div class="gc-foot"><div class="gc-tag">PARKOUR</div><div class="gc-author">Saket</div></div></div>
-        </div>
         <div class="gc" style="--gc-ac:#00E5FF" onclick="launchGame('vanguard')">
           <div class="gc-thumb" style="background:linear-gradient(135deg,#000810,#001428)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
           <div class="gc-body"><div class="gc-name">Neon Vanguard</div><div class="gc-foot"><div class="gc-tag">SHOOTER</div><div class="gc-author">Saket</div></div></div>
         </div>
-        <div class="gc" style="--gc-ac:#F2CD37" onclick="launchGame('brick')">
-          <div class="gc-thumb" style="background:linear-gradient(135deg,#1a1005,#251a08)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
-          <div class="gc-body"><div class="gc-name">Brick Builder</div><div class="gc-foot"><div class="gc-tag">SANDBOX</div><div class="gc-author">Saket</div></div></div>
-        </div>
-        <div class="gc" style="--gc-ac:#00ffcc" onclick="launchGame('shivin')">
-          <div class="gc-thumb" style="background:linear-gradient(135deg,#000a06,#001a10)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
-          <div class="gc-body"><div class="gc-name">Abyssal Archive</div><div class="gc-foot"><div class="gc-tag">HORROR</div><div class="gc-author">Shivin</div></div></div>
-        </div>
         <div class="gc" style="--gc-ac:#00ffff" onclick="launchGame('neonswarm')">
           <div class="gc-thumb" style="background:linear-gradient(135deg,#050512,#101a30)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
           <div class="gc-body"><div class="gc-name">Neon Swarm</div><div class="gc-foot"><div class="gc-tag">SHOOTER</div><div class="gc-author">Saket</div></div></div>
+        </div>
+        <div class="gc" style="--gc-ac:#007AFF" onclick="launchGame('2048')">
+          <div class="gc-thumb" style="background:linear-gradient(135deg,#f0f2f5,#e8ecf0)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
+          <div class="gc-body"><div class="gc-name">Apple Glass 2048</div><div class="gc-foot"><div class="gc-tag">PUZZLE</div><div class="gc-author">Saket</div></div></div>
+        </div>
+        <div class="gc" style="--gc-ac:#2ecc71" onclick="launchGame('banana')">
+          <div class="gc-thumb" style="background:linear-gradient(135deg,#1a3a1a,#0a2a0a)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
+          <div class="gc-body"><div class="gc-name">Ultra-Cluck Banana Tycoon</div><div class="gc-foot"><div class="gc-tag">CHAOS</div><div class="gc-author">Saket</div></div></div>
+        </div>
+        <div class="gc" style="--gc-ac:#ff5252" onclick="launchGame('tank')">
+          <div class="gc-thumb" style="background:linear-gradient(135deg,#1a0a0a,#2d1a0a)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
+          <div class="gc-body"><div class="gc-name">Hilltop Tank Commander</div><div class="gc-foot"><div class="gc-tag">ACTION</div><div class="gc-author">Saket</div></div></div>
+        </div>
+        <div class="gc" style="--gc-ac:#00ffcc" onclick="launchGame('satelliteearth')">
+          <div class="gc-thumb" style="background:linear-gradient(135deg,#031014,#062631)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
+          <div class="gc-body"><div class="gc-name">Satellite Earth Explorer</div><div class="gc-foot"><div class="gc-tag">EXPLORER</div><div class="gc-author">Saket</div></div></div>
         </div>
       </div>
     </div>
@@ -831,115 +832,99 @@ body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.
       <div class="ports-hero-orb ports-hero-orb-b"></div>
       <div class="ports-hero-content">
         <div class="ports-hero-copy">
-          <div class="ports-hero-kicker">EXPERIMENTAL LAB</div>
-          <div class="ports-hero-title">EXPERIMENTS <span>BY SAKET</span></div>
-          <div class="ports-hero-sub">HAND-CRAFTED PROTOTYPES, VISUAL TESTS, AND SIDE PROJECTS WITH THEIR OWN MOOD, MOTION, AND INTERACTION STYLE.</div>
+          <div class="ports-hero-kicker">MYSTERY LAB</div>
+          <div class="ports-hero-title">MYSTERY <span>BY SAKET</span></div>
+          <div class="ports-hero-sub">FIVE SEALED SLOTS — EACH ONE WAITING. PASTE ANY GAME CODE INTO ITS FILE AND UNLOCK IT.</div>
         </div>
         <div class="ports-hero-panel">
           <div class="ports-hero-panel-title">LAB STATUS</div>
           <div class="ports-hero-panel-grid">
-            <div><span>ACTIVE</span><strong>6</strong></div>
-            <div><span>TYPE</span><strong>MIXED</strong></div>
+            <div><span>SLOTS</span><strong>5</strong></div>
+            <div><span>TYPE</span><strong>SEALED</strong></div>
             <div><span>BUILT</span><strong>LOCAL</strong></div>
-            <div><span>FOCUS</span><strong>VISUAL</strong></div>
+            <div><span>FOCUS</span><strong>UNKNOWN</strong></div>
           </div>
         </div>
       </div>
     </div>
     <div class="ports-grid-wrap">
       <div class="ports-sec-hdr">
-        <div class="ports-sec-title">ALL PROJECTS</div>
+        <div class="ports-sec-title">ALL SLOTS</div>
         <div class="ports-sec-line"></div>
       </div>
       <div class="ports-grid" id="ports-grid">
 
-        <div class="port-card" style="--pc-ac:var(--acc)">
-          <div class="port-card-thumb" style="background:linear-gradient(135deg,#0a0a1a,#0d1a2e)">
-            <div class="port-glow"></div>🧛
+        <div class="port-card" style="--pc-ac:#6c6c8a">
+          <div class="port-card-thumb" style="background:linear-gradient(135deg,#080812,#10101e)">
+            <div class="port-glow"></div>🔮
           </div>
           <div class="port-card-body">
-            <div class="port-card-name">THE SUN FOR THE VAMPIRE 2</div>
-            <div class="port-card-desc">A vampire strategy game — survive the sun, manage your clan and build your lair.</div>
+            <div class="port-card-name">1</div>
+            <div class="port-card-desc">Paste your game code into mystery1.html to activate this slot.</div>
             <div class="port-card-foot">
-              <span class="port-tag">STRATEGY</span>
-              <button class="port-open-btn" onclick="openPort('https://ubgwtf.gitlab.io/awesome-loading-screen/','THE SUN FOR THE VAMPIRE 2')">OPEN</button>
+              <span class="port-tag">MYSTERY</span>
+              <button class="port-open-btn" onclick="openPort('mystery1','MYSTERY 1')">OPEN</button>
             </div>
           </div>
         </div>
 
-        <div class="port-card" style="--pc-ac:#007AFF">
-          <div class="port-card-thumb" style="background:linear-gradient(135deg,#f0f2f5,#e8ecf0)">
-            <div class="port-glow"></div>🔢
+        <div class="port-card" style="--pc-ac:#2a5a4a">
+          <div class="port-card-thumb" style="background:linear-gradient(135deg,#060f0c,#0a1c16)">
+            <div class="port-glow"></div>🌑
           </div>
           <div class="port-card-body">
-            <div class="port-card-name">APPLE GLASS 2048</div>
-            <div class="port-card-desc">A gorgeous glassmorphism 2048 — merge tiles, beat your high score, or tackle puzzle mode.</div>
+            <div class="port-card-name">2</div>
+            <div class="port-card-desc">Paste your game code into mystery2.html to activate this slot.</div>
             <div class="port-card-foot">
-              <span class="port-tag">PUZZLE</span>
-              <button class="port-open-btn" onclick="openPort('2048','APPLE GLASS 2048')">OPEN</button>
+              <span class="port-tag">MYSTERY</span>
+              <button class="port-open-btn" onclick="openPort('mystery2','MYSTERY 2')">OPEN</button>
             </div>
           </div>
         </div>
 
-        <div class="port-card" style="--pc-ac:#2ecc71">
-          <div class="port-card-thumb" style="background:linear-gradient(135deg,#1a3a1a,#0a2a0a)">
-            <div class="port-glow"></div>🍌
+        <div class="port-card" style="--pc-ac:#7a5500">
+          <div class="port-card-thumb" style="background:linear-gradient(135deg,#100c00,#1e1500)">
+            <div class="port-glow"></div>⚗️
           </div>
           <div class="port-card-body">
-            <div class="port-card-name">ULTRA-CLUCK BANANA TYCOON</div>
-            <div class="port-card-desc">Click the chicken, collect bananas, survive the chaos. Type FORTNITE for free bananas.</div>
+            <div class="port-card-name">3</div>
+            <div class="port-card-desc">Paste your game code into mystery3.html to activate this slot.</div>
             <div class="port-card-foot">
-              <span class="port-tag">CHAOS</span>
-              <button class="port-open-btn" onclick="openPort('banana','ULTRA-CLUCK BANANA TYCOON')">OPEN</button>
+              <span class="port-tag">MYSTERY</span>
+              <button class="port-open-btn" onclick="openPort('mystery3','MYSTERY 3')">OPEN</button>
             </div>
           </div>
         </div>
 
-        <div class="port-card" style="--pc-ac:#ffffff">
-          <div class="port-card-thumb" style="background:linear-gradient(135deg,#05070a,#0d101a)">
-            <div class="port-glow"></div>🪟
+        <div class="port-card" style="--pc-ac:#5a2a7a">
+          <div class="port-card-thumb" style="background:linear-gradient(135deg,#0c0610,#160a20)">
+            <div class="port-glow"></div>🗝️
           </div>
           <div class="port-card-body">
-            <div class="port-card-name">VITREUS</div>
-            <div class="port-card-desc">A liquid glass platformer — double jump, bounce pads and moving platforms in a gorgeous minimal world.</div>
+            <div class="port-card-name">4</div>
+            <div class="port-card-desc">Paste your game code into mystery4.html to activate this slot.</div>
             <div class="port-card-foot">
-              <span class="port-tag">PLATFORM</span>
-              <button class="port-open-btn" onclick="openPort('vitreus','VITREUS')">OPEN</button>
+              <span class="port-tag">MYSTERY</span>
+              <button class="port-open-btn" onclick="openPort('mystery4','MYSTERY 4')">OPEN</button>
             </div>
           </div>
         </div>
 
-        <div class="port-card" style="--pc-ac:#ff5252">
-          <div class="port-card-thumb" style="background:linear-gradient(135deg,#1a0a0a,#2d1a0a)">
-            <div class="port-glow"></div>🪖
+        <div class="port-card" style="--pc-ac:#1a4a7a">
+          <div class="port-card-thumb" style="background:linear-gradient(135deg,#03080f,#071220)">
+            <div class="port-glow"></div>🕳️
           </div>
           <div class="port-card-body">
-            <div class="port-card-name">HILLTOP TANK COMMANDER</div>
-            <div class="port-card-desc">Infinite tank warfare on deformable terrain. Destroy enemies, earn cash, buy upgrades and survive boss waves.</div>
+            <div class="port-card-name">5</div>
+            <div class="port-card-desc">Paste your game code into mystery5.html to activate this slot.</div>
             <div class="port-card-foot">
-              <span class="port-tag">ACTION</span>
-              <button class="port-open-btn" onclick="openPort('tank','HILLTOP TANK COMMANDER')" style="background:#ff5252">OPEN</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="port-card" style="--pc-ac:#00ffcc">
-          <div class="port-card-thumb" style="background:linear-gradient(135deg,#031014,#062631)">
-            <div class="port-glow"></div>🌍
-          </div>
-          <div class="port-card-body">
-            <div class="port-card-name">SATELLITE EARTH EXPLORER</div>
-            <div class="port-card-desc">A high-detail satellite globe with location search, deep zoom, live geolocation and AI-style visual effects.</div>
-            <div class="port-card-foot">
-              <span class="port-tag">EXPLORER</span>
-              <button class="port-open-btn" onclick="openPort('satelliteearth','SATELLITE EARTH EXPLORER')" style="background:#00bfa5">OPEN</button>
+              <span class="port-tag">MYSTERY</span>
+              <button class="port-open-btn" onclick="openPort('mystery5','MYSTERY 5')">OPEN</button>
             </div>
           </div>
         </div>
 
       </div>
-
-
     </div>
   </div><!-- /ports-view -->
 
@@ -957,7 +942,7 @@ body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.
         <div class="ports-hero-panel">
           <div class="ports-hero-panel-title">EXPORT STATUS</div>
           <div class="ports-hero-panel-grid">
-            <div><span>TITLES</span><strong>6</strong></div>
+            <div><span>TITLES</span><strong>4</strong></div>
             <div><span>SOURCE</span><strong>UGS</strong></div>
             <div><span>ENGINE</span><strong>MIXED</strong></div>
             <div><span>STATUS</span><strong>LIVE</strong></div>
@@ -969,18 +954,13 @@ body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.
       <div class="ports-sec-hdr">
         <div class="ports-sec-title">EXPORTED TITLES</div>
         <div class="ports-sec-line"></div>
-        <div class="gsec-count">6 TITLES</div>
+        <div class="gsec-count">4 TITLES</div>
       </div>
       <div class="ports-grid" id="exports-grid">
 
         <div class="gc" style="--gc-ac:#ffaa00" onclick="launchExportGame('crazy-cars')">
           <div class="gc-thumb" style="background:linear-gradient(135deg,#1a0f00,#231a05)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
           <div class="gc-body"><div class="gc-name">Crazy Cars</div><div class="gc-foot"><div class="gc-tag">RACING</div><div class="gc-author">UGS</div></div></div>
-        </div>
-
-        <div class="gc" style="--gc-ac:#00e5ff" onclick="launchExportGame('fortzone')">
-          <div class="gc-thumb" style="background:linear-gradient(135deg,#001a1f,#00252c)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
-          <div class="gc-body"><div class="gc-name">Fortzone BR</div><div class="gc-foot"><div class="gc-tag">BATTLE ROYALE</div><div class="gc-author">UGS</div></div></div>
         </div>
 
         <div class="gc" style="--gc-ac:#a600ff" onclick="launchExportGame('hollow-knight')">
@@ -991,11 +971,6 @@ body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.
         <div class="gc" style="--gc-ac:#5cb85c" onclick="launchExportGame('minecraft')">
           <div class="gc-thumb" style="background:linear-gradient(135deg,#0a1a08,#122a10)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
           <div class="gc-body"><div class="gc-name">Minecraft</div><div class="gc-foot"><div class="gc-tag">SANDBOX</div><div class="gc-author">UGS</div></div></div>
-        </div>
-
-        <div class="gc" style="--gc-ac:#d2691e" onclick="launchExportGame('retro-bowl')">
-          <div class="gc-thumb" style="background:linear-gradient(135deg,#1a0f05,#2a1808)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
-          <div class="gc-body"><div class="gc-name">Retro Bowl</div><div class="gc-foot"><div class="gc-tag">SPORTS</div><div class="gc-author">UGS</div></div></div>
         </div>
 
         <div class="gc" style="--gc-ac:#ff5e00" onclick="launchExportGame('solar-smash')">
@@ -1142,29 +1117,26 @@ const GAME_PATHS = {
     khalil: 'games/khalil.html',
     glass: 'games/glass.html',
     nebula: 'games/nebula.html',
-    krishiv: 'games/krishiv.html',
     escape: 'games/escape.html',
     vitric: 'games/vitric.html',
-    nitro: 'games/nitro.html',
-    obby: 'games/obby.html',
     vanguard: 'games/vanguard.html',
-    brick: 'games/brick.html',
-    shivin: 'games/shivin.html',
     neonswarm: 'games/neonswarm.html',
     '2048': 'games/2048.html',
     banana: 'games/banana.html',
-    vitreus: 'games/vitreus.html',
     tank: 'games/tank.html',
     satelliteearth: 'games/satelliteearth.html',
+    mystery1: 'games/mystery1.html',
+    mystery2: 'games/mystery2.html',
+    mystery3: 'games/mystery3.html',
+    mystery4: 'games/mystery4.html',
+    mystery5: 'games/mystery5.html',
     'crazy-cars': 'games/exports/crazy-cars.html',
-    fortzone: 'games/exports/fortzone.html',
     'hollow-knight': 'games/exports/hollow-knight.html',
     minecraft: 'games/exports/minecraft.html',
-    'retro-bowl': 'games/exports/retro-bowl.html',
     'solar-smash': 'games/exports/solar-smash.html'
 };
 
-const GAME_TITLES = { marco:"MARCO'S STEALTH ARCADE", khalil:"KHALIL'S NEON DODGER", glass:"GLASS OS 26", nebula:"NEBULA DRIFT", krishiv:"KRISHIV'S FUN SHOOTER", aros:"AR.OS ARENA", escape:"ESCAPE THE NEST", vitric:"VITRIC FLOW", nitro:"NITRO DRIFT", obby:"NEON OBBY 3.0", brick:"BRICK BUILDER", shivin:"ABYSSAL ARCHIVE", vanguard:"NEON VANGUARD", vitreus:"VITREUS", tank:"HILLTOP TANK COMMANDER", neonswarm:"NEON SWARM", satelliteearth:"SATELLITE EARTH EXPLORER", 'crazy-cars':"CRAZY CARS", fortzone:"FORTZONE BATTLE ROYALE", 'hollow-knight':"HOLLOW KNIGHT", minecraft:"MINECRAFT", 'retro-bowl':"RETRO BOWL", 'solar-smash':"SOLAR SMASH" };
+const GAME_TITLES = { marco:"MARCO'S STEALTH ARCADE", khalil:"KHALIL'S NEON DODGER", glass:"GLASS OS 26", nebula:"NEBULA DRIFT", aros:"AR.OS ARENA", escape:"ESCAPE THE NEST", vitric:"VITRIC FLOW", vanguard:"NEON VANGUARD", '2048':"APPLE GLASS 2048", banana:"ULTRA-CLUCK BANANA TYCOON", tank:"HILLTOP TANK COMMANDER", neonswarm:"NEON SWARM", satelliteearth:"SATELLITE EARTH EXPLORER", mystery1:"MYSTERY 1", mystery2:"MYSTERY 2", mystery3:"MYSTERY 3", mystery4:"MYSTERY 4", mystery5:"MYSTERY 5", 'crazy-cars':"CRAZY CARS", 'hollow-knight':"HOLLOW KNIGHT", minecraft:"MINECRAFT", 'solar-smash':"SOLAR SMASH" };
 
 function launchEmbeddedGame(id) {
     const path = GAME_PATHS[id];
@@ -1416,11 +1388,8 @@ document.addEventListener('click', e => {
                 '`1234` - Boss event, SWARM + PIERCE unlock'
             ],
             projects: {
-                'vitreus': 'Vitreus is the glass platformer in Experiments. It now focuses on momentum, bounce pads, moving platforms, checkpoints, and a finish gate.',
-                'satellite earth explorer': 'Satellite Earth Explorer is the globe experiment with search, deep zoom, geolocation, and cinematic effects.',
+                'satellite earth explorer': 'Satellite Earth Explorer is a high-detail globe with location search, deep zoom, and live geolocation — now in the main Games tab.',
                 'neon swarm': 'Neon Swarm is the survival shooter with weapon switching, giant multiplier growth, and time control.',
-                'nitro drift': 'Nitro Drift is one of the core games in the main Games tab.',
-                'brick builder': 'Brick Builder is the sandbox game from the main Games grid.',
                 'ar.os arena': 'AR.OS Arena is the flagship shooter and the title I can read the deepest live combat context from.'
             }
         };
@@ -1685,7 +1654,7 @@ document.addEventListener('click', e => {
 
             const projectInfo = findProjectInfo(q);
             if(projectInfo) return projectInfo;
-            if(/experiment|experiments|games tab|what games are here/.test(q)) return 'The arcade has a main **Games** tab for the core titles and an **Experiments** tab for side projects like Vitreus, Satellite Earth Explorer, and the other prototypes.';
+            if(/mystery|mystery|games tab|what games are here/.test(q)) return 'The arcade has a main **Games** tab for core titles and a **Mistery** tab with 5 sealed slots — paste code into any slot file to unlock a new game.';
 
             const pct = tryPercent(userMsg); if(pct) return pct;
             const avg = tryAverage(userMsg); if(avg) return avg;
@@ -1922,11 +1891,33 @@ function _switchView(which) {
   if (tabArena) tabArena.classList.remove('active');
   if (tabPorts) tabPorts.classList.toggle('active', which === 'ports');
   if (tabExports) tabExports.classList.toggle('active', which === 'exports');
+
+  // reset scroll + shrunk state on every view switch
+  const ga = document.getElementById('games-area');
+  if (ga) { ga.scrollTop = 0; }
+  document.getElementById('site-hero').classList.remove('hero-shrunk');
+  document.querySelectorAll('.ports-grid-wrap').forEach(w => { w.scrollTop = 0; });
+  document.querySelectorAll('.ports-hero').forEach(h => h.classList.remove('hero-shrunk'));
 }
 function goLanding()  { _switchView('landing'); }
 function goHome()     { _switchView('home'); }
 function goWebPorts() { _switchView('ports'); }
 function goExports()  { _switchView('exports'); }
+
+// scroll-shrink hero panels
+(function(){
+  function shrink(scrollEl, heroEl){
+    if(!scrollEl||!heroEl) return;
+    scrollEl.addEventListener('scroll', function(){
+      heroEl.classList.toggle('hero-shrunk', scrollEl.scrollTop > 40);
+    }, {passive:true});
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    shrink(document.getElementById('games-area'), document.getElementById('site-hero'));
+    shrink(document.querySelector('#ports-view .ports-grid-wrap'), document.querySelector('#ports-view .ports-hero'));
+    shrink(document.querySelector('#exports-view .ports-grid-wrap'), document.querySelector('#exports-view .ports-hero'));
+  });
+})();
 
 function openPort(urlOrId, title) {
   const frame   = document.getElementById('eg-frame');
@@ -2577,202 +2568,183 @@ function termsDecline() {
     heightMapCurrent[gridX + gridY * gridCols] = -120;
   }, { passive: true });
 
-  // ════ LIQUID METABALL CURSOR ════
+  // ════ WEBGL FLUID GLASS CURSOR ════
   if (!window.matchMedia || !window.matchMedia('(pointer:fine)').matches) return;
   if (reducedMotion) return;
 
   document.body.classList.add('shell-cursor-enabled');
 
   const cursorCanvas = document.getElementById('cursor-canvas');
-  const cCtx = cursorCanvas.getContext('2d');
+  const gl = cursorCanvas.getContext('webgl', { antialias: false, alpha: true });
+  if (!gl) return;
+
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+  const TRAIL_SIZE = 40;
+
+  const vsSource = `
+    attribute vec2 position;
+    void main() { gl_Position = vec4(position, 0.0, 1.0); }
+  `;
+
+  const fsSource = `
+    precision highp float;
+    uniform vec2 u_resolution;
+    uniform float u_time;
+    uniform float u_click;
+    #define TRAIL_SIZE 40
+    uniform vec3 u_trail[TRAIL_SIZE];
+
+    float smin(float a, float b, float k) {
+      float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
+      return mix(b, a, h) - k * h * (1.0 - h);
+    }
+    vec2 sdLine(vec2 p, vec2 a, vec2 b) {
+      vec2 pa = p - a, ba = b - a;
+      float h = clamp(dot(pa, ba) / max(dot(ba, ba), 0.0001), 0.0, 1.0);
+      return vec2(length(pa - ba * h), h);
+    }
+    float getFluid(vec2 uv) {
+      float d = 100.0;
+      for (int i = 0; i < TRAIL_SIZE - 1; i++) {
+        vec3 p1 = u_trail[i], p2 = u_trail[i + 1];
+        vec2 ld = sdLine(uv, p1.xy, p2.xy);
+        float radius = mix(p1.z, p2.z, ld.y);
+        d = smin(d, ld.x - radius, 0.025);
+      }
+      return d;
+    }
+    void main() {
+      vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+      vec2 auv = uv;
+      auv.x *= u_resolution.x / u_resolution.y;
+
+      float d = getFluid(auv);
+      float px = 1.0 / u_resolution.y;
+      float mask = smoothstep(px * 1.5, -px * 1.5, d);
+      if (mask < 0.01) { gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0); return; }
+
+      vec2 e = vec2(px * 2.0, 0.0);
+      vec3 normal = normalize(vec3(
+        getFluid(auv + e.xy) - getFluid(auv - e.xy),
+        getFluid(auv + e.yx) - getFluid(auv - e.yx),
+        0.025
+      ));
+
+      vec3 lightDir = normalize(vec3(-1.0, 1.0, 1.0));
+      vec3 halfVec  = normalize(lightDir + vec3(0.0, 0.0, 1.0));
+      float spec1   = pow(max(dot(normal, lightDir), 0.0), 128.0);
+      float spec2   = pow(max(dot(normal, halfVec),  0.0),  32.0);
+      float fresnel = pow(1.0 - max(dot(normal, vec3(0.0, 0.0, 1.0)), 0.0), 3.0);
+
+      vec3 col = vec3(0.35, 0.75, 1.0) * 0.55;
+      col += vec3(1.0) * spec1 * 3.5;
+      col += vec3(0.7, 0.92, 1.0) * spec2 * 1.2;
+      col += vec3(0.6, 0.88, 1.0) * fresnel * 1.4;
+      col *= mix(0.7, 1.0, smoothstep(-0.02, 0.0, d));
+
+      float alpha = mask * (0.55 + fresnel * 0.42);
+      gl_FragColor = vec4(col, alpha);
+    }
+  `;
+
+  function makeShader(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s); return s;
+  }
+  const glProg = gl.createProgram();
+  gl.attachShader(glProg, makeShader(gl.VERTEX_SHADER,   vsSource));
+  gl.attachShader(glProg, makeShader(gl.FRAGMENT_SHADER, fsSource));
+  gl.linkProgram(glProg); gl.useProgram(glProg);
+
+  const posBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
+  const posLoc = gl.getAttribLocation(glProg, 'position');
+  gl.enableVertexAttribArray(posLoc);
+  gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+  const resLoc   = gl.getUniformLocation(glProg, 'u_resolution');
+  const timeLoc  = gl.getUniformLocation(glProg, 'u_time');
+  const clickLoc = gl.getUniformLocation(glProg, 'u_click');
+  const trailLoc = gl.getUniformLocation(glProg, 'u_trail');
+
+  const history = Array.from({ length: TRAIL_SIZE }, () => ({ x: mouseX, y: mouseY, r: 0.035 }));
+  const trailArray = new Float32Array(TRAIL_SIZE * 3);
+
+  let glMouseDown = false, glClickVal = 0, glElasticity = 0, glSnapVel = 0;
+  document.addEventListener('mousedown', () => { glMouseDown = true;  glElasticity = 1.0; }, { passive: true });
+  document.addEventListener('mouseup',   () => { glMouseDown = false; }, { passive: true });
 
   function resizeCursorCanvas() {
-    const dpr = window.devicePixelRatio || 1;
-    cursorCanvas.width = window.innerWidth * dpr;
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    cursorCanvas.width  = window.innerWidth  * dpr;
     cursorCanvas.height = window.innerHeight * dpr;
-    cursorCanvas.style.width = window.innerWidth + 'px';
+    cursorCanvas.style.width  = window.innerWidth  + 'px';
     cursorCanvas.style.height = window.innerHeight + 'px';
-    cCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    gl.viewport(0, 0, cursorCanvas.width, cursorCanvas.height);
+    gl.uniform2f(resLoc, cursorCanvas.width, cursorCanvas.height);
   }
   window.addEventListener('resize', resizeCursorCanvas);
   resizeCursorCanvas();
 
-  const slingshotInertiaFactor = 3;
-  let innerX = mouseX, innerY = mouseY, innerVx = 0, innerVy = 0;
-  const innerSpring = 0.09, innerDamping = 0.72, innerMass = 0.85, innerGravity = 0.03;
+  const glLerp = (a, b, t) => a * (1 - t) + b * t;
+  const glT0 = Date.now();
 
-  const trailLength = 12;
-  const trailPoints = [];
-  for (let i = 0; i < trailLength; i++) trailPoints.push({ x: mouseX, y: mouseY, vx: 0, vy: 0 });
+  function renderGlassCursor() {
+    if (egOpen()) {
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      requestAnimationFrame(renderGlassCursor); return;
+    }
 
-  let clickEffectValue = 0, activeRippleRadius = 0, rippleAlpha = 0;
-  let isCursorHovering = false, hoverTransitionFactor = 0;
-  let sparkParticles = [];
+    gl.uniform1f(timeLoc, (Date.now() - glT0) * 0.001);
 
-  function Spark(x, y, color) {
-    this.x = x; this.y = y;
-    const angle = Math.random() * Math.PI * 2, speed = 0.5 + Math.random() * 1.5;
-    this.vx = Math.cos(angle) * speed; this.vy = Math.sin(angle) * speed;
-    this.size = 1.0 + Math.random() * 2.0; this.alpha = 1.0;
-    this.decay = 0.014 + Math.random() * 0.02; this.color = color;
+    glClickVal += ((glMouseDown ? 1.0 : 0.0) - glClickVal) * 0.2;
+    gl.uniform1f(clickLoc, glClickVal);
+
+    if (glElasticity > 0.01) {
+      glElasticity += (0.0 - glElasticity) * 0.1;
+      glSnapVel    += (0.0 - glElasticity) * 0.4;
+      glSnapVel    *= 0.8;
+      glElasticity += glSnapVel;
+    } else { glElasticity = 0; glSnapVel = 0; }
+
+    let tx = mouseX, ty = mouseY;
+    if (glElasticity > 0) {
+      const dx = mouseX - history[1].x, dy = mouseY - history[1].y;
+      const len = Math.sqrt(dx * dx + dy * dy);
+      if (len > 0) {
+        const pull = 50.0 * glElasticity * Math.sin(glElasticity * Math.PI);
+        tx -= (dx / len) * pull; ty -= (dy / len) * pull;
+      }
+    }
+
+    history[0].x += (tx - history[0].x) * 0.45;
+    history[0].y += (ty - history[0].y) * 0.45;
+    history[0].r  = glLerp(0.04, 0.02, glClickVal) + glElasticity * 0.015;
+
+    for (let i = 1; i < TRAIL_SIZE; i++) {
+      const dx = history[i-1].x - history[i].x, dy = history[i-1].y - history[i].y;
+      history[i].x += dx * 0.65; history[i].y += dy * 0.65;
+      const thin = 0.0006 + glElasticity * 0.001;
+      const r = Math.max(0.001, 0.035 - Math.sqrt(dx*dx+dy*dy) * thin) * (1.0 - (i / TRAIL_SIZE) * 0.9);
+      history[i].r += (r - history[i].r) * 0.3;
+    }
+
+    const aspect = window.innerWidth / window.innerHeight;
+    for (let i = 0; i < TRAIL_SIZE; i++) {
+      trailArray[i*3]   = (history[i].x / window.innerWidth) * aspect;
+      trailArray[i*3+1] = 1.0 - (history[i].y / window.innerHeight);
+      trailArray[i*3+2] = history[i].r;
+    }
+    gl.uniform3fv(trailLoc, trailArray);
+
+    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    requestAnimationFrame(renderGlassCursor);
   }
-  Spark.prototype.update = function(){ this.x += this.vx; this.y += this.vy; this.alpha -= this.decay; };
-  Spark.prototype.draw = function(ctx){
-    ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color;
-    ctx.shadowBlur = 8; ctx.shadowColor = this.color;
-    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
-    ctx.restore();
-  };
-
-  function updateInteractiveState(target) {
-    isCursorHovering = !!(target && target.closest && target.closest('button, a, input, select, textarea, .gc, .port-card, .nav-logo, .nav-tab, .ai-chip, .sp-swatch'));
-  }
-
-  document.addEventListener('mousemove', e => {
-    if (Math.random() < 0.35 && !egOpen()) {
-      const c = isCursorHovering ? '#ffcc66' : accentColor();
-      sparkParticles.push(new Spark(e.clientX, e.clientY, c));
-    }
-    updateInteractiveState(e.target);
-  }, { passive: true });
-
-  document.addEventListener('mousedown', () => {
-    clickEffectValue = 1; activeRippleRadius = 10; rippleAlpha = 0.8;
-  }, { passive: true });
-
-  document.addEventListener('mouseover', e => updateInteractiveState(e.target), { passive: true });
-
-  function renderLiquidCursor(time) {
-    const dpr = window.devicePixelRatio || 1;
-    cCtx.clearRect(0, 0, cursorCanvas.width / dpr, cursorCanvas.height / dpr);
-
-    if (egOpen()) { requestAnimationFrame(renderLiquidCursor); return; }
-
-    targetMouseX += (mouseX - targetMouseX) * 0.35;
-    targetMouseY += (mouseY - targetMouseY) * 0.35;
-
-    const leadTargetX = targetMouseX + mouseVx * slingshotInertiaFactor;
-    const leadTargetY = targetMouseY + mouseVy * slingshotInertiaFactor;
-
-    const dx = leadTargetX - innerX, dy = leadTargetY - innerY;
-    const ax = (dx * innerSpring) / innerMass, ay = (dy * innerSpring) / innerMass;
-    innerVx += ax; innerVy += ay + innerGravity;
-    innerVx *= innerDamping; innerVy *= innerDamping;
-    innerX += innerVx; innerY += innerVy;
-
-    const currentVelocity = Math.sqrt(innerVx * innerVx + innerVy * innerVy);
-    const maxStretch = 1.9;
-    const stretch = Math.min(maxStretch, 1.0 + currentVelocity * 0.05);
-    const squash = 1.0 / stretch;
-    const travelAngle = Math.atan2(innerVy, innerVx);
-
-    trailPoints[0].x = innerX; trailPoints[0].y = innerY;
-    for (let i = 1; i < trailLength; i++) {
-      const prev = trailPoints[i - 1], curr = trailPoints[i];
-      const tdx = prev.x - curr.x, tdy = prev.y - curr.y;
-      curr.vx += tdx * 0.55; curr.vy += tdy * 0.55;
-      curr.vx *= 0.42; curr.vy *= 0.42;
-      curr.x += curr.vx; curr.y += curr.vy;
-    }
-
-    hoverTransitionFactor += ((isCursorHovering ? 1 : 0) - hoverTransitionFactor) * 0.12;
-    const themeColor = accentColor();
-
-    sparkParticles = sparkParticles.filter(s => s.alpha > 0);
-    sparkParticles.forEach(s => { s.update(); s.draw(cCtx); });
-
-    cCtx.save();
-    cCtx.lineCap = 'round'; cCtx.lineJoin = 'round';
-    const abberationAmt = Math.min(5, currentVelocity * 0.45);
-
-    cCtx.beginPath();
-    cCtx.strokeStyle = 'rgba(255, 0, 85, 0.35)';
-    for (let i = 1; i < trailLength; i++) {
-      const p1 = trailPoints[i - 1], p2 = trailPoints[i];
-      const xc = (p1.x + p2.x) / 2 + abberationAmt, yc = (p1.y + p2.y) / 2 + abberationAmt;
-      cCtx.lineWidth = (trailLength - i) * 1.2;
-      if (i === 1) cCtx.moveTo(p1.x + abberationAmt, p1.y + abberationAmt);
-      cCtx.quadraticCurveTo(p1.x + abberationAmt, p1.y + abberationAmt, xc, yc);
-    }
-    cCtx.stroke();
-
-    cCtx.beginPath();
-    cCtx.strokeStyle = 'rgba(87, 217, 255, 0.35)';
-    for (let i = 1; i < trailLength; i++) {
-      const p1 = trailPoints[i - 1], p2 = trailPoints[i];
-      const xc = (p1.x + p2.x) / 2 - abberationAmt, yc = (p1.y + p2.y) / 2 - abberationAmt;
-      cCtx.lineWidth = (trailLength - i) * 1.2;
-      if (i === 1) cCtx.moveTo(p1.x - abberationAmt, p1.y - abberationAmt);
-      cCtx.quadraticCurveTo(p1.x - abberationAmt, p1.y - abberationAmt, xc, yc);
-    }
-    cCtx.stroke();
-
-    cCtx.beginPath();
-    cCtx.strokeStyle = '#ffffff';
-    cCtx.shadowBlur = 12; cCtx.shadowColor = themeColor;
-    for (let i = 1; i < trailLength; i++) {
-      const p1 = trailPoints[i - 1], p2 = trailPoints[i];
-      const xc = (p1.x + p2.x) / 2, yc = (p1.y + p2.y) / 2;
-      cCtx.lineWidth = (trailLength - i) * 0.6;
-      cCtx.globalAlpha = (trailLength - i) / trailLength * 0.85;
-      if (i === 1) cCtx.moveTo(p1.x, p1.y);
-      cCtx.quadraticCurveTo(p1.x, p1.y, xc, yc);
-    }
-    cCtx.stroke();
-    cCtx.restore();
-
-    if (rippleAlpha > 0) {
-      activeRippleRadius += 2.8; rippleAlpha -= 0.03;
-      cCtx.save();
-      cCtx.strokeStyle = themeColor;
-      cCtx.globalAlpha = Math.max(0, rippleAlpha);
-      cCtx.lineWidth = 1;
-      cCtx.beginPath(); cCtx.arc(innerX, innerY, activeRippleRadius, 0, Math.PI * 2); cCtx.stroke();
-      cCtx.restore();
-    }
-
-    cCtx.save();
-    cCtx.translate(innerX, innerY);
-    cCtx.shadowBlur = 12; cCtx.shadowColor = themeColor;
-
-    const rotTime = time * 0.0015;
-    const breathScale = 1.0 + Math.sin(time * 0.004) * 0.08;
-    clickEffectValue += (0 - clickEffectValue) * 0.1;
-    const hoverScaleFactor = 1.0 + (hoverTransitionFactor * 0.25);
-    const finalScale = breathScale * hoverScaleFactor - (clickEffectValue * 0.25);
-
-    cCtx.save();
-    cCtx.rotate(rotTime); cCtx.scale(finalScale, finalScale);
-    cCtx.strokeStyle = themeColor; cCtx.lineWidth = 1.5; cCtx.setLineDash([4, 10]);
-    cCtx.beginPath(); cCtx.arc(0, 0, 18, 0, Math.PI * 2); cCtx.stroke();
-    cCtx.restore();
-
-    const speedSpinFactor = mouseSpeed * 0.05;
-    cCtx.save();
-    cCtx.rotate(-rotTime * 0.7 - speedSpinFactor); cCtx.scale(finalScale, finalScale);
-    cCtx.strokeStyle = themeColor; cCtx.lineWidth = 1; cCtx.setLineDash([]);
-    cCtx.beginPath();
-    cCtx.moveTo(0, -18); cCtx.lineTo(0, -23);
-    cCtx.moveTo(0, 18); cCtx.lineTo(0, 23);
-    cCtx.moveTo(-18, 0); cCtx.lineTo(-23, 0);
-    cCtx.moveTo(18, 0); cCtx.lineTo(23, 0);
-    cCtx.stroke();
-    cCtx.restore();
-
-    cCtx.save();
-    cCtx.rotate(travelAngle);
-    cCtx.fillStyle = isCursorHovering ? '#ffcc00' : '#fff';
-    cCtx.beginPath();
-    const baseRadius = isCursorHovering ? 5.5 : 4.0;
-    cCtx.ellipse(0, 0, baseRadius * stretch, baseRadius * squash, 0, 0, Math.PI * 2);
-    cCtx.fill();
-    cCtx.restore();
-
-    cCtx.restore();
-
-    requestAnimationFrame(renderLiquidCursor);
-  }
-  requestAnimationFrame(renderLiquidCursor);
+  requestAnimationFrame(renderGlassCursor);
 })();
 </script>
 </body>
