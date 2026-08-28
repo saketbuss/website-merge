@@ -954,7 +954,7 @@ body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.
       <div class="ports-sec-hdr">
         <div class="ports-sec-title">EXPORTED TITLES</div>
         <div class="ports-sec-line"></div>
-        <div class="gsec-count">4 TITLES</div>
+        <div class="gsec-count">6 TITLES</div>
       </div>
       <div class="ports-grid" id="exports-grid">
 
@@ -976,6 +976,16 @@ body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.
         <div class="gc" style="--gc-ac:#ff5e00" onclick="launchExportGame('solar-smash')">
           <div class="gc-thumb" style="background:linear-gradient(135deg,#1a0800,#2a1000)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
           <div class="gc-body"><div class="gc-name">Solar Smash</div><div class="gc-foot"><div class="gc-tag">SIMULATION</div><div class="gc-author">UGS</div></div></div>
+        </div>
+
+        <div class="gc" style="--gc-ac:#ff2222" onclick="launchExportGame('escaperoad')">
+          <div class="gc-thumb" style="background:linear-gradient(135deg,#1a0000,#2a0808)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
+          <div class="gc-body"><div class="gc-name">Escape Road</div><div class="gc-foot"><div class="gc-tag">RACING</div><div class="gc-author">UGS</div></div></div>
+        </div>
+
+        <div class="gc" style="--gc-ac:#00c8ff" onclick="launchExportGame('timeshooter')">
+          <div class="gc-thumb" style="background:linear-gradient(135deg,#00101a,#001a2a)"><div class="gc-glow"></div><div class="gc-over">PLAY</div></div>
+          <div class="gc-body"><div class="gc-name">Time Shooter 3</div><div class="gc-foot"><div class="gc-tag">SHOOTER</div><div class="gc-author">UGS</div></div></div>
         </div>
 
       </div>
@@ -1133,10 +1143,12 @@ const GAME_PATHS = {
     'crazy-cars': 'games/exports/crazy-cars.html',
     'hollow-knight': 'games/exports/hollow-knight.html',
     minecraft: 'games/exports/minecraft.html',
-    'solar-smash': 'games/exports/solar-smash.html'
+    'solar-smash': 'games/exports/solar-smash.html',
+    'escaperoad': 'games/exports/escaperoad.html',
+    'timeshooter': 'games/exports/timeshooter.html'
 };
 
-const GAME_TITLES = { marco:"MARCO'S STEALTH ARCADE", khalil:"KHALIL'S NEON DODGER", glass:"GLASS OS 26", nebula:"NEBULA DRIFT", aros:"AR.OS ARENA", escape:"ESCAPE THE NEST", vitric:"VITRIC FLOW", vanguard:"NEON VANGUARD", '2048':"APPLE GLASS 2048", banana:"ULTRA-CLUCK BANANA TYCOON", tank:"HILLTOP TANK COMMANDER", neonswarm:"NEON SWARM", satelliteearth:"SATELLITE EARTH EXPLORER", mystery1:"MYSTERY 1", mystery2:"MYSTERY 2", mystery3:"MYSTERY 3", mystery4:"MYSTERY 4", mystery5:"MYSTERY 5", 'crazy-cars':"CRAZY CARS", 'hollow-knight':"HOLLOW KNIGHT", minecraft:"MINECRAFT", 'solar-smash':"SOLAR SMASH" };
+const GAME_TITLES = { marco:"MARCO'S STEALTH ARCADE", khalil:"KHALIL'S NEON DODGER", glass:"GLASS OS 26", nebula:"NEBULA DRIFT", aros:"AR.OS ARENA", escape:"ESCAPE THE NEST", vitric:"VITRIC FLOW", vanguard:"NEON VANGUARD", '2048':"APPLE GLASS 2048", banana:"ULTRA-CLUCK BANANA TYCOON", tank:"HILLTOP TANK COMMANDER", neonswarm:"NEON SWARM", satelliteearth:"SATELLITE EARTH EXPLORER", mystery1:"MYSTERY 1", mystery2:"MYSTERY 2", mystery3:"MYSTERY 3", mystery4:"MYSTERY 4", mystery5:"MYSTERY 5", 'crazy-cars':"CRAZY CARS", 'hollow-knight':"HOLLOW KNIGHT", minecraft:"MINECRAFT", 'solar-smash':"SOLAR SMASH", 'escaperoad':"ESCAPE ROAD", 'timeshooter':"TIME SHOOTER 3 SWAT" };
 
 function launchEmbeddedGame(id) {
     const path = GAME_PATHS[id];
