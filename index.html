@@ -397,13 +397,13 @@ body::after{right:-120px;bottom:-40px;width:420px;height:420px;border-radius:50%
 #home-view,#ports-view,#exports-view,#landing-view{padding:0 0 18px;transition:opacity .28s ease, transform .28s ease}
 #home-view.hidden,#ports-view.hidden,#exports-view.hidden,#landing-view.hidden{opacity:0;pointer-events:none;transform:translateY(8px) scale(.988);display:block}
 #site-hero,.ports-hero{margin:22px 24px 0;border-radius:30px;border:1px solid rgba(255,255,255,.07);overflow:hidden;box-shadow:var(--shadow-1), inset 0 1px 0 rgba(255,255,255,.05)}
-#site-hero{min-height:210px;height:auto;padding:22px 24px;display:block}
+#site-hero{min-height:0;height:auto;padding:12px 24px;display:block}
 .hero-bg{background:linear-gradient(130deg, rgba(4,10,18,.96) 0%, rgba(9,18,30,.9) 45%, rgba(7,16,24,.95) 100%),radial-gradient(circle at 78% 18%, rgba(91,214,255,.18), transparent 26%),radial-gradient(circle at 14% 78%, rgba(122,255,200,.12), transparent 20%)}
 .hero-grid{opacity:.42;background-image:linear-gradient(rgba(91,214,255,.085) 1px, transparent 1px), linear-gradient(90deg, rgba(91,214,255,.085) 1px, transparent 1px);background-size:34px 34px;mask-image:linear-gradient(180deg, rgba(0,0,0,.7), transparent 94%)}
 .hero-aurora{position:absolute;z-index:1;border-radius:999px;filter:blur(10px);opacity:.55;animation:shellPulse 10s ease-in-out infinite}
 .hero-aurora-a{right:13%;top:-38px;width:210px;height:210px;background:radial-gradient(circle, rgba(91,214,255,.24), transparent 70%)}
 .hero-aurora-b{left:8%;bottom:-70px;width:240px;height:240px;background:radial-gradient(circle, rgba(122,255,200,.18), transparent 70%);animation-delay:-4s}
-.hero-content{position:relative;z-index:3;width:100%;display:grid;grid-template-columns:minmax(0,1.6fr) 280px;gap:20px;align-items:stretch}
+.hero-content{position:relative;z-index:3;width:100%;display:flex;align-items:center;gap:20px}
 .hero-main{display:flex;align-items:center;gap:16px;min-width:0}
 .hero-icon-wrap{width:98px;height:98px;flex-shrink:0;border-radius:22px;padding:1px;background:linear-gradient(145deg, rgba(91,214,255,.46), rgba(122,255,200,.18), rgba(255,255,255,.08));box-shadow:0 12px 30px rgba(0,0,0,.24)}
 .hero-icon{width:100%;height:100%;border-radius:21px;display:flex;align-items:center;justify-content:center;font-family:var(--fdisplay);font-size:32px;letter-spacing:3px;color:#ecfbff;background:linear-gradient(180deg, rgba(14,28,44,.94), rgba(8,16,28,.96));box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
@@ -598,7 +598,7 @@ body.light .lsr-name{color:#182334}
 body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.5);border-color:rgba(0,0,0,.08)}
 @media (max-width:680px){#landing-ai-blob{right:16px;bottom:16px}.blob-shape{width:64px;height:64px}.landing-title{letter-spacing:3px}.blob-bars{top:26px;left:26px}}
 /* scroll-shrink heroes */
-#site-hero{transition:max-height .35s cubic-bezier(.4,0,.2,1),padding-top .35s cubic-bezier(.4,0,.2,1),padding-bottom .35s cubic-bezier(.4,0,.2,1);max-height:400px;overflow:hidden}
+#site-hero{transition:max-height .35s cubic-bezier(.4,0,.2,1),padding-top .35s cubic-bezier(.4,0,.2,1),padding-bottom .35s cubic-bezier(.4,0,.2,1);max-height:120px;overflow:hidden}
 #site-hero.hero-shrunk{max-height:0;padding-top:0!important;padding-bottom:0!important}
 .ports-hero{transition:max-height .35s cubic-bezier(.4,0,.2,1),padding-top .35s cubic-bezier(.4,0,.2,1),padding-bottom .35s cubic-bezier(.4,0,.2,1);max-height:400px;overflow:hidden}
 .ports-hero.hero-shrunk{max-height:0;padding-top:0!important;padding-bottom:0!important}
@@ -728,36 +728,15 @@ body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.
       <div class="hero-aurora hero-aurora-a"></div>
       <div class="hero-aurora hero-aurora-b"></div>
       <div class="hero-content">
-        <div class="hero-main">
-          <div class="hero-icon-wrap">
+        <div class="hero-main" style="align-items:center;flex:1">
+          <div class="hero-icon-wrap" style="width:62px;height:62px;flex-shrink:0">
             <div class="hero-icon">AR</div>
           </div>
-          <div class="hero-info">
-            <div class="hero-kicker">FEATURED // SHOOTER</div>
-            <div class="hero-title">CENTRAL LOBBY</div>
-            <div class="hero-desc">A cleaner command deck for Saket's arcade with bigger motion, stronger contrast, smoother hover feedback, and a more polished browse experience across the main lobby.</div>
-            <div class="hero-actions">
-              <button class="hero-play-btn" onclick="launchAROS()">PLAY NOW</button>
-              <button class="hero-alt-btn" onclick="goWebPorts()">OPEN MYSTERY</button>
-            </div>
-            <div class="hero-meta">
-              <div class="hero-stat">WEAPONS <b>12</b></div>
-              <div class="hero-stat">TITLES <b>14</b></div>
-              <div class="hero-stat">MYSTERY <b>5</b></div>
-              <div class="hero-stat">AI COACH <b>YES</b></div>
-            </div>
+          <div style="flex:1;min-width:0">
+            <div class="hero-title" style="font-size:clamp(26px,3.8vw,46px);margin:0;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">CENTRAL LOBBY</div>
           </div>
         </div>
-        <div class="hero-side-panel">
-          <div class="hero-side-title">LIVE BOARD</div>
-          <div class="hero-side-grid">
-            <div class="hero-side-cell"><span>STATUS</span><strong>ONLINE</strong></div>
-            <div class="hero-side-cell"><span>MODE</span><strong>ARCADE</strong></div>
-            <div class="hero-side-cell"><span>FEATURED</span><strong>AR.OS</strong></div>
-            <div class="hero-side-cell"><span>STYLE</span><strong>NEON</strong></div>
-          </div>
-          <div class="hero-side-note">Browse games, jump into experiments, and keep the shell visuals separate from the actual game payloads.</div>
-        </div>
+        <button class="hero-play-btn" onclick="playRandomLobbyGame()" style="flex-shrink:0;padding:10px 28px;align-self:center">PLAY RANDOM</button>
       </div>
     </div>
     <!-- Game grid -->
@@ -832,18 +811,7 @@ body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.
       <div class="ports-hero-orb ports-hero-orb-b"></div>
       <div class="ports-hero-content">
         <div class="ports-hero-copy">
-          <div class="ports-hero-kicker">MYSTERY LAB</div>
           <div class="ports-hero-title">MYSTERY <span>BY SAKET</span></div>
-          <div class="ports-hero-sub">FIVE SEALED SLOTS — EACH ONE WAITING. PASTE ANY GAME CODE INTO ITS FILE AND UNLOCK IT.</div>
-        </div>
-        <div class="ports-hero-panel">
-          <div class="ports-hero-panel-title">LAB STATUS</div>
-          <div class="ports-hero-panel-grid">
-            <div><span>SLOTS</span><strong>5</strong></div>
-            <div><span>TYPE</span><strong>SEALED</strong></div>
-            <div><span>BUILT</span><strong>LOCAL</strong></div>
-            <div><span>FOCUS</span><strong>UNKNOWN</strong></div>
-          </div>
         </div>
       </div>
     </div>
@@ -935,18 +903,7 @@ body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.
       <div class="ports-hero-orb ports-hero-orb-b"></div>
       <div class="ports-hero-content">
         <div class="ports-hero-copy">
-          <div class="ports-hero-kicker">IMPORTED ARCADE</div>
           <div class="ports-hero-title">EXPORTS <span>FROM UGS</span></div>
-          <div class="ports-hero-sub">GAMES PORTED IN FROM THE UGS GAME PORTAL, RUNNING NATIVELY INSIDE SAKET'S SITE.</div>
-        </div>
-        <div class="ports-hero-panel">
-          <div class="ports-hero-panel-title">EXPORT STATUS</div>
-          <div class="ports-hero-panel-grid">
-            <div><span>TITLES</span><strong>4</strong></div>
-            <div><span>SOURCE</span><strong>UGS</strong></div>
-            <div><span>ENGINE</span><strong>MIXED</strong></div>
-            <div><span>STATUS</span><strong>LIVE</strong></div>
-          </div>
         </div>
       </div>
     </div>
@@ -1915,6 +1872,11 @@ function goLanding()  { _switchView('landing'); }
 function goHome()     { _switchView('home'); }
 function goWebPorts() { _switchView('ports'); }
 function goExports()  { _switchView('exports'); }
+function playRandomLobbyGame() {
+  const games = ['aros','marco','khalil','glass','nebula','escape','vitric','vanguard','neonswarm','2048','banana','tank','satelliteearth'];
+  const id = games[Math.floor(Math.random() * games.length)];
+  if (id === 'aros') launchAROS(); else launchGame(id);
+}
 
 // scroll-shrink hero panels
 (function(){
@@ -2580,84 +2542,115 @@ function termsDecline() {
     heightMapCurrent[gridX + gridY * gridCols] = -120;
   }, { passive: true });
 
-  // ════ WEBGL FLUID GLASS CURSOR ════
+  // ════ WEBGL NEON LIQUID CURSOR (coursor2) ════
   if (!window.matchMedia || !window.matchMedia('(pointer:fine)').matches) return;
   if (reducedMotion) return;
 
   document.body.classList.add('shell-cursor-enabled');
 
   const cursorCanvas = document.getElementById('cursor-canvas');
-  const gl = cursorCanvas.getContext('webgl', { antialias: false, alpha: true });
+  const gl = cursorCanvas.getContext('webgl', { alpha: true, antialias: true, preserveDrawingBuffer: false });
   if (!gl) return;
 
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-  const TRAIL_SIZE = 40;
-
   const vsSource = `
-    attribute vec2 position;
-    void main() { gl_Position = vec4(position, 0.0, 1.0); }
+    attribute vec2 a_position;
+    varying vec2 v_uv;
+    void main() {
+        v_uv = (a_position + 1.0) * 0.5;
+        v_uv.y = 1.0 - v_uv.y;
+        gl_Position = vec4(a_position, 0.0, 1.0);
+    }
   `;
 
   const fsSource = `
     precision highp float;
+    varying vec2 v_uv;
     uniform vec2 u_resolution;
+    uniform vec2 u_points[32];
+    uniform float u_radii[32];
+    uniform int u_point_count;
+    uniform vec3 u_neon_primary;
+    uniform vec3 u_neon_secondary;
     uniform float u_time;
-    uniform float u_click;
-    #define TRAIL_SIZE 40
-    uniform vec3 u_trail[TRAIL_SIZE];
+    uniform vec2 u_click_pos;
+    uniform float u_click_time;
+    uniform float u_speed;
 
     float smin(float a, float b, float k) {
-      float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
-      return mix(b, a, h) - k * h * (1.0 - h);
+        float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
+        return mix(b, a, h) - k * h * (1.0 - h);
     }
-    vec2 sdLine(vec2 p, vec2 a, vec2 b) {
-      vec2 pa = p - a, ba = b - a;
-      float h = clamp(dot(pa, ba) / max(dot(ba, ba), 0.0001), 0.0, 1.0);
-      return vec2(length(pa - ba * h), h);
+    float sdSegment(vec2 p, vec2 a, vec2 b, float ra, float rb) {
+        vec2 pa = p - a, ba = b - a;
+        float l2 = dot(ba, ba);
+        if (l2 < 0.0001) return length(pa) - ra;
+        float h = clamp(dot(pa, ba) / l2, 0.0, 1.0);
+        return length(pa - ba * h) - mix(ra, rb, h);
     }
-    float getFluid(vec2 uv) {
-      float d = 100.0;
-      for (int i = 0; i < TRAIL_SIZE - 1; i++) {
-        vec3 p1 = u_trail[i], p2 = u_trail[i + 1];
-        vec2 ld = sdLine(uv, p1.xy, p2.xy);
-        float radius = mix(p1.z, p2.z, ld.y);
-        d = smin(d, ld.x - radius, 0.025);
-      }
-      return d;
+    float mapSDF(vec2 p) {
+        float d = 1000.0;
+        for (int i = 0; i < 31; i++) {
+            if (i >= u_point_count - 1) break;
+            float wave = sin(u_time * 4.5 - float(i) * 0.25) * 1.0;
+            float segDist = sdSegment(p, u_points[i], u_points[i+1],
+                max(0.5, u_radii[i] + wave), max(0.5, u_radii[i+1] + wave));
+            d = (i == 0) ? segDist : smin(d, segDist, 24.0);
+        }
+        if (u_click_time > 0.0) {
+            float waveAge = u_time - u_click_time;
+            if (waveAge > 0.0 && waveAge < 0.65) {
+                float waveRadius = waveAge * 170.0;
+                float ringDist = abs(length(p - u_click_pos) - waveRadius) - 5.0 * (1.0 - waveAge / 0.65);
+                d = smin(d, ringDist, 12.0);
+            }
+        }
+        return d;
+    }
+    vec3 getSurfaceNormal(vec2 p, float d) {
+        float eps1 = 1.8, eps2 = 3.6;
+        vec2 g1 = vec2(mapSDF(vec2(p.x+eps1,p.y))-mapSDF(vec2(p.x-eps1,p.y)),
+                       mapSDF(vec2(p.x,p.y+eps1))-mapSDF(vec2(p.x,p.y-eps1)));
+        vec2 g2 = vec2(mapSDF(vec2(p.x+eps2,p.y))-mapSDF(vec2(p.x-eps2,p.y)),
+                       mapSDF(vec2(p.x,p.y+eps2))-mapSDF(vec2(p.x,p.y-eps2)));
+        vec2 grad = normalize(mix(g1, g2, 0.5) + 0.0001);
+        float r = max(0.0, -d);
+        float z = sqrt(max(0.1, 1.0 - clamp(r * 0.045, 0.0, 0.95)));
+        return normalize(vec3(grad * (1.0 - z * 0.5), z));
     }
     void main() {
-      vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-      vec2 auv = uv;
-      auv.x *= u_resolution.x / u_resolution.y;
+        vec2 pixelPos = v_uv * u_resolution;
+        float d = mapSDF(pixelPos);
+        if (d > 45.0) { gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0); return; }
 
-      float d = getFluid(auv);
-      float px = 1.0 / u_resolution.y;
-      float mask = smoothstep(px * 1.5, -px * 1.5, d);
-      if (mask < 0.01) { gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0); return; }
+        vec3 normal = getSurfaceNormal(pixelPos, d);
+        float innerMask = smoothstep(2.0, -2.0, d);
+        float outerGlow = exp(-max(0.0, d) * 0.09);
+        float fresnel = pow(clamp(1.0 - normal.z, 0.0, 1.0), 3.0);
 
-      vec2 e = vec2(px * 2.0, 0.0);
-      vec3 normal = normalize(vec3(
-        getFluid(auv + e.xy) - getFluid(auv - e.xy),
-        getFluid(auv + e.yx) - getFluid(auv - e.yx),
-        0.025
-      ));
+        float spec1 = pow(max(0.0, dot(normal, normalize(vec3(-0.4,-0.6,0.7)))), 32.0) * 1.8;
+        float spec2 = pow(max(0.0, dot(normal, normalize(vec3(0.5,0.5,0.8)))), 18.0) * 0.7;
+        float specularTotal = spec1 + spec2;
 
-      vec3 lightDir = normalize(vec3(-1.0, 1.0, 1.0));
-      vec3 halfVec  = normalize(lightDir + vec3(0.0, 0.0, 1.0));
-      float spec1   = pow(max(dot(normal, lightDir), 0.0), 128.0);
-      float spec2   = pow(max(dot(normal, halfVec),  0.0),  32.0);
-      float fresnel = pow(1.0 - max(dot(normal, vec3(0.0, 0.0, 1.0)), 0.0), 3.0);
+        float colorCycle = sin(u_time * 2.0 + length(v_uv - vec2(0.5)) * 3.5) * 0.5 + 0.5;
+        vec3 neonColor = mix(u_neon_primary, u_neon_secondary, colorCycle);
 
-      vec3 col = vec3(0.35, 0.75, 1.0) * 0.55;
-      col += vec3(1.0) * spec1 * 3.5;
-      col += vec3(0.7, 0.92, 1.0) * spec2 * 1.2;
-      col += vec3(0.6, 0.88, 1.0) * fresnel * 1.4;
-      col *= mix(0.7, 1.0, smoothstep(-0.02, 0.0, d));
+        vec3 chromaticGlow;
+        chromaticGlow.r = neonColor.r * (outerGlow + spec1 * 0.9);
+        chromaticGlow.g = mix(neonColor.g, u_neon_secondary.g, 0.4) * (outerGlow * 0.9 + specularTotal * 0.8);
+        chromaticGlow.b = neonColor.b * (outerGlow * 1.1 + spec2 * 1.2);
 
-      float alpha = mask * (0.55 + fresnel * 0.42);
-      gl_FragColor = vec4(col, alpha);
+        vec3 liquidCore = neonColor * fresnel * 0.95 + vec3(specularTotal * 1.1);
+
+        vec3 finalColor = chromaticGlow * outerGlow * 1.4;
+        finalColor = mix(finalColor, liquidCore, innerMask);
+        float innerCaustic = pow(clamp(-d/18.0,0.0,1.0),2.5)*(1.0-pow(clamp(-d/12.0,0.0,1.0),2.0));
+        finalColor += neonColor * innerCaustic * 0.4 * innerMask;
+
+        float alpha = clamp(outerGlow * 1.2 + innerMask, 0.0, 1.0);
+        gl_FragColor = vec4(finalColor, alpha);
     }
   `;
 
@@ -2672,87 +2665,133 @@ function termsDecline() {
 
   const posBuf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
-  const posLoc = gl.getAttribLocation(glProg, 'position');
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]), gl.STATIC_DRAW);
+  const posLoc = gl.getAttribLocation(glProg, 'a_position');
   gl.enableVertexAttribArray(posLoc);
   gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
 
-  const resLoc   = gl.getUniformLocation(glProg, 'u_resolution');
-  const timeLoc  = gl.getUniformLocation(glProg, 'u_time');
-  const clickLoc = gl.getUniformLocation(glProg, 'u_click');
-  const trailLoc = gl.getUniformLocation(glProg, 'u_trail');
+  const uResLoc      = gl.getUniformLocation(glProg, 'u_resolution');
+  const uPointsLoc   = gl.getUniformLocation(glProg, 'u_points');
+  const uRadiiLoc    = gl.getUniformLocation(glProg, 'u_radii');
+  const uCountLoc    = gl.getUniformLocation(glProg, 'u_point_count');
+  const uPrimaryLoc  = gl.getUniformLocation(glProg, 'u_neon_primary');
+  const uSecondLoc   = gl.getUniformLocation(glProg, 'u_neon_secondary');
+  const uTimeLoc     = gl.getUniformLocation(glProg, 'u_time');
+  const uClickPosLoc = gl.getUniformLocation(glProg, 'u_click_pos');
+  const uClickTLoc   = gl.getUniformLocation(glProg, 'u_click_time');
+  const uSpeedLoc    = gl.getUniformLocation(glProg, 'u_speed');
 
-  const history = Array.from({ length: TRAIL_SIZE }, () => ({ x: mouseX, y: mouseY, r: 0.035 }));
-  const trailArray = new Float32Array(TRAIL_SIZE * 3);
+  const primaryColor   = [0.0, 0.95, 1.0];
+  const secondaryColor = [1.0, 0.05, 0.85];
 
-  let glMouseDown = false, glClickVal = 0, glElasticity = 0, glSnapVel = 0;
-  document.addEventListener('mousedown', () => { glMouseDown = true;  glElasticity = 1.0; }, { passive: true });
-  document.addEventListener('mouseup',   () => { glMouseDown = false; }, { passive: true });
+  const RAW_NODES = 16, RENDER_POINTS = 32, baseRadius = 19.5;
+
+  let cursorTargetX = window.innerWidth / 2, cursorTargetY = window.innerHeight / 2;
+  let prevCursorX = cursorTargetX, prevCursorY = cursorTargetY;
+  let cursorSpeed = 0, clickScale = 1.0, clickScaleVel = 0.0;
+  let lastClickTime = -1.0, clickPos = [0, 0];
+
+  let rawNodes    = Array.from({ length: RAW_NODES    }, () => ({ x: cursorTargetX, y: cursorTargetY }));
+  let renderPts   = Array.from({ length: RENDER_POINTS }, () => ({ x: cursorTargetX, y: cursorTargetY }));
+  let renderRadii = new Float32Array(RENDER_POINTS);
+
+  // Idle drift: sinusoidal wander after 2.5 s of no movement
+  let lastMove = Date.now();
+  document.addEventListener('mousemove', () => { lastMove = Date.now(); }, { passive: true });
+  (function idleCheck() {
+    if (Date.now() - lastMove > 2500) {
+      const t = Date.now() * 0.001;
+      cursorTargetX = window.innerWidth  / 2 + Math.sin(t * 1.3) * (window.innerWidth  * 0.22);
+      cursorTargetY = window.innerHeight / 2 + Math.cos(t * 1.7) * (window.innerHeight * 0.18);
+    } else {
+      cursorTargetX = mouseX;
+      cursorTargetY = mouseY;
+    }
+    setTimeout(idleCheck, 50);
+  })();
+
+  document.addEventListener('mousedown', (e) => {
+    clickPos = [e.clientX, e.clientY];
+    lastClickTime = performance.now() / 1000.0;
+    clickScale = 0.42; clickScaleVel = -0.12;
+  }, { passive: true });
+
+  function catmullRom(p0, p1, p2, p3, t) {
+    const t2 = t * t, t3 = t2 * t;
+    return 0.5 * ((2*p1) + (-p0+p2)*t + (2*p0-5*p1+4*p2-p3)*t2 + (-p0+3*p1-3*p2+p3)*t3);
+  }
+
+  function updatePhysics() {
+    const dx = cursorTargetX - prevCursorX, dy = cursorTargetY - prevCursorY;
+    cursorSpeed += (Math.sqrt(dx*dx+dy*dy) - cursorSpeed) * 0.2;
+    prevCursorX = cursorTargetX; prevCursorY = cursorTargetY;
+
+    clickScaleVel += (1.0 - clickScale) * 0.22;
+    clickScaleVel *= 0.70;
+    clickScale += clickScaleVel;
+
+    rawNodes[0].x += (cursorTargetX - rawNodes[0].x) * 0.48;
+    rawNodes[0].y += (cursorTargetY - rawNodes[0].y) * 0.48;
+    for (let i = 1; i < RAW_NODES; i++) {
+      const spd = 0.55 - (i / RAW_NODES) * 0.22;
+      rawNodes[i].x += (rawNodes[i-1].x - rawNodes[i].x) * spd;
+      rawNodes[i].y += (rawNodes[i-1].y - rawNodes[i].y) * spd;
+    }
+
+    for (let i = 0; i < RENDER_POINTS; i++) {
+      const u = (i / (RENDER_POINTS - 1)) * (RAW_NODES - 1);
+      const idx = Math.floor(u), t = u - idx;
+      const p0 = rawNodes[Math.max(0, idx-1)], p1 = rawNodes[idx];
+      const p2 = rawNodes[Math.min(RAW_NODES-1, idx+1)], p3 = rawNodes[Math.min(RAW_NODES-1, idx+2)];
+      renderPts[i].x = catmullRom(p0.x, p1.x, p2.x, p3.x, t);
+      renderPts[i].y = catmullRom(p0.y, p1.y, p2.y, p3.y, t);
+      const ratio = i / (RENDER_POINTS - 1);
+      const taper = Math.pow(1.0 - ratio * 0.76, 1.12);
+      renderRadii[i] = baseRadius * taper * Math.max(0.35, 1.0 - ratio * Math.min(cursorSpeed*0.012,0.4)) * clickScale;
+    }
+  }
 
   function resizeCursorCanvas() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     cursorCanvas.width  = window.innerWidth  * dpr;
     cursorCanvas.height = window.innerHeight * dpr;
     cursorCanvas.style.width  = window.innerWidth  + 'px';
     cursorCanvas.style.height = window.innerHeight + 'px';
     gl.viewport(0, 0, cursorCanvas.width, cursorCanvas.height);
-    gl.uniform2f(resLoc, cursorCanvas.width, cursorCanvas.height);
   }
   window.addEventListener('resize', resizeCursorCanvas);
   resizeCursorCanvas();
 
-  const glLerp = (a, b, t) => a * (1 - t) + b * t;
-  const glT0 = Date.now();
-
-  function renderGlassCursor() {
+  function renderGlassCursor(currentTime) {
     if (egOpen()) {
-      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
       requestAnimationFrame(renderGlassCursor); return;
     }
 
-    gl.uniform1f(timeLoc, (Date.now() - glT0) * 0.001);
+    updatePhysics();
 
-    glClickVal += ((glMouseDown ? 1.0 : 0.0) - glClickVal) * 0.2;
-    gl.uniform1f(clickLoc, glClickVal);
-
-    if (glElasticity > 0.01) {
-      glElasticity += (0.0 - glElasticity) * 0.1;
-      glSnapVel    += (0.0 - glElasticity) * 0.4;
-      glSnapVel    *= 0.8;
-      glElasticity += glSnapVel;
-    } else { glElasticity = 0; glSnapVel = 0; }
-
-    let tx = mouseX, ty = mouseY;
-    if (glElasticity > 0) {
-      const dx = mouseX - history[1].x, dy = mouseY - history[1].y;
-      const len = Math.sqrt(dx * dx + dy * dy);
-      if (len > 0) {
-        const pull = 50.0 * glElasticity * Math.sin(glElasticity * Math.PI);
-        tx -= (dx / len) * pull; ty -= (dy / len) * pull;
-      }
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const pointArray  = new Float32Array(RENDER_POINTS * 2);
+    const scaledRadii = new Float32Array(RENDER_POINTS);
+    for (let i = 0; i < RENDER_POINTS; i++) {
+      pointArray[i*2]   = renderPts[i].x * dpr;
+      pointArray[i*2+1] = renderPts[i].y * dpr;
+      scaledRadii[i]    = renderRadii[i]  * dpr;
     }
 
-    history[0].x += (tx - history[0].x) * 0.45;
-    history[0].y += (ty - history[0].y) * 0.45;
-    history[0].r  = glLerp(0.04, 0.02, glClickVal) + glElasticity * 0.015;
+    gl.useProgram(glProg);
+    gl.uniform2f(uResLoc, cursorCanvas.width, cursorCanvas.height);
+    gl.uniform2fv(uPointsLoc, pointArray);
+    gl.uniform1fv(uRadiiLoc, scaledRadii);
+    gl.uniform1i(uCountLoc, RENDER_POINTS);
+    gl.uniform3fv(uPrimaryLoc,  primaryColor);
+    gl.uniform3fv(uSecondLoc,   secondaryColor);
+    gl.uniform1f(uTimeLoc,      currentTime * 0.001);
+    gl.uniform1f(uSpeedLoc,     cursorSpeed);
+    gl.uniform2f(uClickPosLoc,  clickPos[0] * dpr, clickPos[1] * dpr);
+    gl.uniform1f(uClickTLoc,    lastClickTime);
 
-    for (let i = 1; i < TRAIL_SIZE; i++) {
-      const dx = history[i-1].x - history[i].x, dy = history[i-1].y - history[i].y;
-      history[i].x += dx * 0.65; history[i].y += dy * 0.65;
-      const thin = 0.0006 + glElasticity * 0.001;
-      const r = Math.max(0.001, 0.035 - Math.sqrt(dx*dx+dy*dy) * thin) * (1.0 - (i / TRAIL_SIZE) * 0.9);
-      history[i].r += (r - history[i].r) * 0.3;
-    }
-
-    const aspect = window.innerWidth / window.innerHeight;
-    for (let i = 0; i < TRAIL_SIZE; i++) {
-      trailArray[i*3]   = (history[i].x / window.innerWidth) * aspect;
-      trailArray[i*3+1] = 1.0 - (history[i].y / window.innerHeight);
-      trailArray[i*3+2] = history[i].r;
-    }
-    gl.uniform3fv(trailLoc, trailArray);
-
-    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
     requestAnimationFrame(renderGlassCursor);
   }
