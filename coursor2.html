@@ -1,218 +1,264 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Liquid Glass WebGL Cursor</title>
-    <!-- Tailwind CSS CDN -->
+    <title>WebGL Liquid Black Blob & Neon Trail</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * {
-            cursor: none !important; /* Hide native system cursor */
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
         }
-
         html, body {
             width: 100%;
             height: 100%;
-            margin: 0;
-            padding: 0;
             overflow: hidden;
-            background-color: #030408; /* Solid deep navy/dark background */
-            touch-action: none;
+            background-color: #ffffff;
+            cursor: none;
         }
-
         canvas {
             display: block;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
+            touch-action: none;
         }
     </style>
 </head>
-<body class="h-full w-full relative">
+<body class="bg-white overflow-hidden">
 
-    <!-- Fullscreen WebGL Canvas -->
+    <!-- Fullscreen WebGL Canvas rendering Liquid Black Blob Cursor & Idle Shape-Shifter -->
     <canvas id="webgl-canvas"></canvas>
 
     <script>
-        // WebGL Engine Setup
+        // --- WebGL Setup ---
         const canvas = document.getElementById('webgl-canvas');
-        const gl = canvas.getContext('webgl', { alpha: false, antialias: true, preserveDrawingBuffer: false });
+        const gl = canvas.getContext('webgl', { alpha: false, antialias: true, depth: false }) || 
+                   canvas.getContext('experimental-webgl');
 
         if (!gl) {
             console.error('WebGL not supported');
         }
 
-        // Vertex Shader Program
+        // Viewport dimensions
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = Math.floor(width * dpr);
+            canvas.height = Math.floor(height * dpr);
+            if (gl) {
+                gl.viewport(0, 0, canvas.width, canvas.height);
+            }
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Vertex Shader (Fullscreen Quad)
         const vsSource = `
             attribute vec2 a_position;
-            varying vec2 v_uv;
             void main() {
-                v_uv = (a_position + 1.0) * 0.5;
-                v_uv.y = 1.0 - v_uv.y;
                 gl_Position = vec4(a_position, 0.0, 1.0);
             }
         `;
 
-        // Advanced Liquid Glass Fragment Shader (Refined smaller profile & gentle ripple)
+        // Fragment Shader with Anti-Aliased SDF Shapes, Organic Liquid Blob & Sub-pixel Neon Trails
         const fsSource = `
             precision highp float;
 
-            varying vec2 v_uv;
-
             uniform vec2 u_resolution;
-            uniform vec2 u_points[32];
-            uniform float u_radii[32];
-            uniform int u_point_count;
-
-            uniform vec3 u_neon_primary;
-            uniform vec3 u_neon_secondary;
-
             uniform float u_time;
-            uniform vec2 u_click_pos;
-            uniform float u_click_time;
-            uniform float u_speed;
+            uniform vec2 u_dormant_center;
+            uniform float u_dormant_factor; // 0.0 = Active Cursor, 1.0 = Fully Dormant Shape
+            uniform float u_shape_mix;      // Smooth Cosine Morph Progress (0.0 -> 1.0)
+            uniform int u_shape_type_a;
+            uniform int u_shape_type_b;
 
-            // Polynomial Smooth Minimum for seamless metaball/tube blending
-            float smin(float a, float b, float k) {
-                float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
-                return mix(b, a, h) - k * h * (1.0 - h);
-            }
+            // Liquid Black Blob Node Array (x, y, radius, noise_phase)
+            uniform vec4 u_black_blobs[8];
+            uniform int u_black_count;
 
-            // Variable-radius continuous segment SDF
-            float sdSegment(vec2 p, vec2 a, vec2 b, float ra, float rb) {
-                vec2 pa = p - a, ba = b - a;
-                float l2 = dot(ba, ba);
-                if (l2 < 0.0001) return length(pa) - ra;
-                float h = clamp(dot(pa, ba) / l2, 0.0, 1.0);
-                float r = mix(ra, rb, h);
-                return length(pa - ba * h) - r;
-            }
+            // Glowing Neon Trail & Orbit Satellite Droplets (x, y, radius, color_type)
+            uniform vec4 u_neon_blobs[60];
+            uniform int u_neon_count;
 
-            // Smooth Continuous Liquid Field SDF
-            float mapSDF(vec2 p) {
-                float d = 1000.0;
-                
-                // Continuous tube segments with smooth joins
-                for (int i = 0; i < 31; i++) {
-                    if (i >= u_point_count - 1) break;
-                    vec2 a = u_points[i];
-                    vec2 b = u_points[i+1];
-                    
-                    float ra = u_radii[i];
-                    float rb = u_radii[i+1];
-                    
-                    // Organic surface tension ripple frequency
-                    float wave = sin(u_time * 4.5 - float(i) * 0.25) * 1.0;
-                    float segDist = sdSegment(p, a, b, max(0.5, ra + wave), max(0.5, rb + wave));
-                    
-                    if (i == 0) {
-                        d = segDist;
-                    } else {
-                        // Blend radius scaled to match smaller fluid size
-                        d = smin(d, segDist, 24.0);
-                    }
+            // Distance Estimator for Morphing Dormant Shapes around Origin
+            float getShapeDistance(vec2 p, int shapeType, float time) {
+                float r = length(p);
+                float angle = atan(p.y, p.x);
+                float d = 999.0;
+
+                if (shapeType == 0) {
+                    // 1. Organic Breathing Liquid Sphere
+                    float pulse = sin(time * 2.2) * 2.8;
+                    float wave = sin(angle * 4.0 + time * 3.0) * 1.8;
+                    d = r - (27.0 + pulse + wave);
                 }
-
-                // Subtler, tighter expansion ripple on click
-                if (u_click_time > 0.0) {
-                    float waveAge = u_time - u_click_time;
-                    if (waveAge > 0.0 && waveAge < 0.65) {
-                        float waveRadius = waveAge * 170.0;
-                        float ringDist = abs(length(p - u_click_pos) - waveRadius) - 5.0 * (1.0 - waveAge / 0.65);
-                        d = smin(d, ringDist, 12.0);
-                    }
+                else if (shapeType == 1) {
+                    // 2. Soft 4-Point Pulsing Starburst
+                    float rotAngle = angle - time * 0.6;
+                    float starR = 25.0 + 15.0 * pow(abs(cos(2.0 * rotAngle)), 1.8) + sin(time * 3.0) * 2.5;
+                    d = r - starR;
+                }
+                else if (shapeType == 2) {
+                    // 3. Figure-8 Infinity Loop Metamorphosis
+                    vec2 node1 = vec2(sin(time * 1.8) * 21.0, sin(time * 3.6) * 10.0);
+                    vec2 node2 = -node1;
+                    float d1 = length(p - node1) - 16.0;
+                    float d2 = length(p - node2) - 16.0;
+                    float k = 14.0;
+                    float h = clamp(0.5 + 0.5 * (d2 - d1) / k, 0.0, 1.0);
+                    d = mix(d2, d1, h) - k * h * (1.0 - h);
+                }
+                else if (shapeType == 3) {
+                    // 4. Smooth Pulsing Rounded Heart
+                    vec2 hp = p / 27.0;
+                    hp.y -= 0.12;
+                    float beat = 1.0 + 0.1 * sin(time * 4.5) * step(0.0, sin(time * 4.5));
+                    hp /= beat;
+                    float hx = hp.x, hy = hp.y;
+                    float heartEq = pow(hx*hx + hy*hy - 1.0, 3.0) - hx*hx*hy*hy*hy;
+                    d = heartEq * 15.0;
+                }
+                else if (shapeType == 4) {
+                    // 5. Wave-Edged Rounded Triangle
+                    float rotAngle = angle + time * 0.5;
+                    float triR = 24.0 + 11.0 * cos(3.0 * rotAngle + sin(time * 1.8) * 0.4);
+                    d = r - triR;
+                }
+                else if (shapeType == 5) {
+                    // 6. Swirling 6-Petal Liquid Flower
+                    float rotAngle = angle - time * 0.8;
+                    float petalR = 23.0 + 14.0 * cos(6.0 * rotAngle) * (0.85 + 0.15 * sin(time * 2.5));
+                    d = r - petalR;
                 }
 
                 return d;
             }
 
-            // Smooth 3D surface normal reconstruction for liquid dome rendering
-            vec3 getSurfaceNormal(vec2 p, float d) {
-                float eps1 = 1.8;
-                float eps2 = 3.6;
-                
-                vec2 g1 = vec2(
-                    mapSDF(vec2(p.x + eps1, p.y)) - mapSDF(vec2(p.x - eps1, p.y)),
-                    mapSDF(vec2(p.x, p.y + eps1)) - mapSDF(vec2(p.x, p.y - eps1))
-                );
-                
-                vec2 g2 = vec2(
-                    mapSDF(vec2(p.x + eps2, p.y)) - mapSDF(vec2(p.x - eps2, p.y)),
-                    mapSDF(vec2(p.x, p.y + eps2)) - mapSDF(vec2(p.x, p.y - eps2))
-                );
-
-                vec2 grad = normalize(mix(g1, g2, 0.5) + 0.0001);
-                
-                // Construct rounded 3D dome height component (z)
-                float r = max(0.0, -d);
-                float z = sqrt(max(0.1, 1.0 - clamp(r * 0.045, 0.0, 0.95)));
-                
-                return normalize(vec3(grad * (1.0 - z * 0.5), z));
-            }
-
             void main() {
-                vec2 pixelPos = v_uv * u_resolution;
-                float d = mapSDF(pixelPos);
+                vec2 st = gl_FragCoord.xy;
+                
+                // Base Canvas Background: Pure White
+                vec3 finalColor = vec3(1.0, 1.0, 1.0);
 
-                // Pure dark background base
-                vec3 bgColor = vec3(0.012, 0.016, 0.03);
+                // --- 1. Compute Neon Trail & Satellites ---
+                float neonField = 0.0;
+                vec3 neonColorSum = vec3(0.0);
 
-                // Early performance clip
-                if (d > 45.0) {
-                    gl_FragColor = vec4(bgColor, 1.0);
-                    return;
+                for (int i = 0; i < 60; i++) {
+                    if (i >= u_neon_count) break;
+                    vec4 nb = u_neon_blobs[i];
+                    vec2 d = st - nb.xy;
+                    float distSq = dot(d, d);
+                    float rSq = nb.z * nb.z;
+                    
+                    float field = rSq / (distSq + 1.0);
+                    neonField += field;
+
+                    // Neon Palettes: 0 = Electric Cyan, 1 = Neon Magenta, 2 = Violet / Deep Blue
+                    vec3 c = vec3(0.0, 0.95, 1.0);
+                    if (nb.w > 0.5 && nb.w < 1.5) {
+                        c = vec3(1.0, 0.0, 0.65);
+                    } else if (nb.w >= 1.5) {
+                        c = vec3(0.42, 0.18, 1.0);
+                    }
+
+                    neonColorSum += c * field;
                 }
 
-                // Calculate liquid surface 3D geometry
-                vec3 normal = getSurfaceNormal(pixelPos, d);
+                // Render Neon Trail with Sub-pixel Anti-Aliasing over Pure White
+                if (neonField > 0.005) {
+                    vec3 avgNeonColor = neonColorSum / (neonField + 0.0001);
 
-                // Fluid mask (Interior vs Exterior)
-                float innerMask = smoothstep(2.0, -2.0, d);
+                    float core = smoothstep(0.3, 0.8, neonField);
+                    float softAura = smoothstep(0.008, 0.4, neonField) * 0.45;
 
-                // Outer Neon Bloom & Edge Glow
-                float edgeDistance = max(0.0, d);
-                float outerGlow = exp(-edgeDistance * 0.09);
-                float fresnel = pow(clamp(1.0 - normal.z, 0.0, 1.0), 3.0);
+                    vec3 neonGlow = mix(vec3(1.0), avgNeonColor, clamp(core + softAura, 0.0, 1.0));
+                    
+                    if (neonField > 0.6) {
+                        neonGlow = mix(neonGlow, avgNeonColor, smoothstep(0.6, 1.0, neonField));
+                    }
 
-                // Crisp Glass Specular Reflections
-                vec3 lightDir1 = normalize(vec3(-0.4, -0.6, 0.7));
-                vec3 lightDir2 = normalize(vec3(0.5, 0.5, 0.8));
+                    finalColor = neonGlow;
+                }
 
-                float spec1 = pow(max(0.0, dot(normal, lightDir1)), 32.0) * 1.8;
-                float spec2 = pow(max(0.0, dot(normal, lightDir2)), 18.0) * 0.7;
-                float specularTotal = spec1 + spec2;
+                // --- 2. Compute Active Cursor Chain Black Field ---
+                float activeBlackField = 0.0;
+                vec2 headPos = vec2(0.0);
 
-                // Color gradient cycling along liquid body
-                float colorCycle = sin(u_time * 2.0 + length(v_uv - vec2(0.5)) * 3.5) * 0.5 + 0.5;
-                vec3 neonColor = mix(u_neon_primary, u_neon_secondary, colorCycle);
+                for (int i = 0; i < 8; i++) {
+                    if (i >= u_black_count) break;
+                    vec4 bb = u_black_blobs[i];
+                    if (i == 0) headPos = bb.xy;
 
-                // Dispersion & Chromatic Prism Refraction
-                vec3 chromaticGlow;
-                chromaticGlow.r = neonColor.r * (outerGlow + spec1 * 0.9);
-                chromaticGlow.g = mix(neonColor.g, u_neon_secondary.g, 0.4) * (outerGlow * 0.9 + specularTotal * 0.8);
-                chromaticGlow.b = neonColor.b * (outerGlow * 1.1 + spec2 * 1.2);
+                    vec2 d = st - bb.xy;
+                    float angle = atan(d.y, d.x);
 
-                // Translucent Liquid Glass Core (Center lets background show through clearly)
-                vec3 liquidCore = mix(bgColor, neonColor * 0.2, 0.12);
-                liquidCore += neonColor * fresnel * 0.95; // Strong glowing rim
-                liquidCore += vec3(specularTotal * 1.1);  // High glass sheen glint
+                    float wobble = sin(angle * 5.0 + u_time * 4.0 + bb.w) * (bb.z * 0.06);
+                    float r = bb.z + wobble;
 
-                // Combine Outer Neon Dispersion with Translucent Liquid Interior
-                vec3 finalColor = bgColor;
-                finalColor += chromaticGlow * outerGlow * 1.4;
-                finalColor = mix(finalColor, liquidCore, innerMask);
+                    float distSq = dot(d, d);
+                    activeBlackField += (r * r) / (distSq + 0.001);
+                }
 
-                // Caustic refraction ring near glass edge
-                float innerCaustic = pow(clamp(-d / 18.0, 0.0, 1.0), 2.5) * (1.0 - pow(clamp(-d / 12.0, 0.0, 1.0), 2.0));
-                finalColor += neonColor * innerCaustic * 0.4 * innerMask;
+                // --- 3. Compute Dormant SDF Shape Distance ---
+                vec2 dormantLocal = st - u_dormant_center;
+                float dA = getShapeDistance(dormantLocal, u_shape_type_a, u_time);
+                float dB = getShapeDistance(dormantLocal, u_shape_type_b, u_time);
+                
+                // Silky Cosine Shape Morphing
+                float dormantSdf = mix(dA, dB, u_shape_mix);
+
+                // Anti-aliased SDF density map
+                float dormantFieldDensity = 1.0 - smoothstep(-8.0, 10.0, dormantSdf);
+
+                // --- 4. Continuously Blend Active & Dormant Fields ---
+                float activeFieldDensity = smoothstep(0.5, 0.95, activeBlackField);
+                
+                // Continuous transition factor with zero harsh snaps
+                float smoothFactor = smoothstep(0.0, 1.0, u_dormant_factor);
+                float effectiveDensity = mix(activeFieldDensity, dormantFieldDensity, smoothFactor);
+                float combinedField = mix(activeBlackField, dormantFieldDensity * 1.15, smoothFactor);
+
+                // --- 5. Render Anti-Aliased Liquid Black Core & Specular Rim Glow ---
+                if (effectiveDensity > 0.01 || combinedField > 0.5) {
+                    vec3 blackBody = vec3(0.04, 0.04, 0.06);
+                    vec3 rimColor = mix(vec3(0.8, 0.98, 1.0), vec3(1.0, 0.35, 0.9), 0.5 + 0.5 * sin(u_time * 1.8));
+
+                    if (effectiveDensity >= 0.88 || combinedField >= 0.98) {
+                        finalColor = blackBody;
+
+                        // Soft 3D Glossy Specular Highlight
+                        vec2 targetCenter = mix(headPos, u_dormant_center, smoothFactor);
+                        vec2 lightDir = normalize(vec2(-0.7, 0.9));
+                        vec2 dHead = normalize(st - targetCenter + vec2(5.0, -5.0));
+                        float spec = pow(max(0.0, dot(dHead, lightDir)), 12.0) * 0.35;
+                        finalColor += vec3(spec);
+                    } else if (effectiveDensity > 0.01) {
+                        // Smooth, anti-aliased neon specular rim
+                        float rimAlpha = smoothstep(0.01, 0.45, effectiveDensity) * (1.0 - smoothstep(0.45, 0.85, effectiveDensity));
+                        
+                        finalColor = mix(finalColor, rimColor, rimAlpha * 0.92);
+                        if (effectiveDensity > 0.45) {
+                            float fillAlpha = (effectiveDensity - 0.45) / 0.43;
+                            finalColor = mix(finalColor, blackBody, fillAlpha);
+                        }
+                    }
+                }
 
                 gl_FragColor = vec4(finalColor, 1.0);
             }
         `;
 
-        function createShader(gl, type, source) {
+        // Compile Shader Helper
+        function compileShader(type, source) {
             const shader = gl.createShader(type);
             gl.shaderSource(shader, source);
             gl.compileShader(shader);
@@ -224,8 +270,8 @@
             return shader;
         }
 
-        const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
-        const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+        const vertexShader = compileShader(gl.VERTEX_SHADER, vsSource);
+        const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fsSource);
 
         const program = gl.createProgram();
         gl.attachShader(program, vertexShader);
@@ -238,231 +284,328 @@
 
         gl.useProgram(program);
 
-        // Quad Buffer Setup
+        // Fullscreen Quad Geometry Buffer
         const positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-            -1, -1,
-             1, -1,
-            -1,  1,
-            -1,  1,
-             1, -1,
-             1,  1,
-        ]), gl.STATIC_DRAW);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                -1.0, -1.0,
+                 1.0, -1.0,
+                -1.0,  1.0,
+                -1.0,  1.0,
+                 1.0, -1.0,
+                 1.0,  1.0
+            ]),
+            gl.STATIC_DRAW
+        );
 
-        const aPositionLoc = gl.getAttribLocation(program, 'a_position');
-        gl.enableVertexAttribArray(aPositionLoc);
-        gl.vertexAttribPointer(aPositionLoc, 2, gl.FLOAT, false, 0, 0);
+        const positionLocation = gl.getAttribLocation(program, 'a_position');
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-        // Uniform Locations
-        const uResLoc = gl.getUniformLocation(program, 'u_resolution');
-        const uPointsLoc = gl.getUniformLocation(program, 'u_points');
-        const uRadiiLoc = gl.getUniformLocation(program, 'u_radii');
-        const uPointCountLoc = gl.getUniformLocation(program, 'u_point_count');
-        const uNeonPrimaryLoc = gl.getUniformLocation(program, 'u_neon_primary');
-        const uNeonSecondaryLoc = gl.getUniformLocation(program, 'u_neon_secondary');
-        const uTimeLoc = gl.getUniformLocation(program, 'u_time');
-        const uClickPosLoc = gl.getUniformLocation(program, 'u_click_pos');
-        const uClickTimeLoc = gl.getUniformLocation(program, 'u_click_time');
-        const uSpeedLoc = gl.getUniformLocation(program, 'u_speed');
+        // Cache Uniform Locations
+        const uResolution = gl.getUniformLocation(program, 'u_resolution');
+        const uTime = gl.getUniformLocation(program, 'u_time');
+        const uDormantCenter = gl.getUniformLocation(program, 'u_dormant_center');
+        const uDormantFactor = gl.getUniformLocation(program, 'u_dormant_factor');
+        const uShapeMix = gl.getUniformLocation(program, 'u_shape_mix');
+        const uShapeTypeA = gl.getUniformLocation(program, 'u_shape_type_a');
+        const uShapeTypeB = gl.getUniformLocation(program, 'u_shape_type_b');
+        const uBlackCount = gl.getUniformLocation(program, 'u_black_count');
+        const uNeonCount = gl.getUniformLocation(program, 'u_neon_count');
 
-        // Color Palette (Vibrant Neon Cyan -> Electric Pink Magenta)
-        const primaryColor = [0.0, 0.95, 1.0];
-        const secondaryColor = [1.0, 0.05, 0.85];
-
-        // Physics Node Configuration
-        const RAW_NODES = 16;
-        const RENDER_POINTS = 32;
-        const baseRadius = 19.5;
-
-        let targetX = window.innerWidth / 2;
-        let targetY = window.innerHeight / 2;
-        let prevTargetX = targetX;
-        let prevTargetY = targetY;
-        let currentSpeed = 0;
-
-        // Click shrink & spring bounce state
-        let clickScale = 1.0;
-        let clickScaleVel = 0.0;
-
-        // Physics node array with position, velocity, and smoothing
-        let rawNodes = Array.from({ length: RAW_NODES }, () => ({ x: targetX, y: targetY, vx: 0, vy: 0 }));
-        let renderPoints = Array.from({ length: RENDER_POINTS }, () => ({ x: targetX, y: targetY }));
-        let renderRadii = new Float32Array(RENDER_POINTS);
-
-        let lastClickTime = -1.0;
-        let clickPos = [0, 0];
-
-        // Canvas Resize
-        function resizeCanvas() {
-            const dpr = Math.min(window.devicePixelRatio || 1, 2);
-            canvas.width = window.innerWidth * dpr;
-            canvas.height = window.innerHeight * dpr;
-            gl.viewport(0, 0, canvas.width, canvas.height);
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        // Pointer Motion Handlers
-        function updatePointer(x, y) {
-            targetX = x;
-            targetY = y;
+        const uBlackBlobsLoc = [];
+        for (let i = 0; i < 8; i++) {
+            uBlackBlobsLoc.push(gl.getUniformLocation(program, `u_black_blobs[${i}]`));
         }
 
-        window.addEventListener('mousemove', (e) => updatePointer(e.clientX, e.clientY));
+        const uNeonBlobsLoc = [];
+        for (let i = 0; i < 60; i++) {
+            uNeonBlobsLoc.push(gl.getUniformLocation(program, `u_neon_blobs[${i}]`));
+        }
+
+        // --- Cursor Physics & Continuous Smooth State Machine ---
+        let mouseX = width / 2;
+        let mouseY = height / 2;
+        let targetX = width / 2;
+        let targetY = height / 2;
+
+        let smoothSpeed = 0;
+        let vx = 0;
+        let vy = 0;
+
+        // Squish factor on click
+        let squish = 1.0;
+        let squishVel = 0;
+
+        const BASE_HEAD_RADIUS = 15;
+        const NUM_BLACK_NODES = 6;
+
+        const blackNodes = [];
+        for (let i = 0; i < NUM_BLACK_NODES; i++) {
+            blackNodes.push({
+                x: width / 2,
+                y: height / 2,
+                radius: BASE_HEAD_RADIUS * Math.pow(0.82, i),
+                phase: i * 1.2
+            });
+        }
+
+        const neonDroplets = [];
+
+        // --- Continuous Dormant & Silky Shape Morphing System ---
+        let lastMoveTime = Date.now();
+        const IDLE_THRESHOLD_MS = 1200; // Time stationary before starting gradual idle transition
+        let dormantFactor = 0.0;       // Smooth blend factor: 0.0 (fully active) -> 1.0 (fully dormant)
+
+        let dormantCenterX = width / 2;
+        let dormantCenterY = height / 2;
+
+        // Shape morph sequence
+        let currentShapeIndex = 0;
+        let nextShapeIndex = 1;
+        let shapeMorphProgress = 0.0;
+        const SHAPE_DURATION = 4.0;              // Dwell time per shape (seconds)
+        const MORPH_TRANSITION_DURATION = 1.8;   // Smooth transition duration between shapes
+        let shapeTimer = 0;
+
+        function registerActivity(x, y) {
+            lastMoveTime = Date.now();
+            mouseX = x;
+            mouseY = y;
+        }
+
+        window.addEventListener('mousemove', (e) => registerActivity(e.clientX, e.clientY));
         window.addEventListener('touchmove', (e) => {
             if (e.touches.length > 0) {
-                updatePointer(e.touches[0].clientX, e.touches[0].clientY);
+                registerActivity(e.touches[0].clientX, e.touches[0].clientY);
             }
-        });
+        }, { passive: true });
 
-        // Click Shockwave & Shrink Bounce Trigger
-        function triggerPulse(x, y) {
-            clickPos = [x, y];
-            lastClickTime = performance.now() / 1000.0;
-            // Instantly squish down and initiate elastic spring bounce back
-            clickScale = 0.42;
-            clickScaleVel = -0.12;
+        // Trigger Click Splash
+        function triggerSplash(x, y) {
+            registerActivity(x, y);
+            squishVel = -0.4;
+
+            // Soft radial neon splash
+            const count = 20;
+            for (let i = 0; i < count; i++) {
+                const angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.3;
+                const spd = 4 + Math.random() * 9;
+                neonDroplets.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * spd,
+                    vy: Math.sin(angle) * spd,
+                    radius: 6 + Math.random() * 8,
+                    life: 1.0,
+                    decay: 0.018 + Math.random() * 0.018,
+                    colorType: Math.floor(Math.random() * 3),
+                    isSatellite: false
+                });
+            }
         }
 
-        window.addEventListener('mousedown', (e) => triggerPulse(e.clientX, e.clientY));
+        window.addEventListener('mousedown', (e) => triggerSplash(e.clientX, e.clientY));
         window.addEventListener('touchstart', (e) => {
             if (e.touches.length > 0) {
-                triggerPulse(e.touches[0].clientX, e.touches[0].clientY);
+                triggerSplash(e.touches[0].clientX, e.touches[0].clientY);
             }
-        });
+        }, { passive: true });
 
-        // Catmull-Rom Smooth Spline Sampling
-        function catmullRom(p0, p1, p2, p3, t) {
-            const t2 = t * t;
-            const t3 = t2 * t;
-            return 0.5 * (
-                (2 * p1) +
-                (-p0 + p2) * t +
-                (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 +
-                (-p0 + 3 * p1 - 3 * p2 + p3) * t3
-            );
-        }
+        // --- Critically Damped Frame-Rate Independent Physics Render Loop ---
+        const startTime = Date.now();
+        let lastFrameTime = startTime;
 
-        // Dynamic Liquid Physics Update
-        function updatePhysics() {
-            // Measure pointer speed for dynamic fluid stretching
-            const dx = targetX - prevTargetX;
-            const dy = targetY - prevTargetY;
-            const instSpeed = Math.sqrt(dx * dx + dy * dy);
-            currentSpeed += (instSpeed - currentSpeed) * 0.2;
-            prevTargetX = targetX;
-            prevTargetY = targetY;
+        function render() {
+            const now = Date.now();
+            const elapsed = (now - startTime) * 0.001;
+            const dt = Math.min((now - lastFrameTime) * 0.001, 0.08); // Cap dt to prevent physics spikes
+            lastFrameTime = now;
 
-            // Elastic spring physics for click shrink and bounce back
-            const springK = 0.22;   // Spring stiffness
-            const damping = 0.70;   // Damping factor for smooth elastic bounce
-            const springForce = (1.0 - clickScale) * springK;
-            clickScaleVel += springForce;
-            clickScaleVel *= damping;
-            clickScale += clickScaleVel;
+            // 1. Frame-Rate Independent Exponential Smoothing for Position
+            const posFactor = 1.0 - Math.exp(-dt * 14.0);
+            const prevTargetX = targetX;
+            const prevTargetY = targetY;
 
-            // Lead head node follows pointer closely
-            const leadDamp = 0.48;
-            rawNodes[0].x += (targetX - rawNodes[0].x) * leadDamp;
-            rawNodes[0].y += (targetY - rawNodes[0].y) * leadDamp;
+            targetX += (mouseX - targetX) * posFactor;
+            targetY += (mouseY - targetY) * posFactor;
 
-            // Subsequent trail nodes follow with smooth viscous tension
-            for (let i = 1; i < RAW_NODES; i++) {
-                const prev = rawNodes[i - 1];
-                const curr = rawNodes[i];
+            vx = (targetX - prevTargetX) / Math.max(dt, 0.001);
+            vy = (targetY - prevTargetY) / Math.max(dt, 0.001);
+            const instantSpeed = Math.sqrt(vx * vx + vy * vy);
 
-                const followSpeed = 0.55 - (i / RAW_NODES) * 0.22;
-                curr.x += (prev.x - curr.x) * followSpeed;
-                curr.y += (prev.y - curr.y) * followSpeed;
+            // Smoothly bleed off velocity over time (exponential moving average)
+            const speedFactor = 1.0 - Math.exp(-dt * 5.0);
+            smoothSpeed += (instantSpeed - smoothSpeed) * speedFactor;
+
+            // 2. Gradual & Continuous Dormant Factor Ramp (No Harsh Snaps)
+            const timeSinceMove = now - lastMoveTime;
+            const targetDormant = (timeSinceMove > IDLE_THRESHOLD_MS && smoothSpeed < 3.0) ? 1.0 : 0.0;
+
+            // Dual-speed exponential lerp: gentle 2.0s ramp into sleep, cushioned 0.45s ease-out on wake
+            const dormantLerpRate = targetDormant > dormantFactor ? 1.2 : 5.0;
+            dormantFactor += (targetDormant - dormantFactor) * (1.0 - Math.exp(-dt * dormantLerpRate));
+
+            // 3. Silky SDF Shape-Shifting Interpolation (Quintic Cosine Curve)
+            if (dormantFactor > 0.005) {
+                shapeTimer += dt;
+                if (shapeTimer >= SHAPE_DURATION) {
+                    shapeTimer = 0;
+                    currentShapeIndex = nextShapeIndex;
+                    nextShapeIndex = (nextShapeIndex + 1) % 6;
+                }
+
+                if (shapeTimer < MORPH_TRANSITION_DURATION) {
+                    const normT = shapeTimer / MORPH_TRANSITION_DURATION;
+                    // Cosine smoothstep interpolation for continuous liquid melting
+                    shapeMorphProgress = 0.5 - 0.5 * Math.cos(Math.PI * normT);
+                } else {
+                    shapeMorphProgress = 1.0;
+                }
+
+                // Floating Center Drift
+                const driftFactor = 1.0 - Math.exp(-dt * 3.0);
+                dormantCenterX += (targetX + Math.cos(elapsed * 1.2) * 8.0 - dormantCenterX) * driftFactor;
+                dormantCenterY += (targetY + Math.sin(elapsed * 1.6) * 8.0 - dormantCenterY) * driftFactor;
+
+                // Smoothly spawn and dissolve Orbiting Neon Satellites based on dormantFactor
+                if (Math.random() < 0.3 * dormantFactor) {
+                    const orbAngle = elapsed * 2.0 + Math.random() * Math.PI * 2;
+                    const orbDist = 32.0 + Math.random() * 20.0;
+                    const orbSpeed = (1.2 + Math.random() * 1.8) * (Math.random() > 0.5 ? 1 : -1);
+
+                    neonDroplets.push({
+                        x: dormantCenterX + Math.cos(orbAngle) * orbDist,
+                        y: dormantCenterY + Math.sin(orbAngle) * orbDist,
+                        vx: Math.cos(orbAngle + Math.PI / 2) * orbSpeed,
+                        vy: Math.sin(orbAngle + Math.PI / 2) * orbSpeed,
+                        radius: (3.0 + Math.random() * 5.0) * dormantFactor,
+                        life: 1.0,
+                        decay: 0.012 + Math.random() * 0.015,
+                        colorType: Math.floor((elapsed * 1.8 + neonDroplets.length) % 3),
+                        isSatellite: true
+                    });
+                }
+            } else {
+                shapeTimer = 0;
+                shapeMorphProgress = 0.0;
+                dormantCenterX = targetX;
+                dormantCenterY = targetY;
             }
 
-            // Interpolate smooth spline points through physics nodes
-            for (let i = 0; i < RENDER_POINTS; i++) {
-                const u = (i / (RENDER_POINTS - 1)) * (RAW_NODES - 1);
-                const idx = Math.floor(u);
-                const t = u - idx;
+            // 4. Squish & Elasticity Physics
+            squish += squishVel;
+            squishVel += (1.0 - squish) * (1.0 - Math.exp(-dt * 15.0));
+            squishVel *= Math.exp(-dt * 10.0);
 
-                const p0 = rawNodes[Math.max(0, idx - 1)];
-                const p1 = rawNodes[idx];
-                const p2 = rawNodes[Math.min(RAW_NODES - 1, idx + 1)];
-                const p3 = rawNodes[Math.min(RAW_NODES - 1, idx + 2)];
+            // 5. Update Liquid Chain Nodes with Exponential Drag Easing
+            blackNodes[0].x = targetX;
+            blackNodes[0].y = targetY;
+            blackNodes[0].radius = (BASE_HEAD_RADIUS + Math.min(smoothSpeed * 0.035, 10)) * squish;
 
-                renderPoints[i].x = catmullRom(p0.x, p1.x, p2.x, p3.x, t);
-                renderPoints[i].y = catmullRom(p0.y, p1.y, p2.y, p3.y, t);
+            for (let i = 1; i < NUM_BLACK_NODES; i++) {
+                const prev = blackNodes[i - 1];
+                const current = blackNodes[i];
 
-                // Velocity-based fluid stretch scaled by click bounce factor
-                const ratio = i / (RENDER_POINTS - 1);
-                const speedStretch = Math.min(currentSpeed * 0.012, 0.4);
-                const taper = Math.pow(1.0 - ratio * 0.76, 1.12);
-                const stretchFactor = 1.0 - (ratio * speedStretch);
+                const followRate = (18.0 - i * 1.8);
+                const chainFactor = 1.0 - Math.exp(-dt * followRate);
 
-                renderRadii[i] = baseRadius * taper * Math.max(0.35, stretchFactor) * clickScale;
+                current.x += (prev.x - current.x) * chainFactor;
+                current.y += (prev.y - current.y) * chainFactor;
+
+                const stretchFactor = Math.max(0.45, 1.0 - (smoothSpeed * 0.0012));
+                current.radius = BASE_HEAD_RADIUS * Math.pow(0.79, i) * stretchFactor * squish;
             }
-        }
 
-        // Main Render Loop
-        function render(currentTime) {
-            const timeSec = currentTime * 0.001;
+            // 6. Spawn Motion Neon Trail
+            if (smoothSpeed > 15.0 && dormantFactor < 0.6) {
+                const spawnCount = Math.min(2, Math.floor(smoothSpeed * 0.008) + 1);
+                for (let k = 0; k < spawnCount; k++) {
+                    const offsetAngle = Math.random() * Math.PI * 2;
+                    const offsetDist = Math.random() * blackNodes[0].radius * 0.5;
+                    
+                    neonDroplets.push({
+                        x: targetX + Math.cos(offsetAngle) * offsetDist,
+                        y: targetY + Math.sin(offsetAngle) * offsetDist,
+                        vx: -vx * 0.015 + (Math.random() - 0.5) * 1.2,
+                        vy: -vy * 0.015 + (Math.random() - 0.5) * 1.2,
+                        radius: (3.5 + Math.random() * 6.5),
+                        life: 1.0,
+                        decay: 0.02 + Math.random() * 0.018,
+                        colorType: (elapsed * 2.5 + neonDroplets.length * 0.1) % 3,
+                        isSatellite: false
+                    });
+                }
+            }
 
-            updatePhysics();
+            // 7. Update & Age Neon Droplets
+            const dragFactor = Math.exp(-dt * 3.5);
+            for (let i = neonDroplets.length - 1; i >= 0; i--) {
+                const p = neonDroplets[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vx *= dragFactor;
+                p.vy *= dragFactor;
+                p.life -= p.decay;
 
-            gl.useProgram(program);
+                if (p.life <= 0) {
+                    neonDroplets.splice(i, 1);
+                }
+            }
 
-            // Resolution
-            gl.uniform2f(uResLoc, canvas.width, canvas.height);
+            if (neonDroplets.length > 60) {
+                neonDroplets.splice(0, neonDroplets.length - 60);
+            }
 
-            // Shader Trail Data (Scaled for DPR)
+            // --- 8. Pass Uniforms to WebGL ---
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
-            const pointArray = new Float32Array(RENDER_POINTS * 2);
-            const scaledRadii = new Float32Array(RENDER_POINTS);
+            gl.uniform2f(uResolution, canvas.width, canvas.height);
+            gl.uniform1f(uTime, elapsed);
 
-            for (let i = 0; i < RENDER_POINTS; i++) {
-                pointArray[i * 2] = renderPoints[i].x * dpr;
-                pointArray[i * 2 + 1] = renderPoints[i].y * dpr;
-                scaledRadii[i] = renderRadii[i] * dpr;
+            // Dormant state uniforms
+            gl.uniform2f(uDormantCenter, dormantCenterX * dpr, (height - dormantCenterY) * dpr);
+            gl.uniform1f(uDormantFactor, dormantFactor);
+            gl.uniform1f(uShapeMix, shapeMorphProgress);
+            gl.uniform1i(uShapeTypeA, currentShapeIndex);
+            gl.uniform1i(uShapeTypeB, shapeMorphProgress >= 1.0 ? currentShapeIndex : nextShapeIndex);
+
+            // Black blob chain uniforms
+            gl.uniform1i(uBlackCount, blackNodes.length);
+            for (let i = 0; i < blackNodes.length; i++) {
+                const node = blackNodes[i];
+                gl.uniform4f(
+                    uBlackBlobsLoc[i],
+                    node.x * dpr,
+                    (height - node.y) * dpr,
+                    node.radius * dpr,
+                    node.phase
+                );
             }
 
-            gl.uniform2fv(uPointsLoc, pointArray);
-            gl.uniform1fv(uRadiiLoc, scaledRadii);
-            gl.uniform1i(uPointCountLoc, RENDER_POINTS);
+            // Neon droplets uniforms
+            gl.uniform1i(uNeonCount, neonDroplets.length);
+            for (let i = 0; i < neonDroplets.length; i++) {
+                const p = neonDroplets[i];
+                gl.uniform4f(
+                    uNeonBlobsLoc[i],
+                    p.x * dpr,
+                    (height - p.y) * dpr,
+                    (p.radius * p.life) * dpr,
+                    p.colorType
+                );
+            }
 
-            // Neon Colors & Animation Uniforms
-            gl.uniform3fv(uNeonPrimaryLoc, primaryColor);
-            gl.uniform3fv(uNeonSecondaryLoc, secondaryColor);
-            gl.uniform1f(uTimeLoc, timeSec);
-            gl.uniform1f(uSpeedLoc, currentSpeed);
-
-            // Pulse Shockwave Data
-            gl.uniform2f(uClickPosLoc, clickPos[0] * dpr, clickPos[1] * dpr);
-            gl.uniform1f(uClickTimeLoc, lastClickTime);
-
-            // Clear and Render Fullscreen Quad
-            gl.clearColor(0.012, 0.016, 0.03, 1.0);
-            gl.clear(gl.COLOR_BUFFER_BIT);
+            // Render Frame
             gl.drawArrays(gl.TRIANGLES, 0, 6);
 
             requestAnimationFrame(render);
         }
 
-        // Idle Motion when stationary
-        let lastMove = Date.now();
-        window.addEventListener('mousemove', () => { lastMove = Date.now(); });
-        window.addEventListener('touchmove', () => { lastMove = Date.now(); });
-        
-        function idleCheck() {
-            if (Date.now() - lastMove > 2500) {
-                const t = Date.now() * 0.001;
-                targetX = window.innerWidth / 2 + Math.sin(t * 1.3) * (window.innerWidth * 0.22);
-                targetY = window.innerHeight / 2 + Math.cos(t * 1.7) * (window.innerHeight * 0.18);
-            }
-            setTimeout(idleCheck, 50);
-        }
-        idleCheck();
-
-        // Start Animation Loop on Page Load
-        window.onload = function() {
-            requestAnimationFrame(render);
+        // Start animation loop on load
+        window.onload = function () {
+            render();
         };
     </script>
 </body>
