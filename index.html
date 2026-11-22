@@ -9,26 +9,9 @@
 *,*::before,*::after{box-sizing:border-box;user-select:none;-webkit-user-select:none}
 html,body{margin:0;padding:0;width:100%;height:100%;background:#080c12;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#e8edf5}
 /* ══ SITE SHELL ══ */
-:root{--topbar-h:54px;--sidebar-w:200px;--site-bg:#080c12;--glass:rgba(255,255,255,0.04);--glass2:rgba(255,255,255,0.08);--glass-b:rgba(255,255,255,0.07);--acc:#007AFF;--acg:#34C759;--acr:#FF3B30;--aco:#FF9F0A;--acp:#AF52DE;--acc2:#00E5FF;--fd:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--fm:'Roboto Mono','Courier New',monospace}
+:root{--topbar-h:0px;--sidebar-w:200px;--site-bg:#080c12;--glass:rgba(255,255,255,0.04);--glass2:rgba(255,255,255,0.08);--glass-b:rgba(255,255,255,0.07);--acc:#007AFF;--acg:#34C759;--acr:#FF3B30;--aco:#FF9F0A;--acp:#AF52DE;--acc2:#00E5FF;--fd:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--fm:'Roboto Mono','Courier New',monospace}
 body{overflow:hidden}
 /* ──── TOP NAV ──── */
-#site-nav{position:fixed;top:0;left:0;right:0;height:var(--topbar-h);z-index:500;display:flex;align-items:center;background:rgba(8,12,18,.95);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid var(--glass2);transition:right .3s cubic-bezier(.4,0,.2,1)}
-#site-nav.sidebar-open{right:var(--sidebar-w)}
-.nav-logo{display:flex;align-items:center;gap:10px;padding:0 18px;height:100%;min-width:178px;border-right:1px solid var(--glass2);cursor:pointer;text-decoration:none;flex-shrink:0}
-.nav-hex,.nav-icon{width:32px;height:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 8px rgba(0,122,255,.7));animation:hexGlow 3s ease-in-out infinite}
-@keyframes hexGlow{0%,100%{box-shadow:0 0 8px rgba(0,122,255,.4)}50%{box-shadow:0 0 20px rgba(0,229,255,.7)}}
-.nav-logo-text{font-size:16px;font-weight:700;letter-spacing:3px;color:#fff;font-family:var(--fd)}
-.nav-logo-sub{font-family:var(--fm);font-size:8px;color:rgba(255,255,255,.22);letter-spacing:2px;margin-top:1px}
-.nav-tabs{display:flex;align-items:center;gap:2px;padding:0 10px;height:100%;flex:1}
-.nav-tab{display:flex;align-items:center;gap:5px;padding:6px 13px;background:transparent;border:none;color:rgba(255,255,255,.4);font-family:var(--fd);font-size:12.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;border-radius:8px;cursor:pointer;transition:all .15s}
-.nav-tab:hover{color:#fff;background:var(--glass)}
-.nav-tab.active{color:var(--acc);background:rgba(0,122,255,.12)}
-.nav-tab-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.6}
-.nav-right{display:flex;align-items:center;gap:7px;padding:0 12px;height:100%;border-left:1px solid var(--glass2)}
-#settings-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--glass);border:1px solid var(--glass-b);border-radius:8px;color:rgba(255,255,255,.45);font-family:var(--fd);font-size:11.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s}
-#settings-btn:hover{color:#fff;border-color:var(--acc);background:rgba(0,122,255,.1)}
-#ai-toggle-btn{display:flex;align-items:center;gap:7px;padding:6px 13px;background:rgba(0,122,255,.15);border:1px solid rgba(0,122,255,.35);border-radius:8px;color:var(--acc);font-family:var(--fd);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s}
-#ai-toggle-btn:hover,#ai-toggle-btn.active{background:rgba(0,122,255,.28);box-shadow:0 0 18px rgba(0,122,255,.3)}
 .ai-btn-bars{display:flex;gap:2px;align-items:flex-end;height:13px}
 .ai-btn-bar{width:3px;background:var(--acc);border-radius:1.5px;animation:aiBtnBar 1.4s ease-in-out infinite}
 .ai-btn-bar:nth-child(1){height:5px;animation-delay:0s}.ai-btn-bar:nth-child(2){height:11px;animation-delay:.15s}.ai-btn-bar:nth-child(3){height:7px;animation-delay:.3s}
@@ -174,7 +157,7 @@ body{overflow:hidden}
 .sp-swatch{width:20px;height:20px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .15s}
 .sp-swatch.on{border-color:#fff;transform:scale(1.22)}
 /* TOAST */
-#toast-wrap{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:700;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+#toast-wrap{position:fixed;bottom:104px;left:50%;transform:translateX(-50%);z-index:700;display:flex;flex-direction:column;gap:6px;pointer-events:none}
 .toast{background:rgba(8,12,18,.97);border:1px solid var(--glass-b);border-radius:10px;padding:8px 15px;font-family:var(--fm);font-size:10px;letter-spacing:1px;color:#fff;white-space:nowrap;animation:toastIn .22s ease-out,toastOut .28s ease-in 2.5s forwards}
 @keyframes toastIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 @keyframes toastOut{to{opacity:0;transform:translateY(-4px)}}
@@ -246,16 +229,6 @@ body.light .port-card-desc{color:rgba(0,0,0,.45)}
 
 /* ══ LIGHT MODE ══ */
 body.light { background: #f0f4f8; color: #1a2030; }
-body.light #site-nav { background: rgba(240,244,248,.96); border-color: rgba(0,0,0,0.08); }
-body.light .nav-logo-text { color: #1a2030; }
-body.light .nav-logo-sub { color: rgba(0,0,0,0.3); }
-body.light .nav-tab { color: rgba(0,0,0,0.4); }
-body.light .nav-tab:hover { color: #1a2030; background: rgba(0,0,0,0.06); }
-body.light .nav-tab.active { color: var(--acc); background: rgba(0,122,255,0.1); }
-body.light .nav-right { border-color: rgba(0,0,0,0.08); }
-body.light #settings-btn { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.12); color: rgba(0,0,0,0.55); }
-body.light #settings-btn:hover { color: #1a2030; }
-body.light #ai-toggle-btn { background: rgba(0,122,255,0.1); border-color: rgba(0,122,255,0.3); }
 body.light #site-shell, body.light #home-view, body.light #landing-view { background: transparent; }
 body.light .hero-bg { background: linear-gradient(135deg, #dde8f5 0%, #c8ddf0 60%, #d8e8f5 100%); }
 body.light .hero-grid { background-image: linear-gradient(rgba(0,122,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,122,255,.06) 1px, transparent 1px); }
@@ -344,7 +317,7 @@ body.light .toast { background: rgba(245,248,252,.97); border-color: rgba(0,0,0,
 .boot-line.err::before{content:'[ERR] ';color:rgba(255,59,48,.7)}
 /* SHELL OVERHAUL */
 :root{
-  --topbar-h:64px;
+  --topbar-h:0px;
   --site-bg:#07111a;
   --surface-1:rgba(7,16,24,.78);
   --surface-2:rgba(10,22,33,.94);
@@ -374,24 +347,60 @@ body::after{right:-120px;bottom:-40px;width:420px;height:420px;border-radius:50%
 @keyframes shellPulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:.9;transform:scale(1.08)}}
 @keyframes shellRise{0%{transform:translateY(16px);opacity:0}100%{transform:translateY(0);opacity:1}}
 @keyframes shellCardIn{0%{opacity:0;transform:translateY(18px) scale(.98)}100%{opacity:1;transform:translateY(0) scale(1)}}
-#site-nav{height:var(--topbar-h);background:linear-gradient(180deg, rgba(7,14,22,.93), rgba(7,14,22,.78));border-bottom:1px solid var(--line-1);box-shadow:0 10px 30px rgba(0,0,0,.22)}
-#site-nav::after{content:'';position:absolute;left:18px;right:18px;bottom:-1px;height:1px;background:linear-gradient(90deg, transparent, rgba(91,214,255,.42), rgba(122,255,200,.28), transparent)}
-.nav-logo{min-width:206px;gap:12px;padding:0 20px;border-right:1px solid var(--line-2);transition:background .25s ease, transform .25s ease}
-.nav-logo:hover{background:rgba(255,255,255,.035)}
-.nav-icon{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg, rgba(91,214,255,.16), rgba(122,255,200,.05));border:1px solid rgba(91,214,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 8px 24px rgba(0,0,0,.22)}
-.nav-logo-text{font-family:var(--fdisplay);font-size:17px;letter-spacing:3.4px}
-.nav-logo-sub{letter-spacing:2.6px;color:rgba(255,255,255,.34)}
-.nav-tabs{gap:8px;padding:0 18px}
-.nav-tab{position:relative;padding:10px 16px;border:1px solid transparent;border-radius:999px;color:rgba(230,243,255,.58);background:rgba(255,255,255,.02);letter-spacing:1.8px}
-.nav-tab::after{content:'';position:absolute;left:14px;right:14px;bottom:5px;height:2px;border-radius:999px;background:linear-gradient(90deg,var(--acc),var(--acc2));opacity:0;transform:scaleX(.6);transition:all .22s ease}
-.nav-tab:hover{color:#fff;background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.06);transform:translateY(-1px)}
-.nav-tab.active{color:#fff;background:linear-gradient(180deg, rgba(91,214,255,.14), rgba(91,214,255,.08));border-color:rgba(91,214,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 10px 24px rgba(0,0,0,.18)}
-.nav-tab.active::after,.nav-tab:hover::after{opacity:1;transform:scaleX(1)}
-.nav-right{gap:10px;padding:0 16px;border-left:1px solid var(--line-2)}
-#settings-btn,#ai-toggle-btn{border-radius:999px;padding:9px 14px;font-size:11px;letter-spacing:1.7px}
-#settings-btn{background:rgba(255,255,255,.035);border-color:rgba(255,255,255,.08);color:rgba(255,255,255,.68)}
-#settings-btn:hover{color:#fff;border-color:rgba(91,214,255,.25);background:rgba(91,214,255,.08)}
-#ai-toggle-btn{background:linear-gradient(135deg, rgba(91,214,255,.16), rgba(122,255,200,.08));border-color:rgba(91,214,255,.26);color:#dff8ff;box-shadow:0 10px 25px rgba(0,0,0,.18)}
+/* ──── macOS-STYLE BOTTOM DOCK (liquid-glass island, shown when the cursor reaches the bottom edge) ──── */
+#site-nav{position:fixed;left:50%;bottom:18px;z-index:560;transform:translate(-50%,calc(100% + 40px));opacity:0;pointer-events:none;transition:transform .45s cubic-bezier(.2,.9,.25,1.15),opacity .3s ease,left .3s cubic-bezier(.4,0,.2,1)}
+#site-nav.dock-show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
+#site-nav.sidebar-open{left:calc((100vw - var(--sidebar-w)) / 2)}
+.dock-island{position:relative;display:flex;align-items:center;gap:6px;padding:9px 12px;border-radius:30px;
+  background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.07));
+  border:1px solid rgba(255,255,255,.28);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(255,255,255,.08),inset 0 0 18px rgba(255,255,255,.06),0 18px 50px rgba(0,0,0,.45),0 2px 8px rgba(0,0,0,.3);
+  -webkit-backdrop-filter:blur(14px) saturate(1.8) brightness(1.08);backdrop-filter:blur(14px) saturate(1.8) brightness(1.08)}
+/* Chromium only: warp whatever is behind the island with an SVG displacement map */
+.dock-island.lg-warp{-webkit-backdrop-filter:url(#lg-warp) blur(6px) saturate(1.9) brightness(1.1);backdrop-filter:url(#lg-warp) blur(6px) saturate(1.9) brightness(1.1)}
+.dock-island::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,.34) 0%,rgba(255,255,255,0) 28%,rgba(255,255,255,0) 72%,rgba(255,255,255,.14) 100%)}
+.dock-group{display:flex;align-items:center;gap:6px}
+.dock-sep{width:1px;align-self:stretch;margin:6px 4px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.4),transparent)}
+.dock-item{position:relative;display:flex;align-items:center;justify-content:center;width:52px;height:52px;padding:0;border:1px solid rgba(255,255,255,.16);border-radius:15px;
+  background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.05));color:rgba(255,255,255,.88);cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 12px rgba(0,0,0,.25);
+  transition:transform .22s cubic-bezier(.3,1.5,.5,1),background .2s ease,color .2s ease}
+.dock-item svg{width:24px;height:24px;pointer-events:none}
+.dock-item:hover,.dock-item:focus-visible{transform:translateY(-10px) scale(1.22);color:#fff;background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,.1));outline:none}
+.dock-item:hover + .dock-item,.dock-item:has(+ .dock-item:hover){transform:translateY(-4px) scale(1.08)}
+.dock-item.active{color:#fff;background:linear-gradient(180deg,rgba(10,132,255,.75),rgba(10,132,255,.4));border-color:rgba(255,255,255,.35)}
+.dock-item.active::after{content:'';position:absolute;bottom:-8px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:rgba(255,255,255,.9)}
+#ai-toggle-btn.active{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 18px rgba(10,132,255,.55)}
+.dock-label{position:absolute;bottom:calc(100% + 14px);left:50%;transform:translateX(-50%) translateY(4px);padding:4px 10px;border-radius:9px;white-space:nowrap;
+  font:600 11px/1 var(--fd);letter-spacing:.6px;color:#fff;background:rgba(28,28,32,.78);border:1px solid rgba(255,255,255,.14);
+  opacity:0;pointer-events:none;transition:opacity .15s ease,transform .15s ease}
+.dock-item:hover .dock-label,.dock-item:focus-visible .dock-label{opacity:1;transform:translateX(-50%) translateY(0)}
+#dock-hotzone{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(560px,70vw);height:18px;z-index:565}
+@media (pointer:coarse){
+  #dock-hotzone{height:26px}
+  #dock-hotzone::after{content:'';position:absolute;left:50%;bottom:7px;width:120px;height:5px;margin-left:-60px;border-radius:3px;background:rgba(255,255,255,.4)}
+  .dock-item{width:46px;height:46px}
+}
+@media (max-width:520px){.dock-island{padding:7px 8px;gap:3px}.dock-group{gap:3px}.dock-item{width:40px;height:40px;border-radius:12px}.dock-item svg{width:20px;height:20px}}
+body.light .dock-island{background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,.4));border-color:rgba(255,255,255,.8);box-shadow:inset 0 1px 0 #fff,0 18px 40px rgba(67,92,121,.25)}
+body.light .dock-item{color:rgba(20,30,45,.8);border-color:rgba(0,0,0,.08);background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,255,255,.4))}
+body.light .dock-item.active{color:#fff}
+body.light .dock-sep{background:linear-gradient(180deg,transparent,rgba(0,0,0,.2),transparent)}
+body.light #dock-hotzone::after{background:rgba(0,0,0,.3)}
+/* search results: highlighted row, snippets, section heads, engine switcher */
+.lsr-head{padding:10px 18px 4px;font:700 9.5px/1 var(--fm);letter-spacing:2px;color:rgba(229,240,248,.4)}
+.lsr-main{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.lsr-sub{font-size:11.5px;line-height:1.35;color:rgba(229,240,248,.5);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.lsr-item.sel{background:rgba(91,214,255,.14)}
+.lsr-engines{position:sticky;bottom:0;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:10px 14px;border-top:1px solid rgba(255,255,255,.08);background:rgba(8,14,22,.9)}
+.lsr-engines-label{font:700 9.5px/1 var(--fm);letter-spacing:2px;color:rgba(229,240,248,.4);margin-right:4px}
+.lsr-engine{padding:5px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(229,240,248,.65);font:600 11px var(--fd);cursor:pointer}
+.lsr-engine.on{background:rgba(91,214,255,.2);border-color:rgba(91,214,255,.4);color:#fff}
+body.light .lsr-sub,body.light .lsr-head,body.light .lsr-engines-label{color:rgba(0,0,0,.45)}
+body.light .lsr-engines{background:rgba(245,249,252,.95)}
+body.light .lsr-engine{color:rgba(0,0,0,.6);border-color:rgba(0,0,0,.15)}
+body.light .lsr-engine.on{color:#16324a}
 #site-shell{background:transparent}
 #site-shell::before{content:'';position:absolute;inset:18px;border-radius:28px;border:1px solid rgba(255,255,255,.04);box-shadow:inset 0 1px 0 rgba(255,255,255,.03);pointer-events:none}
 #home-view,#ports-view,#exports-view,#landing-view{padding:0 0 18px;transition:opacity .28s ease, transform .28s ease}
@@ -477,15 +486,8 @@ body::after{right:-120px;bottom:-40px;width:420px;height:420px;border-radius:50%
 #settings-panel,#terms-panel{background:linear-gradient(180deg, rgba(10,18,28,.98), rgba(7,14,22,.96));border:1px solid rgba(255,255,255,.08);box-shadow:0 28px 90px rgba(0,0,0,.6)}
 .toast{border-radius:999px;padding:10px 16px;background:rgba(7,14,22,.95)}
 body.light{background:radial-gradient(circle at 15% 20%, rgba(89,160,220,.2), transparent 24%),radial-gradient(circle at 85% 12%, rgba(90,200,170,.15), transparent 20%),linear-gradient(180deg, #edf4fb 0%, #e6f0fa 44%, #eef5fb 100%)}
-body.light #site-nav{background:linear-gradient(180deg, rgba(240,246,252,.95), rgba(240,246,252,.82));border-color:rgba(0,0,0,.07)}
-body.light #site-nav::after{background:linear-gradient(90deg, transparent, rgba(91,214,255,.35), rgba(122,255,200,.2), transparent)}
-body.light .nav-logo,body.light .nav-right{border-color:rgba(0,0,0,.08)}
-body.light .nav-logo:hover{background:rgba(0,0,0,.03)}
 body.light .nav-logo-text,body.light .hero-title,body.light .ports-hero-title,body.light .gc-name,body.light .port-card-name,body.light .sp-title{color:#182334;text-shadow:none}
 body.light .nav-logo-sub,body.light .gsec-count,body.light .gc-author{color:rgba(0,0,0,.35)}
-body.light .nav-tab{color:rgba(0,0,0,.55);background:rgba(255,255,255,.4)}
-body.light .nav-tab:hover{background:#fff;border-color:rgba(0,0,0,.06)}
-body.light .nav-tab.active{background:rgba(91,214,255,.15);color:#16324a}
 body.light #site-shell::before{border-color:rgba(0,0,0,.06)}
 body.light #site-hero,body.light .ports-hero,body.light .gc,body.light .port-card,body.light #settings-panel,body.light #terms-panel,body.light #ai-sidebar{background:linear-gradient(180deg, rgba(255,255,255,.84), rgba(255,255,255,.72));border-color:rgba(0,0,0,.08);box-shadow:0 16px 40px rgba(67,92,121,.12)}
 body.light .hero-bg,body.light .ports-hero::before{background:linear-gradient(135deg, rgba(255,255,255,.84), rgba(229,239,248,.78))}
@@ -495,7 +497,7 @@ body.light .hero-stat b,body.light .hero-side-cell strong,body.light .ports-hero
 body.light .hero-play-btn,body.light #ai-send{color:#fff}
 body.light #eg-bar{background:linear-gradient(180deg, rgba(246,250,253,.96), rgba(239,246,252,.9));border-color:rgba(0,0,0,.08)}
 @media (max-width:980px){#site-hero,.ports-hero{margin:18px 18px 0}#site-hero{padding:18px 18px 16px}.hero-content,.ports-hero-content{grid-template-columns:1fr}.hero-main{align-items:flex-start}.hero-side-panel,.ports-hero-panel{max-width:100%}#games-area,#ports-grid-wrap{padding:20px 18px 28px}}
-@media (max-width:680px){:root{--topbar-h:60px}.nav-logo{min-width:auto;padding:0 14px}.nav-logo-text{font-size:14px;letter-spacing:2px}.nav-tabs{padding:0 8px;gap:6px;overflow-x:auto}.nav-tab{padding:8px 12px;font-size:10px;letter-spacing:1.3px;white-space:nowrap}.nav-right{padding:0 10px;gap:8px}#site-hero,.ports-hero{border-radius:24px}.hero-main{flex-direction:column}.hero-icon-wrap{width:96px;height:96px}.hero-icon{font-size:32px;letter-spacing:3px}.hero-title,.ports-hero-title{letter-spacing:2px}.hero-actions{flex-direction:column;align-items:stretch}.hero-play-btn,.hero-alt-btn{width:100%}.hero-side-grid,.ports-hero-panel-grid{grid-template-columns:1fr 1fr}#game-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}.ports-grid{grid-template-columns:1fr}}
+@media (max-width:680px){.nav-logo{min-width:auto;padding:0 14px}.nav-logo-text{font-size:14px;letter-spacing:2px}.nav-tabs{padding:0 8px;gap:6px;overflow-x:auto}.nav-tab{padding:8px 12px;font-size:10px;letter-spacing:1.3px;white-space:nowrap}.nav-right{padding:0 10px;gap:8px}#site-hero,.ports-hero{border-radius:24px}.hero-main{flex-direction:column}.hero-icon-wrap{width:96px;height:96px}.hero-icon{font-size:32px;letter-spacing:3px}.hero-title,.ports-hero-title{letter-spacing:2px}.hero-actions{flex-direction:column;align-items:stretch}.hero-play-btn,.hero-alt-btn{width:100%}.hero-side-grid,.ports-hero-panel-grid{grid-template-columns:1fr 1fr}#game-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}.ports-grid{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}}
 
 /* LIQUID GLASS BACKGROUND + CURSOR (ported from the UGS export site) */
@@ -633,55 +635,52 @@ body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.
 </div>
 
 <!-- ════ TOPBAR ════ -->
-<nav id="site-nav">
-  <div class="nav-logo" onclick="goLanding()">
-    <div class="nav-icon">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- outer ring -->
-        <circle cx="14" cy="14" r="13" stroke="url(#logoGrad)" stroke-width="1.5" opacity="0.6"/>
-        <!-- controller body -->
-        <rect x="5" y="10" width="18" height="11" rx="5.5" fill="url(#logoGrad)" opacity="0.9"/>
-        <!-- D-pad left dot -->
-        <circle cx="10" cy="15.5" r="1.3" fill="white" opacity="0.9"/>
-        <!-- D-pad right dot -->
-        <circle cx="13" cy="15.5" r="1.3" fill="white" opacity="0.9"/>
-        <!-- buttons right side -->
-        <circle cx="18.5" cy="14.2" r="1.2" fill="white" opacity="0.7"/>
-        <circle cx="20.8" cy="16" r="1.2" fill="white" opacity="0.7"/>
-        <!-- thumbstick nubs -->
-        <circle cx="9" cy="12.5" r="1.5" fill="white" opacity="0.5"/>
-        <circle cx="19" cy="12.5" r="1.5" fill="white" opacity="0.5"/>
-        <defs>
-          <linearGradient id="logoGrad" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="var(--acc)"/>
-            <stop offset="100%" stop-color="#00E5FF"/>
-          </linearGradient>
-        </defs>
-      </svg>
+<!-- ════ BOTTOM DOCK (liquid-glass island; slides up when the cursor reaches the bottom edge) ════ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="lg-warp" x="-5%" y="-30%" width="110%" height="160%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.011 0.02" numOctaves="2" seed="7" result="noise"/>
+    <feGaussianBlur in="noise" stdDeviation="2.5" result="map"/>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="46" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+<nav id="site-nav" aria-label="Main navigation">
+  <div class="dock-island" id="dock-island">
+    <div class="dock-group">
+      <button class="dock-item nav-tab active" id="tab-landing" onclick="goLanding()" aria-label="Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></svg>
+        <span class="dock-label">Home</span>
+      </button>
+      <button class="dock-item nav-tab" id="tab-home" onclick="goHome()" aria-label="Games">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="19" height="11" rx="5.5"/><path d="M8 10.5v4M6 12.5h4"/><circle cx="15.5" cy="11.5" r=".9" fill="currentColor"/><circle cx="17.8" cy="13.5" r=".9" fill="currentColor"/></svg>
+        <span class="dock-label">Games</span>
+      </button>
+      <button class="dock-item nav-tab" id="tab-arena" onclick="launchAROS()" style="display:none" aria-label="AR.OS Arena">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="dock-label">AR.OS Arena</span>
+      </button>
+      <button class="dock-item nav-tab" id="tab-exports" onclick="goExports()" aria-label="Exports">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3.5"/><path d="M7.5 8 12 3.5 16.5 8"/><path d="M5 13v6.5h14V13"/></svg>
+        <span class="dock-label">Exports</span>
+      </button>
+      <button class="dock-item nav-tab" id="tab-ports" onclick="goWebPorts()" aria-label="Mystery">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9.2a3.2 3.2 0 1 1 4.6 2.9c-1 .5-1.6 1.2-1.6 2.4"/><circle cx="12" cy="18" r=".6" fill="currentColor"/><circle cx="12" cy="12" r="9.5"/></svg>
+        <span class="dock-label">Mystery</span>
+      </button>
     </div>
-    <div>
-      <div class="nav-logo-text">SAKET'S SITE</div>
-      <div class="nav-logo-sub">GAME ARCADE</div>
+    <div class="dock-sep"></div>
+    <div class="dock-group">
+      <button class="dock-item" id="settings-btn" onclick="openSettings()" aria-label="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>
+        <span class="dock-label">Settings</span>
+      </button>
+      <button class="dock-item" id="ai-toggle-btn" aria-label="AR.OS AI">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l1.9 5.1 5.1 1.9-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9z"/><path d="M18.5 16.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/></svg>
+        <span class="dock-label">AR.OS AI</span>
+      </button>
     </div>
-  </div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" id="tab-landing" onclick="goLanding()"><span class="nav-tab-dot"></span>HOME</button>
-    <button class="nav-tab" id="tab-home" onclick="goHome()"><span class="nav-tab-dot"></span>GAMES</button>
-    <button class="nav-tab" id="tab-arena" onclick="launchAROS()" style="display:none"><span class="nav-tab-dot"></span>AR.OS ARENA</button>
-    <button class="nav-tab" id="tab-exports" onclick="goExports()"><span class="nav-tab-dot"></span>EXPORTS</button>
-    <button class="nav-tab" id="tab-ports" onclick="goWebPorts()"><span class="nav-tab-dot"></span>MYSTERY</button>
-  </div>
-  <div class="nav-right">
-    <button id="settings-btn" onclick="openSettings()">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.22 3.22l1.42 1.42M11.36 11.36l1.42 1.42M3.22 12.78l1.42-1.42M11.36 4.64l1.42-1.42"/></svg>
-      SETTINGS
-    </button>
-    <button id="ai-toggle-btn">
-      <div class="ai-btn-bars"><div class="ai-btn-bar"></div><div class="ai-btn-bar"></div><div class="ai-btn-bar"></div></div>
-      AR.OS AI
-    </button>
   </div>
 </nav>
+<div id="dock-hotzone" aria-hidden="true"></div>
 
 <!-- ════ SITE SHELL ════ -->
 <div id="site-shell">
@@ -697,12 +696,12 @@ body.light .landing-qlink{color:rgba(24,35,52,.65);background:rgba(255,255,255,.
         <div class="landing-kicker">⚠ ARE YOU IN SCHOOL RIGHT NOW?</div>
         <div class="landing-title">SAKET'S SITE</div>
         <div class="landing-sub">GAME ARCADE</div>
-        <div class="landing-tag">No judgment either way. Search for a title below, or use the bar up top to browse Games, AR.OS Arena, Exports and Experiments.</div>
+        <div class="landing-tag">No judgment either way. Search for a title below, or move your cursor to the bottom of the screen to open the dock and browse Games, Exports and Mystery.</div>
       </div>
       <div class="landing-search-wrap">
         <div class="landing-search">
           <svg class="landing-search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="9" r="6.5"/><path d="M18 18l-4.2-4.2" stroke-linecap="round"/></svg>
-          <input id="landing-search-input" type="text" placeholder="Search games, exports, experiments…" autocomplete="off" oninput="onLandingSearchInput(this.value)" onkeydown="onLandingSearchKeydown(event)" onfocus="onLandingSearchInput(this.value)">
+          <input id="landing-search-input" type="text" placeholder="Search games, the web, or paste a link…" autocomplete="off" oninput="onLandingSearchInput(this.value)" onkeydown="onLandingSearchKeydown(event)" onfocus="onLandingSearchInput(this.value)">
         </div>
         <div id="landing-search-results" class="landing-search-results"></div>
       </div>
@@ -1160,12 +1159,28 @@ document.addEventListener('keydown', e => {
     }
 });
 
-// ── HOME PAGE SEARCH (every embedded game + export, searchable from the landing page) ──
+// ── HOME PAGE SEARCH: built-in search engine + link opener ──
+// Local titles (games/exports/mystery) match instantly. Typed URLs open in a new tab. Web results come from the
+// Wikipedia API (CORS-enabled, no key, no iframe); "search on <engine>" rows hand off to a real engine in a new tab.
 const SEARCH_INDEX = Object.keys(GAME_PATHS).map(id => ({
     id,
     title: GAME_TITLES[id] || id.toUpperCase(),
     isExport: GAME_PATHS[id].indexOf('/exports/') !== -1
 }));
+
+const SEARCH_ENGINES = {
+    duckduckgo: { name: 'DuckDuckGo', url: 'https://duckduckgo.com/?q=' },
+    google:     { name: 'Google',     url: 'https://www.google.com/search?q=' },
+    bing:       { name: 'Bing',       url: 'https://www.bing.com/search?q=' },
+    brave:      { name: 'Brave',      url: 'https://search.brave.com/search?q=' }
+};
+let _srEngine = localStorage.getItem('aros_engine');
+if (!SEARCH_ENGINES[_srEngine]) _srEngine = 'duckduckgo';
+
+let _srItems = [], _srSel = -1, _srWiki = [], _srWikiState = 'idle', _srTimer = null, _srAbort = null, _srQuery = '';
+const _srWikiCache = {};
+
+function _openExternal(url) { window.open(url, '_blank', 'noopener,noreferrer'); }
 
 function _launchSearchResult(id, isExport) {
     const input = document.getElementById('landing-search-input');
@@ -1174,27 +1189,127 @@ function _launchSearchResult(id, isExport) {
     if (isExport) launchExportGame(id); else launchGame(id);
 }
 
-function renderLandingSearchResults(query) {
-    const box = document.getElementById('landing-search-results');
-    if (!box) return;
-    const q = query.trim().toLowerCase();
-    if (!q) { box.classList.remove('show'); box.innerHTML = ''; return; }
-    const matches = SEARCH_INDEX.filter(g => g.title.toLowerCase().includes(q) || g.id.toLowerCase().includes(q)).slice(0, 8);
-    box.innerHTML = matches.length
-        ? matches.map(g => `<div class="lsr-item" onclick="_launchSearchResult('${g.id}', ${g.isExport})"><span class="lsr-name">${g.title}</span><span class="lsr-tag">${g.isExport ? 'EXPORT' : 'PLAY'}</span></div>`).join('')
-        : '<div class="lsr-empty">No matches. Try a different title.</div>';
-    box.classList.add('show');
+// "github.com/x", "https://a.b/c", "localhost:3000" -> a full URL; anything else -> null
+function _asUrl(q) {
+    if (/\s/.test(q)) return null;
+    if (/^https?:\/\/[^\s/$.?#][^\s]*$/i.test(q)) return q;
+    if (/^(localhost|(?:[a-z0-9-]+\.)+[a-z]{2,})(:\d+)?([/?#]\S*)?$/i.test(q)) return 'https://' + q;
+    return null;
 }
 
-function onLandingSearchInput(value) { renderLandingSearchResults(value); }
+function _srEl(tag, cls, text) {
+    const el = document.createElement(tag);
+    if (cls) el.className = cls;
+    if (text != null) el.textContent = text;
+    return el;
+}
+
+function _srBuildItems(q) {
+    const lq = q.toLowerCase(), items = [];
+    SEARCH_INDEX.filter(g => g.title.toLowerCase().includes(lq) || g.id.toLowerCase().includes(lq)).slice(0, 5)
+        .forEach(g => items.push({ head: 'ON THIS SITE', title: g.title, tag: g.isExport ? 'EXPORT' : 'PLAY',
+            run: () => _launchSearchResult(g.id, g.isExport) }));
+    const url = _asUrl(q);
+    if (url) items.push({ head: 'LINK', title: url, tag: 'OPEN ↗', run: () => _openExternal(url) });
+    _srWiki.forEach(w => items.push({ head: 'WEB · WIKIPEDIA', title: w.title, sub: w.snippet, tag: 'OPEN ↗',
+        run: () => _openExternal(w.url) }));
+    const eng = SEARCH_ENGINES[_srEngine];
+    items.push({ head: 'SEARCH THE WEB', title: 'Search "' + q + '" on ' + eng.name, tag: 'SEARCH ↗',
+        run: () => _openExternal(eng.url + encodeURIComponent(q)) });
+    return items;
+}
+
+function _srRender() {
+    const box = document.getElementById('landing-search-results');
+    if (!box) return;
+    const q = _srQuery;
+    if (!q) { box.classList.remove('show'); box.textContent = ''; _srItems = []; return; }
+    _srItems = _srBuildItems(q);
+    if (_srSel >= _srItems.length) _srSel = _srItems.length - 1;
+    box.textContent = '';
+    let lastHead = null;
+    _srItems.forEach((it, i) => {
+        if (it.head !== lastHead) { box.appendChild(_srEl('div', 'lsr-head', it.head)); lastHead = it.head; }
+        const row = _srEl('div', 'lsr-item' + (i === _srSel ? ' sel' : ''));
+        const main = _srEl('div', 'lsr-main');
+        main.appendChild(_srEl('span', 'lsr-name', it.title));
+        if (it.sub) main.appendChild(_srEl('span', 'lsr-sub', it.sub));
+        row.appendChild(main);
+        row.appendChild(_srEl('span', 'lsr-tag', it.tag));
+        row.addEventListener('mousedown', e => e.preventDefault());
+        row.addEventListener('click', () => it.run());
+        box.appendChild(row);
+    });
+    if (_srWikiState === 'loading') box.appendChild(_srEl('div', 'lsr-empty', 'Searching the web…'));
+    else if (_srWikiState === 'error') box.appendChild(_srEl('div', 'lsr-empty', 'Web suggestions unavailable (offline or blocked) — you can still search on an engine.'));
+    const engines = _srEl('div', 'lsr-engines');
+    engines.appendChild(_srEl('span', 'lsr-engines-label', 'ENGINE'));
+    Object.keys(SEARCH_ENGINES).forEach(k => {
+        const b = _srEl('button', 'lsr-engine' + (k === _srEngine ? ' on' : ''), SEARCH_ENGINES[k].name);
+        b.type = 'button';
+        b.addEventListener('mousedown', e => e.preventDefault());
+        b.addEventListener('click', () => { _srEngine = k; localStorage.setItem('aros_engine', k); _srRender(); });
+        engines.appendChild(b);
+    });
+    box.appendChild(engines);
+    box.classList.add('show');
+    const sel = box.querySelector('.lsr-item.sel');
+    if (sel) sel.scrollIntoView({ block: 'nearest' });
+}
+
+function _srFetchWiki(q) {
+    if (_srAbort) _srAbort.abort();
+    if (_srWikiCache[q]) { _srWiki = _srWikiCache[q]; _srWikiState = 'idle'; _srRender(); return; }
+    _srAbort = new AbortController();
+    _srWikiState = 'loading';
+    const api = 'https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srlimit=5&srsearch=' + encodeURIComponent(q);
+    fetch(api, { signal: _srAbort.signal })
+        .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(data => {
+            if (q !== _srQuery) return;
+            _srWiki = ((data.query && data.query.search) || []).map(s => ({
+                title: s.title,
+                snippet: s.snippet.replace(/<[^>]*>/g, '').replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&#039;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>'),
+                url: 'https://en.wikipedia.org/wiki/' + encodeURIComponent(s.title.replace(/ /g, '_'))
+            }));
+            _srWikiCache[q] = _srWiki;
+            _srWikiState = 'idle';
+            _srRender();
+        })
+        .catch(err => { if (err && err.name === 'AbortError') return; _srWiki = []; _srWikiState = 'error'; _srRender(); });
+}
+
+function onLandingSearchInput(value) {
+    const q = value.trim();
+    if (q !== _srQuery) { _srSel = -1; _srWiki = []; }
+    _srQuery = q;
+    clearTimeout(_srTimer);
+    if (_srAbort) _srAbort.abort();
+    if (!q) { _srWikiState = 'idle'; _srRender(); return; }
+    // web suggestions only for plain-text queries; a typed URL doesn't need a Wikipedia lookup
+    if (_asUrl(q) || q.length < 2) { _srWikiState = 'idle'; _srRender(); return; }
+    _srWikiState = _srWikiCache[q] ? 'idle' : 'loading';
+    _srRender();
+    _srTimer = setTimeout(() => _srFetchWiki(q), 280);
+}
 
 function onLandingSearchKeydown(e) {
     if (e.key === 'Escape') { hideLandingSearchResults(); e.target.blur(); return; }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        if (!_srItems.length) return;
+        e.preventDefault();
+        const n = _srItems.length;
+        _srSel = e.key === 'ArrowDown' ? (_srSel + 1) % n : (_srSel <= 0 ? n - 1 : _srSel - 1);
+        _srRender();
+        return;
+    }
     if (e.key !== 'Enter') return;
-    const q = e.target.value.trim().toLowerCase();
+    const q = e.target.value.trim();
     if (!q) return;
-    const match = SEARCH_INDEX.find(g => g.title.toLowerCase().includes(q) || g.id.toLowerCase().includes(q));
-    if (match) _launchSearchResult(match.id, match.isExport);
+    if (!_srItems.length) _srItems = _srBuildItems(q);
+    // nothing highlighted: a site match wins, then a typed URL, then a web search
+    const pick = _srSel >= 0 ? _srItems[_srSel] : _srItems[0];
+    if (pick) pick.run();
 }
 
 function hideLandingSearchResults() {
@@ -2542,126 +2657,163 @@ function termsDecline() {
     heightMapCurrent[gridX + gridY * gridCols] = -120;
   }, { passive: true });
 
-  // ════ WEBGL NEON LIQUID CURSOR (coursor2) ════
+  // ════ WEBGL LIQUID BLOB CURSOR (coursor2.html, ported to a transparent overlay canvas) ════
   if (!window.matchMedia || !window.matchMedia('(pointer:fine)').matches) return;
   if (reducedMotion) return;
 
-  document.body.classList.add('shell-cursor-enabled');
-
   const cursorCanvas = document.getElementById('cursor-canvas');
-  const gl = cursorCanvas.getContext('webgl', { alpha: true, antialias: true, preserveDrawingBuffer: false });
+  const gl = cursorCanvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: true, depth: false, preserveDrawingBuffer: false });
   if (!gl) return;
-
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
   const vsSource = `
     attribute vec2 a_position;
-    varying vec2 v_uv;
-    void main() {
-        v_uv = (a_position + 1.0) * 0.5;
-        v_uv.y = 1.0 - v_uv.y;
-        gl_Position = vec4(a_position, 0.0, 1.0);
-    }
+    void main() { gl_Position = vec4(a_position, 0.0, 1.0); }
   `;
 
   const fsSource = `
     precision highp float;
-    varying vec2 v_uv;
-    uniform vec2 u_resolution;
-    uniform vec2 u_points[32];
-    uniform float u_radii[32];
-    uniform int u_point_count;
-    uniform vec3 u_neon_primary;
-    uniform vec3 u_neon_secondary;
     uniform float u_time;
-    uniform vec2 u_click_pos;
-    uniform float u_click_time;
-    uniform float u_speed;
+    uniform vec2 u_dormant_center;
+    uniform float u_dormant_factor;
+    uniform float u_shape_mix;
+    uniform int u_shape_type_a;
+    uniform int u_shape_type_b;
+    uniform vec4 u_black_blobs[8];
+    uniform int u_black_count;
+    uniform vec4 u_neon_blobs[60];
+    uniform int u_neon_count;
 
-    float smin(float a, float b, float k) {
-        float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
-        return mix(b, a, h) - k * h * (1.0 - h);
+    float getShapeDistance(vec2 p, int shapeType, float time) {
+      float r = length(p);
+      float angle = atan(p.y, p.x);
+      float d = 999.0;
+      if (shapeType == 0) {
+        float pulse = sin(time * 2.2) * 2.8;
+        float wave = sin(angle * 4.0 + time * 3.0) * 1.8;
+        d = r - (27.0 + pulse + wave);
+      } else if (shapeType == 1) {
+        float rotAngle = angle - time * 0.6;
+        float starR = 25.0 + 15.0 * pow(abs(cos(2.0 * rotAngle)), 1.8) + sin(time * 3.0) * 2.5;
+        d = r - starR;
+      } else if (shapeType == 2) {
+        vec2 node1 = vec2(sin(time * 1.8) * 21.0, sin(time * 3.6) * 10.0);
+        vec2 node2 = -node1;
+        float d1 = length(p - node1) - 16.0;
+        float d2 = length(p - node2) - 16.0;
+        float k = 14.0;
+        float h = clamp(0.5 + 0.5 * (d2 - d1) / k, 0.0, 1.0);
+        d = mix(d2, d1, h) - k * h * (1.0 - h);
+      } else if (shapeType == 3) {
+        vec2 hp = p / 27.0;
+        hp.y -= 0.12;
+        float beat = 1.0 + 0.1 * sin(time * 4.5) * step(0.0, sin(time * 4.5));
+        hp /= beat;
+        float hx = hp.x, hy = hp.y;
+        float heartEq = pow(hx*hx + hy*hy - 1.0, 3.0) - hx*hx*hy*hy*hy;
+        d = heartEq * 15.0;
+      } else if (shapeType == 4) {
+        float rotAngle = angle + time * 0.5;
+        float triR = 24.0 + 11.0 * cos(3.0 * rotAngle + sin(time * 1.8) * 0.4);
+        d = r - triR;
+      } else if (shapeType == 5) {
+        float rotAngle = angle - time * 0.8;
+        float petalR = 23.0 + 14.0 * cos(6.0 * rotAngle) * (0.85 + 0.15 * sin(time * 2.5));
+        d = r - petalR;
+      }
+      return d;
     }
-    float sdSegment(vec2 p, vec2 a, vec2 b, float ra, float rb) {
-        vec2 pa = p - a, ba = b - a;
-        float l2 = dot(ba, ba);
-        if (l2 < 0.0001) return length(pa) - ra;
-        float h = clamp(dot(pa, ba) / l2, 0.0, 1.0);
-        return length(pa - ba * h) - mix(ra, rb, h);
-    }
-    float mapSDF(vec2 p) {
-        float d = 1000.0;
-        for (int i = 0; i < 31; i++) {
-            if (i >= u_point_count - 1) break;
-            float wave = sin(u_time * 4.5 - float(i) * 0.25) * 1.0;
-            float segDist = sdSegment(p, u_points[i], u_points[i+1],
-                max(0.5, u_radii[i] + wave), max(0.5, u_radii[i+1] + wave));
-            d = (i == 0) ? segDist : smin(d, segDist, 24.0);
-        }
-        if (u_click_time > 0.0) {
-            float waveAge = u_time - u_click_time;
-            if (waveAge > 0.0 && waveAge < 0.65) {
-                float waveRadius = waveAge * 170.0;
-                float ringDist = abs(length(p - u_click_pos) - waveRadius) - 5.0 * (1.0 - waveAge / 0.65);
-                d = smin(d, ringDist, 12.0);
-            }
-        }
-        return d;
-    }
-    vec3 getSurfaceNormal(vec2 p, float d) {
-        float eps1 = 1.8, eps2 = 3.6;
-        vec2 g1 = vec2(mapSDF(vec2(p.x+eps1,p.y))-mapSDF(vec2(p.x-eps1,p.y)),
-                       mapSDF(vec2(p.x,p.y+eps1))-mapSDF(vec2(p.x,p.y-eps1)));
-        vec2 g2 = vec2(mapSDF(vec2(p.x+eps2,p.y))-mapSDF(vec2(p.x-eps2,p.y)),
-                       mapSDF(vec2(p.x,p.y+eps2))-mapSDF(vec2(p.x,p.y-eps2)));
-        vec2 grad = normalize(mix(g1, g2, 0.5) + 0.0001);
-        float r = max(0.0, -d);
-        float z = sqrt(max(0.1, 1.0 - clamp(r * 0.045, 0.0, 0.95)));
-        return normalize(vec3(grad * (1.0 - z * 0.5), z));
-    }
+
     void main() {
-        vec2 pixelPos = v_uv * u_resolution;
-        float d = mapSDF(pixelPos);
-        if (d > 45.0) { gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0); return; }
+      vec2 st = gl_FragCoord.xy;
+      vec3 col = vec3(0.0);
+      float alpha = 0.0;
 
-        vec3 normal = getSurfaceNormal(pixelPos, d);
-        float innerMask = smoothstep(2.0, -2.0, d);
-        float outerGlow = exp(-max(0.0, d) * 0.09);
-        float fresnel = pow(clamp(1.0 - normal.z, 0.0, 1.0), 3.0);
+      // neon trail + orbiting satellites
+      float neonField = 0.0;
+      vec3 neonColorSum = vec3(0.0);
+      for (int i = 0; i < 60; i++) {
+        if (i >= u_neon_count) break;
+        vec4 nb = u_neon_blobs[i];
+        vec2 d = st - nb.xy;
+        float field = (nb.z * nb.z) / (dot(d, d) + 1.0);
+        neonField += field;
+        vec3 c = vec3(0.0, 0.95, 1.0);
+        if (nb.w > 0.5 && nb.w < 1.5) c = vec3(1.0, 0.0, 0.65);
+        else if (nb.w >= 1.5) c = vec3(0.42, 0.18, 1.0);
+        neonColorSum += c * field;
+      }
+      if (neonField > 0.005) {
+        col = neonColorSum / (neonField + 0.0001);
+        float core = smoothstep(0.3, 0.8, neonField);
+        float softAura = smoothstep(0.008, 0.4, neonField) * 0.45;
+        alpha = clamp(core + softAura, 0.0, 1.0);
+        if (neonField > 0.6) alpha = mix(alpha, 1.0, smoothstep(0.6, 1.0, neonField));
+      }
 
-        float spec1 = pow(max(0.0, dot(normal, normalize(vec3(-0.4,-0.6,0.7)))), 32.0) * 1.8;
-        float spec2 = pow(max(0.0, dot(normal, normalize(vec3(0.5,0.5,0.8)))), 18.0) * 0.7;
-        float specularTotal = spec1 + spec2;
+      // active cursor chain
+      float activeBlackField = 0.0;
+      vec2 headPos = vec2(0.0);
+      for (int i = 0; i < 8; i++) {
+        if (i >= u_black_count) break;
+        vec4 bb = u_black_blobs[i];
+        if (i == 0) headPos = bb.xy;
+        vec2 d = st - bb.xy;
+        float angle = atan(d.y, d.x);
+        float wobble = sin(angle * 5.0 + u_time * 4.0 + bb.w) * (bb.z * 0.06);
+        float r = bb.z + wobble;
+        activeBlackField += (r * r) / (dot(d, d) + 0.001);
+      }
 
-        float colorCycle = sin(u_time * 2.0 + length(v_uv - vec2(0.5)) * 3.5) * 0.5 + 0.5;
-        vec3 neonColor = mix(u_neon_primary, u_neon_secondary, colorCycle);
+      // dormant morphing shape
+      vec2 dormantLocal = st - u_dormant_center;
+      float dA = getShapeDistance(dormantLocal, u_shape_type_a, u_time);
+      float dB = getShapeDistance(dormantLocal, u_shape_type_b, u_time);
+      float dormantSdf = mix(dA, dB, u_shape_mix);
+      float dormantFieldDensity = 1.0 - smoothstep(-8.0, 10.0, dormantSdf);
 
-        vec3 chromaticGlow;
-        chromaticGlow.r = neonColor.r * (outerGlow + spec1 * 0.9);
-        chromaticGlow.g = mix(neonColor.g, u_neon_secondary.g, 0.4) * (outerGlow * 0.9 + specularTotal * 0.8);
-        chromaticGlow.b = neonColor.b * (outerGlow * 1.1 + spec2 * 1.2);
+      float activeFieldDensity = smoothstep(0.5, 0.95, activeBlackField);
+      float smoothFactor = smoothstep(0.0, 1.0, u_dormant_factor);
+      float effectiveDensity = mix(activeFieldDensity, dormantFieldDensity, smoothFactor);
+      float combinedField = mix(activeBlackField, dormantFieldDensity * 1.15, smoothFactor);
 
-        vec3 liquidCore = neonColor * fresnel * 0.95 + vec3(specularTotal * 1.1);
+      if (effectiveDensity > 0.01 || combinedField > 0.5) {
+        vec3 blackBody = vec3(0.04, 0.04, 0.06);
+        vec3 rimColor = mix(vec3(0.8, 0.98, 1.0), vec3(1.0, 0.35, 0.9), 0.5 + 0.5 * sin(u_time * 1.8));
+        if (effectiveDensity >= 0.88 || combinedField >= 0.98) {
+          vec2 targetCenter = mix(headPos, u_dormant_center, smoothFactor);
+          vec2 lightDir = normalize(vec2(-0.7, 0.9));
+          vec2 dHead = normalize(st - targetCenter + vec2(5.0, -5.0));
+          float spec = pow(max(0.0, dot(dHead, lightDir)), 12.0) * 0.35;
+          col = blackBody + vec3(spec);
+          alpha = 1.0;
+        } else if (effectiveDensity > 0.01) {
+          float rimAlpha = smoothstep(0.01, 0.45, effectiveDensity) * (1.0 - smoothstep(0.45, 0.85, effectiveDensity)) * 0.92;
+          col = mix(col, rimColor, clamp(rimAlpha / (max(alpha, rimAlpha) + 0.0001), 0.0, 1.0));
+          alpha = max(alpha, rimAlpha);
+          if (effectiveDensity > 0.45) {
+            float fillAlpha = (effectiveDensity - 0.45) / 0.43;
+            col = mix(col, blackBody, fillAlpha);
+            alpha = mix(alpha, 1.0, fillAlpha);
+          }
+        }
+      }
 
-        vec3 finalColor = chromaticGlow * outerGlow * 1.4;
-        finalColor = mix(finalColor, liquidCore, innerMask);
-        float innerCaustic = pow(clamp(-d/18.0,0.0,1.0),2.5)*(1.0-pow(clamp(-d/12.0,0.0,1.0),2.0));
-        finalColor += neonColor * innerCaustic * 0.4 * innerMask;
-
-        float alpha = clamp(outerGlow * 1.2 + innerMask, 0.0, 1.0);
-        gl_FragColor = vec4(finalColor, alpha);
+      gl_FragColor = vec4(col * alpha, alpha);
     }
   `;
 
   function makeShader(type, src) {
     const s = gl.createShader(type);
-    gl.shaderSource(s, src); gl.compileShader(s); return s;
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error('Cursor shader error:', gl.getShaderInfoLog(s));
+    return s;
   }
   const glProg = gl.createProgram();
   gl.attachShader(glProg, makeShader(gl.VERTEX_SHADER,   vsSource));
   gl.attachShader(glProg, makeShader(gl.FRAGMENT_SHADER, fsSource));
-  gl.linkProgram(glProg); gl.useProgram(glProg);
+  gl.linkProgram(glProg);
+  if (!gl.getProgramParameter(glProg, gl.LINK_STATUS)) { console.error('Cursor program error:', gl.getProgramInfoLog(glProg)); return; }
+  gl.useProgram(glProg);
 
   const posBuf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
@@ -2670,91 +2822,47 @@ function termsDecline() {
   gl.enableVertexAttribArray(posLoc);
   gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
 
-  const uResLoc      = gl.getUniformLocation(glProg, 'u_resolution');
-  const uPointsLoc   = gl.getUniformLocation(glProg, 'u_points');
-  const uRadiiLoc    = gl.getUniformLocation(glProg, 'u_radii');
-  const uCountLoc    = gl.getUniformLocation(glProg, 'u_point_count');
-  const uPrimaryLoc  = gl.getUniformLocation(glProg, 'u_neon_primary');
-  const uSecondLoc   = gl.getUniformLocation(glProg, 'u_neon_secondary');
-  const uTimeLoc     = gl.getUniformLocation(glProg, 'u_time');
-  const uClickPosLoc = gl.getUniformLocation(glProg, 'u_click_pos');
-  const uClickTLoc   = gl.getUniformLocation(glProg, 'u_click_time');
-  const uSpeedLoc    = gl.getUniformLocation(glProg, 'u_speed');
+  const U = n => gl.getUniformLocation(glProg, n);
+  const uTime = U('u_time'), uDormantCenter = U('u_dormant_center'), uDormantFactor = U('u_dormant_factor'),
+        uShapeMix = U('u_shape_mix'), uShapeA = U('u_shape_type_a'), uShapeB = U('u_shape_type_b'),
+        uBlackBlobs = U('u_black_blobs'), uBlackCount = U('u_black_count'),
+        uNeonBlobs = U('u_neon_blobs'), uNeonCount = U('u_neon_count');
 
-  const primaryColor   = [0.0, 0.95, 1.0];
-  const secondaryColor = [1.0, 0.05, 0.85];
+  // ── physics / state ──
+  let curX = window.innerWidth / 2, curY = window.innerHeight / 2;
+  let targetX = curX, targetY = curY;
+  let smoothSpeed = 0, squish = 1.0, squishVel = 0;
+  const BASE_HEAD_RADIUS = 15, NUM_BLACK_NODES = 6, MAX_NEON = 60;
+  const blackNodes = Array.from({ length: NUM_BLACK_NODES }, (_, i) => ({
+    x: curX, y: curY, radius: BASE_HEAD_RADIUS * Math.pow(0.82, i), phase: i * 1.2
+  }));
+  const neonDroplets = [];
+  const blackArr = new Float32Array(8 * 4), neonArr = new Float32Array(MAX_NEON * 4);
 
-  const RAW_NODES = 16, RENDER_POINTS = 32, baseRadius = 19.5;
+  let lastMoveTime = Date.now();
+  const IDLE_THRESHOLD_MS = 1200;
+  let dormantFactor = 0, dormantCenterX = curX, dormantCenterY = curY;
+  let currentShape = 0, nextShape = 1, shapeMorph = 0, shapeTimer = 0;
+  const SHAPE_DURATION = 4.0, MORPH_DURATION = 1.8;
 
-  let cursorTargetX = window.innerWidth / 2, cursorTargetY = window.innerHeight / 2;
-  let prevCursorX = cursorTargetX, prevCursorY = cursorTargetY;
-  let cursorSpeed = 0, clickScale = 1.0, clickScaleVel = 0.0;
-  let lastClickTime = -1.0, clickPos = [0, 0];
+  function registerActivity(x, y) { lastMoveTime = Date.now(); curX = x; curY = y; }
+  window.addEventListener('mousemove', e => registerActivity(e.clientX, e.clientY), { passive: true });
 
-  let rawNodes    = Array.from({ length: RAW_NODES    }, () => ({ x: cursorTargetX, y: cursorTargetY }));
-  let renderPts   = Array.from({ length: RENDER_POINTS }, () => ({ x: cursorTargetX, y: cursorTargetY }));
-  let renderRadii = new Float32Array(RENDER_POINTS);
-
-  // Idle drift: sinusoidal wander after 2.5 s of no movement
-  let lastMove = Date.now();
-  document.addEventListener('mousemove', () => { lastMove = Date.now(); }, { passive: true });
-  (function idleCheck() {
-    if (Date.now() - lastMove > 2500) {
-      const t = Date.now() * 0.001;
-      cursorTargetX = window.innerWidth  / 2 + Math.sin(t * 1.3) * (window.innerWidth  * 0.22);
-      cursorTargetY = window.innerHeight / 2 + Math.cos(t * 1.7) * (window.innerHeight * 0.18);
-    } else {
-      cursorTargetX = mouseX;
-      cursorTargetY = mouseY;
+  window.addEventListener('mousedown', e => {
+    registerActivity(e.clientX, e.clientY);
+    squishVel = -0.4;
+    for (let i = 0; i < 20; i++) {
+      const a = (Math.PI * 2 / 20) * i + (Math.random() - 0.5) * 0.3, spd = 4 + Math.random() * 9;
+      neonDroplets.push({ x: e.clientX, y: e.clientY, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd,
+        radius: 6 + Math.random() * 8, life: 1, decay: 0.018 + Math.random() * 0.018,
+        colorType: Math.floor(Math.random() * 3) });
     }
-    setTimeout(idleCheck, 50);
-  })();
-
-  document.addEventListener('mousedown', (e) => {
-    clickPos = [e.clientX, e.clientY];
-    lastClickTime = performance.now() / 1000.0;
-    clickScale = 0.42; clickScaleVel = -0.12;
   }, { passive: true });
-
-  function catmullRom(p0, p1, p2, p3, t) {
-    const t2 = t * t, t3 = t2 * t;
-    return 0.5 * ((2*p1) + (-p0+p2)*t + (2*p0-5*p1+4*p2-p3)*t2 + (-p0+3*p1-3*p2+p3)*t3);
-  }
-
-  function updatePhysics() {
-    const dx = cursorTargetX - prevCursorX, dy = cursorTargetY - prevCursorY;
-    cursorSpeed += (Math.sqrt(dx*dx+dy*dy) - cursorSpeed) * 0.2;
-    prevCursorX = cursorTargetX; prevCursorY = cursorTargetY;
-
-    clickScaleVel += (1.0 - clickScale) * 0.22;
-    clickScaleVel *= 0.70;
-    clickScale += clickScaleVel;
-
-    rawNodes[0].x += (cursorTargetX - rawNodes[0].x) * 0.48;
-    rawNodes[0].y += (cursorTargetY - rawNodes[0].y) * 0.48;
-    for (let i = 1; i < RAW_NODES; i++) {
-      const spd = 0.55 - (i / RAW_NODES) * 0.22;
-      rawNodes[i].x += (rawNodes[i-1].x - rawNodes[i].x) * spd;
-      rawNodes[i].y += (rawNodes[i-1].y - rawNodes[i].y) * spd;
-    }
-
-    for (let i = 0; i < RENDER_POINTS; i++) {
-      const u = (i / (RENDER_POINTS - 1)) * (RAW_NODES - 1);
-      const idx = Math.floor(u), t = u - idx;
-      const p0 = rawNodes[Math.max(0, idx-1)], p1 = rawNodes[idx];
-      const p2 = rawNodes[Math.min(RAW_NODES-1, idx+1)], p3 = rawNodes[Math.min(RAW_NODES-1, idx+2)];
-      renderPts[i].x = catmullRom(p0.x, p1.x, p2.x, p3.x, t);
-      renderPts[i].y = catmullRom(p0.y, p1.y, p2.y, p3.y, t);
-      const ratio = i / (RENDER_POINTS - 1);
-      const taper = Math.pow(1.0 - ratio * 0.76, 1.12);
-      renderRadii[i] = baseRadius * taper * Math.max(0.35, 1.0 - ratio * Math.min(cursorSpeed*0.012,0.4)) * clickScale;
-    }
-  }
 
   function resizeCursorCanvas() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    cursorCanvas.width  = window.innerWidth  * dpr;
-    cursorCanvas.height = window.innerHeight * dpr;
+    cursorCanvas.width  = Math.floor(window.innerWidth  * dpr);
+    cursorCanvas.height = Math.floor(window.innerHeight * dpr);
     cursorCanvas.style.width  = window.innerWidth  + 'px';
     cursorCanvas.style.height = window.innerHeight + 'px';
     gl.viewport(0, 0, cursorCanvas.width, cursorCanvas.height);
@@ -2762,40 +2870,172 @@ function termsDecline() {
   window.addEventListener('resize', resizeCursorCanvas);
   resizeCursorCanvas();
 
-  function renderGlassCursor(currentTime) {
+  document.body.classList.add('shell-cursor-enabled');
+
+  const startTime = Date.now();
+  let lastFrameTime = startTime;
+
+  function renderLiquidBlobCursor() {
     if (egOpen()) {
-      gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
-      requestAnimationFrame(renderGlassCursor); return;
+      gl.disable(gl.SCISSOR_TEST);
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      lastFrameTime = Date.now();
+      requestAnimationFrame(renderLiquidBlobCursor); return;
     }
 
-    updatePhysics();
+    const now = Date.now();
+    const elapsed = (now - startTime) * 0.001;
+    const dt = Math.min((now - lastFrameTime) * 0.001, 0.08);
+    lastFrameTime = now;
+    const height = window.innerHeight;
 
+    // position smoothing + speed
+    const posFactor = 1 - Math.exp(-dt * 14);
+    const px = targetX, py = targetY;
+    targetX += (curX - targetX) * posFactor;
+    targetY += (curY - targetY) * posFactor;
+    const vx = (targetX - px) / Math.max(dt, 0.001), vy = (targetY - py) / Math.max(dt, 0.001);
+    smoothSpeed += (Math.sqrt(vx * vx + vy * vy) - smoothSpeed) * (1 - Math.exp(-dt * 5));
+
+    // idle -> dormant morphing shape
+    const targetDormant = (now - lastMoveTime > IDLE_THRESHOLD_MS && smoothSpeed < 3.0) ? 1 : 0;
+    dormantFactor += (targetDormant - dormantFactor) * (1 - Math.exp(-dt * (targetDormant > dormantFactor ? 1.2 : 5.0)));
+
+    if (dormantFactor > 0.005) {
+      shapeTimer += dt;
+      if (shapeTimer >= SHAPE_DURATION) { shapeTimer = 0; currentShape = nextShape; nextShape = (nextShape + 1) % 6; }
+      shapeMorph = shapeTimer < MORPH_DURATION ? 0.5 - 0.5 * Math.cos(Math.PI * shapeTimer / MORPH_DURATION) : 1;
+      const drift = 1 - Math.exp(-dt * 3);
+      dormantCenterX += (targetX + Math.cos(elapsed * 1.2) * 8 - dormantCenterX) * drift;
+      dormantCenterY += (targetY + Math.sin(elapsed * 1.6) * 8 - dormantCenterY) * drift;
+      if (Math.random() < 0.3 * dormantFactor) {
+        const oa = elapsed * 2 + Math.random() * Math.PI * 2, od = 32 + Math.random() * 20;
+        const os = (1.2 + Math.random() * 1.8) * (Math.random() > 0.5 ? 1 : -1);
+        neonDroplets.push({ x: dormantCenterX + Math.cos(oa) * od, y: dormantCenterY + Math.sin(oa) * od,
+          vx: Math.cos(oa + Math.PI / 2) * os, vy: Math.sin(oa + Math.PI / 2) * os,
+          radius: (3 + Math.random() * 5) * dormantFactor, life: 1, decay: 0.012 + Math.random() * 0.015,
+          colorType: Math.floor((elapsed * 1.8 + neonDroplets.length) % 3) });
+      }
+    } else {
+      shapeTimer = 0; shapeMorph = 0; dormantCenterX = targetX; dormantCenterY = targetY;
+    }
+
+    // squish + chain
+    squish += squishVel;
+    squishVel += (1 - squish) * (1 - Math.exp(-dt * 15));
+    squishVel *= Math.exp(-dt * 10);
+    blackNodes[0].x = targetX; blackNodes[0].y = targetY;
+    blackNodes[0].radius = (BASE_HEAD_RADIUS + Math.min(smoothSpeed * 0.035, 10)) * squish;
+    for (let i = 1; i < NUM_BLACK_NODES; i++) {
+      const prev = blackNodes[i - 1], n = blackNodes[i];
+      const f = 1 - Math.exp(-dt * (18 - i * 1.8));
+      n.x += (prev.x - n.x) * f; n.y += (prev.y - n.y) * f;
+      n.radius = BASE_HEAD_RADIUS * Math.pow(0.79, i) * Math.max(0.45, 1 - smoothSpeed * 0.0012) * squish;
+    }
+
+    // motion trail
+    if (smoothSpeed > 15 && dormantFactor < 0.6) {
+      const n = Math.min(2, Math.floor(smoothSpeed * 0.008) + 1);
+      for (let k = 0; k < n; k++) {
+        const oa = Math.random() * Math.PI * 2, od = Math.random() * blackNodes[0].radius * 0.5;
+        neonDroplets.push({ x: targetX + Math.cos(oa) * od, y: targetY + Math.sin(oa) * od,
+          vx: -vx * 0.015 + (Math.random() - 0.5) * 1.2, vy: -vy * 0.015 + (Math.random() - 0.5) * 1.2,
+          radius: 3.5 + Math.random() * 6.5, life: 1, decay: 0.02 + Math.random() * 0.018,
+          colorType: (elapsed * 2.5 + neonDroplets.length * 0.1) % 3 });
+      }
+    }
+    const drag = Math.exp(-dt * 3.5);
+    for (let i = neonDroplets.length - 1; i >= 0; i--) {
+      const p = neonDroplets[i];
+      p.x += p.vx; p.y += p.vy; p.vx *= drag; p.vy *= drag; p.life -= p.decay;
+      if (p.life <= 0) neonDroplets.splice(i, 1);
+    }
+    if (neonDroplets.length > MAX_NEON) neonDroplets.splice(0, neonDroplets.length - MAX_NEON);
+
+    // uniforms + bounding box (only the pixels near the cursor are shaded)
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const pointArray  = new Float32Array(RENDER_POINTS * 2);
-    const scaledRadii = new Float32Array(RENDER_POINTS);
-    for (let i = 0; i < RENDER_POINTS; i++) {
-      pointArray[i*2]   = renderPts[i].x * dpr;
-      pointArray[i*2+1] = renderPts[i].y * dpr;
-      scaledRadii[i]    = renderRadii[i]  * dpr;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    const grow = (x, y, m) => { if (x - m < minX) minX = x - m; if (x + m > maxX) maxX = x + m; if (y - m < minY) minY = y - m; if (y + m > maxY) maxY = y + m; };
+    for (let i = 0; i < blackNodes.length; i++) {
+      const n = blackNodes[i];
+      blackArr.set([n.x * dpr, (height - n.y) * dpr, n.radius * dpr, n.phase], i * 4);
+      grow(n.x, n.y, n.radius * 2.2 + 8);
+    }
+    if (dormantFactor > 0.005) grow(dormantCenterX, dormantCenterY, 80);
+    for (let i = 0; i < neonDroplets.length; i++) {
+      const p = neonDroplets[i], r = p.radius * p.life;
+      neonArr.set([p.x * dpr, (height - p.y) * dpr, r * dpr, p.colorType], i * 4);
+      grow(p.x, p.y, r * 14 + 4);
     }
 
-    gl.useProgram(glProg);
-    gl.uniform2f(uResLoc, cursorCanvas.width, cursorCanvas.height);
-    gl.uniform2fv(uPointsLoc, pointArray);
-    gl.uniform1fv(uRadiiLoc, scaledRadii);
-    gl.uniform1i(uCountLoc, RENDER_POINTS);
-    gl.uniform3fv(uPrimaryLoc,  primaryColor);
-    gl.uniform3fv(uSecondLoc,   secondaryColor);
-    gl.uniform1f(uTimeLoc,      currentTime * 0.001);
-    gl.uniform1f(uSpeedLoc,     cursorSpeed);
-    gl.uniform2f(uClickPosLoc,  clickPos[0] * dpr, clickPos[1] * dpr);
-    gl.uniform1f(uClickTLoc,    lastClickTime);
-
-    gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
-    requestAnimationFrame(renderGlassCursor);
+    gl.disable(gl.SCISSOR_TEST);
+    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+    const sx = Math.max(0, Math.floor(minX * dpr)), sy = Math.max(0, Math.floor((height - maxY) * dpr));
+    const sw = Math.min(cursorCanvas.width, Math.ceil(maxX * dpr)) - sx, sh = Math.min(cursorCanvas.height, Math.ceil((height - minY) * dpr)) - sy;
+    if (sw > 0 && sh > 0) {
+      gl.enable(gl.SCISSOR_TEST);
+      gl.scissor(sx, sy, sw, sh);
+      gl.uniform1f(uTime, elapsed);
+      gl.uniform2f(uDormantCenter, dormantCenterX * dpr, (height - dormantCenterY) * dpr);
+      gl.uniform1f(uDormantFactor, dormantFactor);
+      gl.uniform1f(uShapeMix, shapeMorph);
+      gl.uniform1i(uShapeA, currentShape);
+      gl.uniform1i(uShapeB, shapeMorph >= 1 ? currentShape : nextShape);
+      gl.uniform1i(uBlackCount, blackNodes.length);
+      gl.uniform4fv(uBlackBlobs, blackArr);
+      gl.uniform1i(uNeonCount, neonDroplets.length);
+      gl.uniform4fv(uNeonBlobs, neonArr);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    }
+    requestAnimationFrame(renderLiquidBlobCursor);
   }
-  requestAnimationFrame(renderGlassCursor);
+  requestAnimationFrame(renderLiquidBlobCursor);
+})();
+
+// ── DOCK: slides up when the cursor reaches the bottom edge, hides when it leaves ──
+(function dockController(){
+    const dock = document.getElementById('site-nav'),
+          island = document.getElementById('dock-island'),
+          hot = document.getElementById('dock-hotzone');
+    if (!dock || !hot) return;
+    const isChromium = !!(navigator.userAgentData && navigator.userAgentData.brands.some(b => /Chromium/.test(b.brand))) || (!!window.chrome && !/Firefox/.test(navigator.userAgent));
+    if (isChromium) island.classList.add('lg-warp');
+
+    const TRIGGER_PX = 70;
+    let hideTimer = null, overDock = false;
+    const show = () => { clearTimeout(hideTimer); dock.classList.add('dock-show'); };
+    const hide = () => {
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => {
+            if (overDock || dock.contains(document.activeElement)) return;
+            dock.classList.remove('dock-show');
+        }, 380);
+    };
+
+    document.addEventListener('mousemove', e => {
+        if (e.clientY >= window.innerHeight - TRIGGER_PX) { show(); return; }
+        if (dock.classList.contains('dock-show')) {
+            const r = island.getBoundingClientRect();
+            const inside = e.clientX > r.left - 24 && e.clientX < r.right + 24 && e.clientY > r.top - 24;
+            if (inside) show(); else hide();
+        }
+    }, { passive: true });
+    // the hot zone also catches the cursor while it's over a game iframe (iframes swallow parent mouse events)
+    hot.addEventListener('mouseenter', show);
+    hot.addEventListener('mouseleave', hide);
+    dock.addEventListener('mouseenter', () => { overDock = true; show(); });
+    dock.addEventListener('mouseleave', () => { overDock = false; hide(); });
+    document.documentElement.addEventListener('mouseleave', hide);
+    dock.addEventListener('focusin', show);
+    dock.addEventListener('focusout', hide);
+    // touch screens have no hover: tap the grabber at the bottom to toggle
+    hot.addEventListener('click', () => {
+        if (!window.matchMedia('(pointer:coarse)').matches) return;
+        dock.classList.contains('dock-show') ? (overDock = false, dock.classList.remove('dock-show')) : show();
+    });
+    dock.addEventListener('click', e => {
+        if (window.matchMedia('(pointer:coarse)').matches && e.target.closest('.dock-item')) setTimeout(() => dock.classList.remove('dock-show'), 250);
+    });
 })();
 </script>
 </body>
