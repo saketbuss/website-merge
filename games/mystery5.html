@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Ultimate Portal of Randomness</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #090d16;
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .font-fun {
+            font-family: 'Fredoka', cursive;
+        }
+
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(22, 30, 49, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Animated Glowing Buttons */
+        .glow-btn-1 {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-btn-1:hover {
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.8);
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .glow-btn-2 {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-btn-2:hover {
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.8);
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .glow-btn-3 {
+            background: linear-gradient(135deg, #10b981, #f59e0b);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-btn-3:hover {
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.8);
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .glow-btn-4 {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-btn-4:hover {
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.8);
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .glow-btn-5 {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-btn-5:hover {
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .glow-btn-6 {
+            background: linear-gradient(135deg, #f43f5e, #eab308);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-btn-6:hover {
+            box-shadow: 0 0 30px rgba(244, 63, 94, 0.8);
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .glow-wildcard {
+            background: linear-gradient(135deg, #ff007f, #7928ca, #4299e1);
+            background-size: 200% 200%;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating background elements */
+        .floating-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            filter: blur(90px);
+            opacity: 0.2;
+            border-radius: 50%;
+            animation: float 22s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(40px, -60px) scale(1.15); }
+            66% { transform: translate(-30px, 30px) scale(0.85); }
+        }
+
+        /* Speech bubble pop */
+        .speech-bubble {
+            animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.9) translateY(12px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+
+        /* Modal Fullscreen Utility */
+        .modal-fullscreen {
+            max-width: 98vw !important;
+            height: 94vh !important;
+        }
+    </style>
+</head>
+<body class="relative flex flex-col justify-between min-h-screen">
+
+    <div class="floating-bg">
+        <div class="blob bg-pink-500 w-96 h-96 -top-10 -left-10"></div>
+        <div class="blob bg-cyan-500 w-96 h-96 top-1/2 -right-10"></div>
+        <div class="blob bg-amber-500 w-80 h-80 -bottom-10 left-1/3"></div>
+        <div class="blob bg-purple-600 w-96 h-96 top-1/4 left-1/2"></div>
+    </div>
+
+    <header class="relative z-10 w-full max-w-7xl mx-auto px-4 py-6 flex flex-wrap justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 flex items-center justify-center text-white text-2xl shadow-lg transform -rotate-6">
+                <i class="fa-solid fa-dice-d20 animate-spin" style="animation-duration: 12s;"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold font-fun tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-pink-400 via-purple-300 to-cyan-400">
+                    Portal of Randomness
+                </h1>
+                <p class="text-xs text-slate-400">Where endless curiosity meets total unexpected fun ✨</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3 glass-card px-4 py-2 rounded-2xl">
+            <button id="soundToggle" onclick="toggleSound()" class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-700/50 transition" title="Toggle Sound FX">
+                <i id="soundIcon" class="fa-solid fa-volume-high text-lg"></i>
+            </button>
+            <div class="h-6 w-px bg-slate-700"></div>
+            <div class="flex items-center gap-2 text-sm font-semibold">
+                <span class="text-slate-400">Rolls:</span>
+                <span id="clickCounter" class="text-pink-400 font-bold font-fun text-lg">0</span>
+            </div>
+            <div class="h-6 w-px bg-slate-700"></div>
+            <button onclick="clearHistory()" class="text-xs text-slate-400 hover:text-red-400 transition" title="Clear History">
+                <i class="fa-solid fa-trash-can"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="relative z-10 flex-1 max-w-7xl mx-auto px-4 py-4 w-full flex flex-col gap-8">
+        
+        <div class="text-center max-w-2xl mx-auto space-y-2">
+            <h2 class="text-3xl sm:text-4xl font-extrabold font-fun text-white">Choose Your Portal 🎯</h2>
+            <p class="text-slate-300 text-sm">
+                Explore secret websites, teleport in Street View, test our Akinator Mind Reader, or unleash weird audio & facts!
+            </p>
+        </div>
+
+        <!-- PORTAL BUTTONS GRID -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-6 gap-5">
+            
+            <!-- PORTAL 1: Random Website -->
+            <div class="glass-card rounded-3xl p-5 flex flex-col justify-between items-center text-center group hover:border-pink-500/50 transition-all duration-300">
+                <div class="space-y-3 w-full">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 text-2xl group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-pink-400 bg-pink-500/10 px-2.5 py-0.5 rounded-full border border-pink-500/20">Portal #1</span>
+                        <h3 class="text-lg font-extrabold text-white font-fun mt-1.5">Random Website</h3>
+                        <p class="text-slate-400 text-xs mt-1">Discover fascinating, safe & cool web projects.</p>
+                    </div>
+                </div>
+
+                <button onclick="launchRandomWebsite()" class="glow-btn-1 w-full mt-5 py-3.5 px-4 rounded-xl font-fun text-sm font-bold text-white flex items-center justify-center gap-2">
+                    <span>Teleport Web</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- PORTAL 2: Street View Teleport -->
+            <div class="glass-card rounded-3xl p-5 flex flex-col justify-between items-center text-center group hover:border-cyan-500/50 transition-all duration-300">
+                <div class="space-y-3 w-full">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid fa-compass"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-cyan-400 bg-cyan-500/10 px-2.5 py-0.5 rounded-full border border-cyan-500/20">Portal #2</span>
+                        <h3 class="text-lg font-extrabold text-white font-fun mt-1.5">Street View</h3>
+                        <p class="text-slate-400 text-xs mt-1">Jump to breathtaking & crazy places on Google Maps!</p>
+                    </div>
+                </div>
+
+                <button onclick="launchRandomStreetView()" class="glow-btn-2 w-full mt-5 py-3.5 px-4 rounded-xl font-fun text-sm font-bold text-white flex items-center justify-center gap-2">
+                    <span>Explore Spot</span>
+                    <i class="fa-solid fa-street-view"></i>
+                </button>
+            </div>
+
+            <!-- PORTAL 3: Goofy Sentence -->
+            <div class="glass-card rounded-3xl p-5 flex flex-col justify-between items-center text-center group hover:border-emerald-500/50 transition-all duration-300">
+                <div class="space-y-3 w-full">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid fa-face-grin-tears"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">Portal #3</span>
+                        <h3 class="text-lg font-extrabold text-white font-fun mt-1.5">Goofy Sentence</h3>
+                        <p class="text-slate-400 text-xs mt-1">Nonsensical wisdom & random quote generator.</p>
+                    </div>
+                </div>
+
+                <button onclick="generateGoofySentence()" class="glow-btn-3 w-full mt-5 py-3.5 px-4 rounded-xl font-fun text-sm font-bold text-white flex items-center justify-center gap-2">
+                    <span>Generate Goof</span>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </button>
+            </div>
+
+            <!-- PORTAL 4: Akinator Mind Reader -->
+            <div class="glass-card rounded-3xl p-5 flex flex-col justify-between items-center text-center group hover:border-purple-500/50 transition-all duration-300 border border-purple-500/20">
+                <div class="space-y-3 w-full">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-2xl group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-purple-400 bg-purple-500/10 px-2.5 py-0.5 rounded-full border border-purple-500/20">Portal #4</span>
+                        <h3 class="text-lg font-extrabold text-white font-fun mt-1.5">Akinator Genie</h3>
+                        <p class="text-slate-400 text-xs mt-1">Think of a character & I'll guess who it is!</p>
+                    </div>
+                </div>
+
+                <button onclick="openAkinatorModal()" class="glow-btn-4 w-full mt-5 py-3.5 px-4 rounded-xl font-fun text-sm font-bold text-white flex items-center justify-center gap-2">
+                    <span>Play Akinator</span>
+                    <i class="fa-solid fa-hat-wizard"></i>
+                </button>
+            </div>
+
+            <!-- PORTAL 5: Weird Fact / Sound Synth -->
+            <div class="glass-card rounded-3xl p-5 flex flex-col justify-between items-center text-center group hover:border-amber-500/50 transition-all duration-300">
+                <div class="space-y-3 w-full">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">Portal #5</span>
+                        <h3 class="text-lg font-extrabold text-white font-fun mt-1.5">Weird Facts</h3>
+                        <p class="text-slate-400 text-xs mt-1">Bizarre & shocking real-world trivia.</p>
+                    </div>
+                </div>
+
+                <button onclick="generateWeirdFact()" class="glow-btn-5 w-full mt-5 py-3.5 px-4 rounded-xl font-fun text-sm font-bold text-white flex items-center justify-center gap-2">
+                    <span>Uncover Fact</span>
+                    <i class="fa-solid fa-bolt"></i>
+                </button>
+            </div>
+
+            <!-- PORTAL 6: Random Jokes & Puns -->
+            <div class="glass-card rounded-3xl p-5 flex flex-col justify-between items-center text-center group hover:border-rose-500/50 transition-all duration-300">
+                <div class="space-y-3 w-full">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 text-2xl group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid fa-face-laugh-squint"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-rose-400 bg-rose-500/10 px-2.5 py-0.5 rounded-full border border-rose-500/20">Portal #6</span>
+                        <h3 class="text-lg font-extrabold text-white font-fun mt-1.5">Jokes & Puns</h3>
+                        <p class="text-slate-400 text-xs mt-1">Hilarious one-liners, dad jokes & clever puns!</p>
+                    </div>
+                </div>
+
+                <button onclick="generateRandomJoke()" class="glow-btn-6 w-full mt-5 py-3.5 px-4 rounded-xl font-fun text-sm font-bold text-white flex items-center justify-center gap-2">
+                    <span>Tell Joke</span>
+                    <i class="fa-solid fa-face-laugh-beam"></i>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- WILDCARD / SURPRISE ME BAR -->
+        <div class="glass-card p-5 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4 border border-purple-500/30">
+            <div class="flex items-center gap-4 text-center sm:text-left">
+                <div class="w-12 h-12 rounded-2xl bg-purple-500/20 flex items-center justify-center text-purple-300 text-xl shrink-0 mx-auto sm:mx-0">
+                    <i class="fa-solid fa-shuffle"></i>
+                </div>
+                <div>
+                    <h4 class="font-fun text-base font-bold text-white">Can't decide? Try the Wildcard!</h4>
+                    <p class="text-xs text-slate-400">Roll the cosmic wheel to launch a completely surprise experience.</p>
+                </div>
+            </div>
+            <button onclick="triggerWildcard()" class="glow-wildcard px-8 py-3.5 rounded-2xl font-fun text-white font-bold hover:opacity-90 active:scale-95 transition shadow-lg w-full sm:w-auto shrink-0 text-sm">
+                🎲 Surprise Me!
+            </button>
+        </div>
+
+        <!-- DYNAMIC SENTENCE / FACT DISPLAY BANNER -->
+        <div id="textOutputContainer" class="hidden speech-bubble glass-card p-6 rounded-3xl border border-emerald-500/40 relative overflow-hidden">
+            <div id="outputAccentBar" class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div class="space-y-2 flex-1">
+                    <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider" id="outputBadge">
+                        <i class="fa-solid fa-quote-left"></i>
+                        <span>Freshly Baked Goofiness</span>
+                    </div>
+                    <p id="textOutput" class="text-xl sm:text-2xl font-fun font-bold text-slate-100 leading-snug">
+                        "Loading sentence..."
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
+                    <button onclick="speakText()" class="p-3 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-xl transition border border-slate-700" title="Read Aloud">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <button onclick="copyText()" class="p-3 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-xl transition border border-slate-700" title="Copy to Clipboard">
+                        <i class="fa-solid fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORY RECENT ROLLS -->
+        <div class="glass-card p-6 rounded-3xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-fun text-lg font-bold text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left text-purple-400"></i>
+                    Recent Portal Log
+                </h3>
+                <span class="text-xs text-slate-500" id="historyCount">0 items logged</span>
+            </div>
+
+            <div id="historyList" class="flex flex-col gap-2 max-h-56 overflow-y-auto pr-1">
+                <p id="emptyHistoryMsg" class="text-center py-6 text-xs text-slate-500 italic">
+                    No random journeys yet! Click any portal button above to log your adventures here.
+                </p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- STREET VIEW MODAL -->
+    <div id="streetViewModal" class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="streetViewCard" class="glass-card w-full max-w-5xl rounded-3xl overflow-hidden flex flex-col h-[85vh] transition-all duration-300 border border-cyan-500/30">
+            <!-- Modal Header -->
+            <div class="px-5 py-3.5 border-b border-slate-800 flex justify-between items-center bg-slate-900/80 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <div>
+                        <h3 id="modalLocTitle" class="font-fun font-bold text-white text-base sm:text-lg">Mysterious Location</h3>
+                        <p id="modalLocCoords" class="text-[11px] text-slate-400">Lat: 0.00, Lng: 0.00</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleStreetViewFullscreen()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition" title="Toggle Fullscreen">
+                        <i id="fsIcon" class="fa-solid fa-expand"></i>
+                    </button>
+                    <button onclick="closeStreetViewModal()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Content - Street View Embed -->
+            <div class="relative flex-1 bg-slate-950 w-full h-full overflow-hidden flex items-center justify-center">
+                <iframe id="streetViewIframe" class="w-full h-full border-0" loading="lazy" allowfullscreen src=""></iframe>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-5 py-3.5 bg-slate-900/80 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-3 shrink-0">
+                <p id="modalLocDescription" class="text-xs text-slate-300 text-center sm:text-left">
+                    Use mouse drag or touch to look around 360 degrees!
+                </p>
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <button onclick="launchRandomStreetView()" class="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-dice"></i>
+                        <span>Another Spot</span>
+                    </button>
+                    <a id="modalDirectLink" target="_blank" rel="noopener noreferrer" href="#" class="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold transition flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20">
+                        <span>Open Maps</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WEBSITE PREVIEW MODAL -->
+    <div id="websiteModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-card w-full max-w-lg rounded-3xl p-6 border border-pink-500/30 text-center space-y-5">
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-pink-500/20 text-pink-400 flex items-center justify-center text-3xl">
+                <i class="fa-solid fa-paper-plane"></i>
+            </div>
+            <div>
+                <span id="webCategoryTag" class="text-xs font-bold text-pink-400 bg-pink-500/10 px-3 py-1 rounded-full border border-pink-500/20">Interactive Experience</span>
+                <h3 id="webModalTitle" class="text-2xl font-extrabold font-fun text-white mt-2">Awesome Website</h3>
+                <p id="webModalDesc" class="text-xs text-slate-300 mt-2 leading-relaxed">Description goes here...</p>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-center text-xs font-mono text-pink-300 truncate" id="webModalUrl">
+                https://example.com
+            </div>
+
+            <div class="flex items-center gap-3 pt-2">
+                <button onclick="closeWebsiteModal()" class="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-fun text-sm font-bold transition">
+                    Cancel
+                </button>
+                <a id="webModalLaunchBtn" target="_blank" rel="noopener noreferrer" href="#" onclick="closeWebsiteModal()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white font-fun text-sm font-bold shadow-lg shadow-pink-500/30 transition flex items-center justify-center gap-2">
+                    <span>Visit Site</span>
+                    <i class="fa-solid fa-external-link"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- AKINATOR GENIE MODAL -->
+    <div id="akinatorModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-card w-full max-w-xl rounded-3xl p-6 sm:p-8 border border-purple-500/40 relative overflow-hidden flex flex-col space-y-6">
+            
+            <!-- Modal Close Header -->
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-purple-500/20 text-purple-300 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-hat-wizard animate-bounce"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-fun text-xl font-bold text-white">Akinator - Mind Reader</h3>
+                        <p class="text-xs text-purple-300">Think of a character or celebrity!</p>
+                    </div>
+                </div>
+                <button onclick="closeAkinatorModal()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- AKINATOR SCREEN 1: INTRO -->
+            <div id="akiIntroScreen" class="text-center space-y-5 py-4">
+                <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-tr from-purple-600 to-pink-500 p-1 shadow-xl shadow-purple-500/30">
+                    <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center text-4xl text-purple-300">
+                        🧙‍♂️
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <h4 class="font-fun text-2xl text-white font-extrabold">Think of ANY famous character!</h4>
+                    <p class="text-xs text-slate-300 max-w-md mx-auto leading-relaxed">
+                        It could be SpongeBob, Batman, Pikachu, Harry Potter, Mario, Santa Claus, Mona Lisa, or Minecraft Steve! I will read your mind with a few questions!
+                    </p>
+                </div>
+                <button onclick="startAkinatorGame()" class="glow-btn-4 w-full py-4 rounded-2xl font-fun text-lg font-bold text-white shadow-lg">
+                    🔮 Start Mind Reading!
+                </button>
+            </div>
+
+            <!-- AKINATOR SCREEN 2: QUESTIONS -->
+            <div id="akiQuestionScreen" class="hidden space-y-6 py-2">
+                <div class="flex justify-between items-center text-xs text-purple-300 font-bold">
+                    <span id="akiQNum">Question #1</span>
+                    <span id="akiConfidence">Confidence: 10%</span>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div id="akiProgressBar" class="bg-gradient-to-r from-purple-500 to-pink-500 h-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-slate-900/90 border border-purple-500/30 text-center min-h-[120px] flex items-center justify-center">
+                    <p id="akiQuestionText" class="font-fun text-xl sm:text-2xl text-white font-bold">
+                        "Is your character real in real life?"
+                    </p>
+                </div>
+
+                <!-- Answer Buttons -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="answerAkinator('yes')" class="p-3.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/40 border border-emerald-500/50 text-emerald-300 font-fun font-bold text-base transition active:scale-95">
+                        ✅ Yes
+                    </button>
+                    <button onclick="answerAkinator('no')" class="p-3.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/40 border border-rose-500/50 text-rose-300 font-fun font-bold text-base transition active:scale-95">
+                        ❌ No
+                    </button>
+                    <button onclick="answerAkinator('probably')" class="p-3.5 rounded-xl bg-amber-600/20 hover:bg-amber-600/40 border border-amber-500/50 text-amber-300 font-fun font-bold text-sm transition active:scale-95">
+                        🤔 Probably
+                    </button>
+                    <button onclick="answerAkinator('unknown')" class="p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-fun font-bold text-sm transition active:scale-95">
+                        🤷 Don't Know
+                    </button>
+                </div>
+            </div>
+
+            <!-- AKINATOR SCREEN 3: GUESS REVEAL -->
+            <div id="akiRevealScreen" class="hidden text-center space-y-5 py-4">
+                <div class="w-28 h-28 mx-auto rounded-3xl bg-gradient-to-tr from-purple-500 via-pink-500 to-amber-400 p-1 shadow-2xl shadow-purple-500/40 animate-pulse">
+                    <div class="w-full h-full bg-slate-900 rounded-[22px] flex items-center justify-center text-5xl" id="akiRevealEmoji">
+                        🧙‍♂️
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <span class="text-xs font-bold text-purple-400 uppercase tracking-widest">I think of...</span>
+                    <h4 id="akiGuessName" class="font-fun text-3xl font-extrabold text-white">SpongeBob SquarePants!</h4>
+                    <p id="akiGuessDesc" class="text-xs text-slate-300 pt-1">Lives in a pineapple under the sea!</p>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button onclick="restartAkinator()" class="flex-1 py-3.5 rounded-2xl bg-purple-600 hover:bg-purple-500 font-fun text-white text-sm font-bold transition shadow-lg">
+                        🎉 You Got It! Play Again
+                    </button>
+                    <button onclick="restartAkinator()" class="flex-1 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 font-fun text-slate-300 text-sm font-bold transition">
+                        😅 Wrong Guess! Retry
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl glass-card border border-emerald-500/50 text-emerald-300 text-xs sm:text-sm font-bold shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-base"></i>
+        <span id="toastMsg">Action completed!</span>
+    </div>
+
+    <footer class="relative z-10 py-6 text-center text-xs text-slate-500 border-t border-slate-800/50 mt-10">
+        <p>Built for endless curiosity & silly moments. Safe & fun for everyone!</p>
+    </footer>
+
+    <script>
+        let soundEnabled = true;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) audioCtx = new AudioContext();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.1);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } else if (type === 'teleport') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.exponentialRampToValueAtTime(700, now + 0.25);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'goofy') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.setValueAtTime(550, now + 0.08);
+                    osc.frequency.setValueAtTime(280, now + 0.16);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'magic') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.08);
+                    osc.frequency.setValueAtTime(783.99, now + 0.16);
+                    osc.frequency.setValueAtTime(1046.50, now + 0.24);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'joke') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(350, now);
+                    osc.frequency.exponentialRampToValueAtTime(700, now + 0.15);
+                    osc.frequency.exponentialRampToValueAtTime(450, now + 0.3);
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                }
+            } catch (e) {
+                console.log('Audio playback prevented');
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-lg';
+                showToast('Sound Effects Enabled 🔊');
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-lg text-slate-500';
+                showToast('Sound Effects Muted 🔇');
+            }
+        }
+
+        const coolWebsites = [
+            { name: "Neal.fun", url: "https://neal.fun/", desc: "A mind-blowing universe of creative mini-games & web simulations.", category: "Interactive Games" },
+            { name: "Quick, Draw!", url: "https://quickdraw.withgoogle.com/", desc: "Can an AI recognize your doodles? Help train neural networks by drawing!", category: "AI & Games" },
+            { name: "Radio Garden", url: "https://radio.garden/", desc: "Rotate a 3D globe to tune into live radio stations anywhere on Earth.", category: "Music & World" },
+            { name: "Window Swap", url: "https://window-swap.com/", desc: "Look out through someone else's window somewhere in the world.", category: "Relaxing Experience" },
+            { name: "Hacker Typer", url: "https://hackertyper.net/", desc: "Type randomly on your keyboard and look like a Hollywood computing hacker!", category: "Fun & Pranks" },
+            { name: "Zoomquilt", url: "https://zoomquilt.org/", desc: "An infinitely zooming, mesmerizing piece of collaborative fantasy art.", category: "Visual Art" },
+            { name: "Pointer Pointer", url: "https://pointerpointer.com/", desc: "Move your cursor anywhere, and it finds a photo of someone pointing at it!", category: "Classic Web Magic" },
+            { name: "Stellarium Web", url: "https://stellarium-web.org/", desc: "An interactive planetarium that shows realistic 3D stars & constellations.", category: "Astronomy" },
+            { name: "Fluid Simulation", url: "https://fluid-simulation.netlify.app/", desc: "Play with colorful, satisfying fluid physics right in your browser.", category: "Visual Physics" },
+            { name: "Earth Nullschool", url: "https://earth.nullschool.net/", desc: "A live global 3D visualization of weather, ocean currents, and wind.", category: "Science & Geography" },
+            { name: "Silk - Generative Art", url: "http://weavesilk.com/", desc: "Create breathtaking, symmetrical flame artwork with cursor movements.", category: "Creativity" },
+            { name: "Incredibox", url: "https://www.incredibox.com/demo/", desc: "Create cool beatbox tunes with a crew of animated musical characters.", category: "Music Creator" },
+            { name: "AirPano", url: "https://www.airpano.com/", desc: "High-resolution 360-degree aerial panoramas of world landmarks.", category: "Virtual Travel" },
+            { name: "SuperCook", url: "https://www.supercook.com/", desc: "Tell it what ingredients you have, and it gives you matching recipes!", category: "Useful Tool" },
+            { name: "Sandspiel", url: "https://sandspiel.club/", desc: "A falling sand physics sandbox game where elements react together.", category: "Physics Sandbox" },
+            { name: "Drive & Listen", url: "https://driveandlisten.herokuapp.com/", desc: "Drive through world cities while listening to local radio stations.", category: "Virtual Travel" },
+            { name: "Bouncy Balls", url: "https://bouncyballs.org/", desc: "Bouncy balls that react to sound from your microphone or mouse clicks.", category: "Interactive Physics" },
+            { name: "Procjam Map Generator", url: "https://watabou.itch.io/medieval-fantasy-city-generator", desc: "Procedurally generate fantasy medieval city maps instantly.", category: "Fantasy Generator" }
+        ];
+
+        const streetViewLocations = [
+            { title: "Grand Canyon Rim", lat: 36.0544, lng: -112.1401, country: "USA 🇺🇸", desc: "Stand on the edge of one of the world's seven natural wonders!" },
+            { title: "Eiffel Tower Grounds", lat: 48.8584, lng: 2.2945, country: "France 🇫🇷", desc: "Gaze directly up at the iconic iron tower in Paris." },
+            { title: "The Colosseum", lat: 41.8902, lng: 12.4922, country: "Italy 🇮🇹", desc: "Walk around the ancient Roman amphitheater built in 80 AD." },
+            { title: "Taj Mahal Gardens", lat: 27.1751, lng: 78.0421, country: "India 🇮🇳", desc: "Admire the stunning white marble monument along the Yamuna river." },
+            { title: "Machu Picchu Citadel", lat: -13.1631, lng: -72.5450, country: "Peru 🇵🇪", desc: "High in the Andes mountains, explore the mysterious Inca sanctuary." },
+            { title: "Shibuya Crossing", lat: 35.6595, lng: 139.7005, country: "Japan 🇯🇵", desc: "Experience the world's busiest pedestrian intersection under neon lights." },
+            { title: "Penguins in Antarctica", lat: -64.7327, lng: -62.5938, country: "Antarctica ❄️", desc: "Chill with real wild penguins in icy Antarctica!" },
+            { title: "Stonehenge Monoliths", lat: 51.1789, lng: -1.8262, country: "UK 🇬🇧", desc: "Prehistoric stone circle set in the rolling green hills." },
+            { title: "Great Pyramids of Giza", lat: 29.9792, lng: 31.1342, country: "Egypt 🇪🇬", desc: "Marvel at the oldest of the Seven Wonders of the Ancient World." },
+            { title: "Venice Canals", lat: 45.4371, lng: 12.3326, country: "Italy 🇮🇹", desc: "Float through the romantic waterways and historic bridges of Venice." },
+            { title: "NASA Rocket Garden", lat: 28.5729, lng: -80.6490, country: "USA 🇺🇸", desc: "Check out space shuttle launch pads & giant space rockets!" },
+            { title: "Mount Fuji Crater Summit", lat: 35.3606, lng: 138.7274, country: "Japan 🇯🇵", desc: "Look out from the crater rim of Japan's highest volcano." },
+            { title: "Easter Island Moai Statues", lat: -27.1212, lng: -109.3667, country: "Chile 🇨🇱", desc: "Discover the giant stone monoliths carved centuries ago." },
+            { title: "Hollywood Sign Trail", lat: 34.1341, lng: -118.3215, country: "USA 🇺🇸", desc: "Enjoy the iconic scenic view looking over Los Angeles." },
+            { title: "Santorini Cliffside", lat: 36.3932, lng: 25.4615, country: "Greece 🇬🇷", desc: "Walk past blue-domed white houses overlooking the Aegean Sea." },
+            { title: "Banff National Park Lake", lat: 51.4254, lng: -116.1773, country: "Canada 🇨🇦", desc: "Crystal turquoise glacial lake surrounded by majestic Rocky Mountains." }
+        ];
+
+        const subjects = ["A hyperactive squirrel", "An emotional potato", "A secret agent flamingo", "My neighbor's toaster", "A disco-dancing Yeti", "A confused astronaut", "An aristocratic llama", "A cosmic jellybean", "A rubber chicken named Bob", "A detective penguin", "A caffeinated sloth", "A taco with trust issues"];
+        const verbs = ["accidentally hacked", "tried to challenge", "enthusiastically high-fived", "started a union with", "wrote a love letter to", "challenged a duel against", "teleported inside", "tried to hypnotize", "sang opera to", "invented a rocket for", "stole a unicycle from"];
+        const objects = ["a bowl of soggy cereal", "a rogue roomba", "the local mayor", "a mysterious disco ball", "a giant inflatable duck", "a slice of pineapple pizza", "a guarded golden waffle", "a sentient jukebox", "a bucket of glitter", "a pair of sparkling crocs"];
+        const locations = ["inside a Walmart at 3 AM.", "on top of Mount Everest.", "during a quiet library study session.", "in an underground badger fortress.", "at a high-stakes bingo tournament.", "in zero gravity.", "inside a giant jar of pickles.", "while riding a riding lawnmower."];
+
+        const weirdFacts = [
+            "Bananas are naturally slightly radioactive because they contain potassium-40!",
+            "Wombats are the only known animals in the universe that produce cube-shaped poop.",
+            "Sharks existed on Earth before trees were ever formed!",
+            "Honey never expires. Edible 3,000-year-old honey was discovered in ancient Egyptian tombs.",
+            "Octopuses have three hearts, blue blood, and nine brains!",
+            "A group of flamingos is officially called a 'Flamboyance'.",
+            "Cows have best friends and get stressed out when they are separated from them.",
+            "Nintendo was founded all the way back in 1889 as a playing card company!",
+            "Sloths can hold their breath underwater longer than dolphins can (up to 40 minutes).",
+            "The total weight of all ants on Earth is roughly equal to the total weight of all humans."
+        ];
+
+        const randomJokes = [
+            "An apple a day keeps anyone away if you throw it hard enough.",
+            "I told my computer I needed a break, and now it won't stop sending me KitKats.",
+            "My daily routine: 1. Wake up. 2. Be epic. 3. Go back to sleep.",
+            "I’m not lazy, I’m just on energy-saving mode.",
+            "I don't need a hair dryer, my life is already full of hot air.",
+            "Why do we tell actors to 'break a leg'? Because every play has a cast.",
+            "I asked my dog what 2 minus 2 is. He said nothing.",
+            "My wallet is like an onion: opening it makes me cry.",
+            "I am on a seafood diet. I see food and I eat it.",
+            "I told my friend to embrace his mistakes. He gave me a hug.",
+            "I'm reading a book about anti-gravity. It’s impossible to put down.",
+            "My teacher told me not to worry about spelling, but it really bothers me.",
+            "Why don't skeletons fight each other? They don't have the guts.",
+            "I didn't fail the test. I just found 100 ways to do it wrong.",
+            "My Wi-Fi went down for 5 minutes, so I talked to my family. They seem like nice people.",
+            "I'm not arguing, I'm just explaining why I'm right.",
+            "If at first you don't succeed, then skydiving definitely isn't for you.",
+            "I used to think I was indecisive, but now I'm not so sure.",
+            "Knowledge is knowing a tomato is a fruit; wisdom is not putting it in a fruit salad.",
+            "I put my phone on airplane mode, but it’s still on the table.",
+            "I asked the barista for something cold and sweet, so she gave me a frozen ice cube.",
+            "What do you call a fake noodle? An impasta.",
+            "I only know 25 letters of the alphabet. I don't know y.",
+            "Why did the scarecrow win an award? Because he was outstanding in his field.",
+            "What do you call a belt made of watches? A waist of time.",
+            "Why do cows have hooves instead of feet? Because they lactose.",
+            "I would tell you a joke about construction, but I'm still working on it.",
+            "Why don't scientists trust atoms? Because they make up everything.",
+            "What do you call a sleeping dinosaur? A dino-snore.",
+            "Why did the bicycle fall over? Because it was two-tired.",
+            "What starts with E, ends with E, but only contains one letter? An envelope.",
+            "How does a penguin build its house? Igloos it together.",
+            "Why did the math book look sad? Because it had too many problems.",
+            "What do you call a cheese that isn't yours? Nacho cheese.",
+            "Why was the broom late? It over-swept.",
+            "What do you call a bear with no teeth? A gummy bear.",
+            "Why did the golfer bring two pairs of pants? In case he got a hole in one.",
+            "How do trees access the internet? They log in.",
+            "What do you call a fish without eyes? A fsh.",
+            "Why couldn't the pony sing a solo? Because he was a little hoarse."
+        ];
+
+        const akinatorCharacters = [
+            { name: "SpongeBob SquarePants", desc: "Yellow sponge who lives in a pineapple under the sea!", emoji: "🧽", real: false, animated: true, hero: true, human: false, game: false },
+            { name: "Batman / Bruce Wayne", desc: "The Dark Knight defender of Gotham City!", emoji: "🦇", real: false, animated: false, hero: true, human: true, game: false },
+            { name: "Pikachu", desc: "Iconic yellow electric mouse Pokemon!", emoji: "⚡", real: false, animated: true, hero: true, human: false, game: true },
+            { name: "Harry Potter", desc: "The Boy Who Lived, wizard at Hogwarts!", emoji: "⚡", real: false, animated: false, hero: true, human: true, game: false },
+            { name: "Mario", desc: "Nintendo's famous Italian plumber!", emoji: "🍄", real: false, animated: true, hero: true, human: true, game: true },
+            { name: "Santa Claus", desc: "Delivers presents down the chimney on Christmas!", emoji: "🎅", real: false, animated: false, hero: true, human: true, game: false },
+            { name: "Minecraft Steve", desc: "The blocky survival hero from Minecraft!", emoji: "🟩", real: false, animated: true, hero: true, human: true, game: true },
+            { name: "Mona Lisa", desc: "Famous mysterious portrait painted by Da Vinci!", emoji: "🖼️", real: true, animated: false, hero: false, human: true, game: false },
+            { name: "Albert Einstein", desc: "Genius theoretical physicist who developed relativity!", emoji: "🧠", real: true, animated: false, hero: false, human: true, game: false },
+            { name: "Darth Vader", desc: "Sith Lord with a red lightsaber from Star Wars!", emoji: "⚔️", real: false, animated: false, hero: false, human: true, game: false }
+        ];
+
+        const akiQuestions = [
+            { key: "real", text: "Is your character a real person from real life?" },
+            { key: "animated", text: "Is your character animated or from a cartoon/anime?" },
+            { key: "game", text: "Is your character originally from a video game?" },
+            { key: "human", text: "Is your character a human being?" },
+            { key: "hero", text: "Is your character considered a good guy or hero?" }
+        ];
+
+        let akiCurrentQIndex = 0;
+        let akiCandidates = [];
+        let clickCount = 0;
+        let currentTextOutput = "";
+        let history = [];
+
+        function incrementClicks() {
+            clickCount++;
+            document.getElementById('clickCounter').innerText = clickCount;
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function logHistory(type, title, detail, actionUrl = null) {
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            history.unshift({ type, title, detail, time, actionUrl });
+            if (history.length > 20) history.pop();
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const historyList = document.getElementById('historyList');
+            const emptyMsg = document.getElementById('emptyHistoryMsg');
+            document.getElementById('historyCount').innerText = `${history.length} logged`;
+
+            if (history.length === 0) {
+                emptyMsg.classList.remove('hidden');
+                historyList.innerHTML = '';
+                historyList.appendChild(emptyMsg);
+                return;
+            }
+
+            emptyMsg.classList.add('hidden');
+            historyList.innerHTML = '';
+
+            history.forEach((item) => {
+                let badgeClass = "bg-pink-500/10 text-pink-400 border-pink-500/20";
+                let icon = "fa-globe";
+
+                if (item.type === 'Street View') { badgeClass = "bg-cyan-500/10 text-cyan-400 border-cyan-500/20"; icon = "fa-compass"; }
+                else if (item.type === 'Goofy Sentence') { badgeClass = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"; icon = "fa-face-grin-tears"; }
+                else if (item.type === 'Akinator') { badgeClass = "bg-purple-500/10 text-purple-400 border-purple-500/20"; icon = "fa-brain"; }
+                else if (item.type === 'Weird Fact') { badgeClass = "bg-amber-500/10 text-amber-400 border-amber-500/20"; icon = "fa-lightbulb"; }
+                else if (item.type === 'Joke & Pun') { badgeClass = "bg-rose-500/10 text-rose-400 border-rose-500/20"; icon = "fa-face-laugh-squint"; }
+
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between p-3 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs hover:border-slate-700 transition";
+                
+                div.innerHTML = `
+                    <div class="flex items-center gap-3 overflow-hidden pr-2">
+                        <span class="px-2.5 py-1 rounded-xl font-bold border ${badgeClass} shrink-0 flex items-center gap-1.5">
+                            <i class="fa-solid ${icon}"></i>
+                            ${item.type}
+                        </span>
+                        <div class="truncate">
+                            <span class="font-bold text-slate-200">${item.title}</span>
+                            <p class="text-slate-400 truncate text-[11px]">${item.detail}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="text-[10px] text-slate-500">${item.time}</span>
+                        ${item.actionUrl ? `<a href="${item.actionUrl}" target="_blank" class="p-1.5 text-slate-400 hover:text-white transition"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>` : ''}
+                    </div>
+                `;
+                historyList.appendChild(div);
+            });
+        }
+
+        function clearHistory() {
+            history = [];
+            renderHistory();
+            showToast("History log cleared!");
+        }
+
+        function launchRandomWebsite() {
+            playSound('click');
+            incrementClicks();
+
+            const randomSite = coolWebsites[Math.floor(Math.random() * coolWebsites.length)];
+
+            document.getElementById('webCategoryTag').innerText = randomSite.category;
+            document.getElementById('webModalTitle').innerText = randomSite.name;
+            document.getElementById('webModalDesc').innerText = randomSite.desc;
+            document.getElementById('webModalUrl').innerText = randomSite.url;
+            document.getElementById('webModalLaunchBtn').href = randomSite.url;
+
+            const modal = document.getElementById('websiteModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100', 'pointer-events-auto');
+
+            logHistory('Random Web', randomSite.name, randomSite.desc, randomSite.url);
+        }
+
+        function closeWebsiteModal() {
+            const modal = document.getElementById('websiteModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.classList.remove('opacity-100', 'pointer-events-auto');
+        }
+
+        function launchRandomStreetView() {
+            playSound('teleport');
+            incrementClicks();
+
+            const location = streetViewLocations[Math.floor(Math.random() * streetViewLocations.length)];
+
+            document.getElementById('modalLocTitle').innerText = `${location.title} (${location.country})`;
+            document.getElementById('modalLocCoords').innerText = `Coordinates: ${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}`;
+            document.getElementById('modalLocDescription').innerText = location.desc;
+
+            const embedUrl = `https://maps.google.com/maps?q=&layer=c&cbll=${location.lat},${location.lng}&cbp=11,0,0,0,0&output=svembed`;
+            const directUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${location.lat},${location.lng}`;
+
+            document.getElementById('streetViewIframe').src = embedUrl;
+            document.getElementById('modalDirectLink').href = directUrl;
+
+            const modal = document.getElementById('streetViewModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100', 'pointer-events-auto');
+
+            logHistory('Street View', location.title, location.country, directUrl);
+        }
+
+        function toggleStreetViewFullscreen() {
+            const card = document.getElementById('streetViewCard');
+            const icon = document.getElementById('fsIcon');
+            card.classList.toggle('modal-fullscreen');
+            if (card.classList.contains('modal-fullscreen')) {
+                icon.className = "fa-solid fa-compress";
+                showToast("Expanded Street View mode!");
+            } else {
+                icon.className = "fa-solid fa-expand";
+            }
+        }
+
+        function closeStreetViewModal() {
+            const modal = document.getElementById('streetViewModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.classList.remove('opacity-100', 'pointer-events-auto');
+            document.getElementById('streetViewIframe').src = '';
+        }
+
+        function generateGoofySentence() {
+            playSound('goofy');
+            incrementClicks();
+
+            const sub = subjects[Math.floor(Math.random() * subjects.length)];
+            const vrb = verbs[Math.floor(Math.random() * verbs.length)];
+            const obj = objects[Math.floor(Math.random() * objects.length)];
+            const loc = locations[Math.floor(Math.random() * locations.length)];
+            const sentence = `${sub} ${vrb} ${obj} ${loc}`;
+
+            currentTextOutput = sentence;
+            showTextBanner("Freshly Baked Goofiness", `"${sentence}"`, "bg-emerald-500", "text-emerald-400");
+            logHistory('Goofy Sentence', 'Random Goof', sentence);
+        }
+
+        function generateWeirdFact() {
+            playSound('magic');
+            incrementClicks();
+
+            const fact = weirdFacts[Math.floor(Math.random() * weirdFacts.length)];
+            currentTextOutput = fact;
+            showTextBanner("Mind-Blowing Real Fact", `"${fact}"`, "bg-amber-500", "text-amber-400");
+            logHistory('Weird Fact', 'Mind Reader Fact', fact);
+        }
+
+        function generateRandomJoke() {
+            playSound('joke');
+            incrementClicks();
+
+            const joke = randomJokes[Math.floor(Math.random() * randomJokes.length)];
+            currentTextOutput = joke;
+            showTextBanner("Hilarious Joke / Pun", `"${joke}"`, "bg-rose-500", "text-rose-400");
+            logHistory('Joke & Pun', 'Random Joke', joke);
+        }
+
+        function showTextBanner(badgeText, mainText, barColor, textColor) {
+            const container = document.getElementById('textOutputContainer');
+            document.getElementById('outputBadge').innerHTML = `<i class="fa-solid fa-quote-left"></i><span>${badgeText}</span>`;
+            document.getElementById('outputBadge').className = `flex items-center gap-2 text-xs font-bold uppercase tracking-wider ${textColor}`;
+            document.getElementById('outputAccentBar').className = `absolute top-0 left-0 w-2 h-full ${barColor}`;
+            document.getElementById('textOutput').innerText = mainText;
+
+            container.classList.remove('hidden');
+            container.classList.remove('speech-bubble');
+            void container.offsetWidth; 
+            container.classList.add('speech-bubble');
+        }
+
+        function speakText() {
+            if (!currentTextOutput) return;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(currentTextOutput);
+                utterance.pitch = 1.2;
+                utterance.rate = 1.0;
+                window.speechSynthesis.speak(utterance);
+                showToast("Reading aloud! 🗣️");
+            } else {
+                showToast("Speech synthesis not supported in this browser.");
+            }
+        }
+
+        function copyText() {
+            if (!currentTextOutput) return;
+            const tempInput = document.createElement("textarea");
+            tempInput.value = currentTextOutput;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            showToast("Copied text to clipboard! 📋");
+        }
+
+        function openAkinatorModal() {
+            playSound('magic');
+            incrementClicks();
+
+            document.getElementById('akiIntroScreen').classList.remove('hidden');
+            document.getElementById('akiQuestionScreen').classList.add('hidden');
+            document.getElementById('akiRevealScreen').classList.add('hidden');
+
+            const modal = document.getElementById('akinatorModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100', 'pointer-events-auto');
+        }
+
+        function closeAkinatorModal() {
+            const modal = document.getElementById('akinatorModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.classList.remove('opacity-100', 'pointer-events-auto');
+        }
+
+        function startAkinatorGame() {
+            playSound('click');
+            akiCurrentQIndex = 0;
+            akiCandidates = [...akinatorCharacters];
+
+            document.getElementById('akiIntroScreen').classList.add('hidden');
+            document.getElementById('akiQuestionScreen').classList.remove('hidden');
+
+            renderAkinatorQuestion();
+        }
+
+        function renderAkinatorQuestion() {
+            const q = akiQuestions[akiCurrentQIndex];
+            document.getElementById('akiQNum').innerText = `Question #${akiCurrentQIndex + 1}`;
+            document.getElementById('akiQuestionText').innerText = `"${q.text}"`;
+            
+            const progress = Math.round(((akiCurrentQIndex + 1) / akiQuestions.length) * 100);
+            document.getElementById('akiProgressBar').style.width = `${progress}%`;
+            document.getElementById('akiConfidence').innerText = `Confidence: ${20 + akiCurrentQIndex * 18}%`;
+        }
+
+        function answerAkinator(ans) {
+            playSound('click');
+            const currentQ = akiQuestions[akiCurrentQIndex];
+
+            if (ans === 'yes' || ans === 'probably') {
+                akiCandidates = akiCandidates.filter(c => c[currentQ.key] === true);
+            } else if (ans === 'no') {
+                akiCandidates = akiCandidates.filter(c => c[currentQ.key] === false);
+            }
+
+            akiCurrentQIndex++;
+
+            if (akiCurrentQIndex >= akiQuestions.length || akiCandidates.length <= 1) {
+                revealAkinatorGuess();
+            } else {
+                renderAkinatorQuestion();
+            }
+        }
+
+        function revealAkinatorGuess() {
+            playSound('magic');
+            const winner = akiCandidates.length > 0 ? akiCandidates[0] : akinatorCharacters[0];
+
+            document.getElementById('akiQuestionScreen').classList.add('hidden');
+            document.getElementById('akiRevealScreen').classList.remove('hidden');
+
+            document.getElementById('akiGuessName').innerText = winner.name;
+            document.getElementById('akiGuessDesc').innerText = winner.desc;
+            document.getElementById('akiRevealEmoji').innerText = winner.emoji;
+
+            logHistory('Akinator', 'Mind Read Guess', winner.name);
+        }
+
+        function restartAkinator() {
+            startAkinatorGame();
+        }
+
+        function triggerWildcard() {
+            const choices = [1, 2, 3, 4, 5, 6];
+            const rand = choices[Math.floor(Math.random() * choices.length)];
+
+            if (rand === 1) launchRandomWebsite();
+            else if (rand === 2) launchRandomStreetView();
+            else if (rand === 3) generateGoofySentence();
+            else if (rand === 4) openAkinatorModal();
+            else if (rand === 5) generateWeirdFact();
+            else generateRandomJoke();
+        }
+
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('streetViewModal')) closeStreetViewModal();
+            if (event.target === document.getElementById('websiteModal')) closeWebsiteModal();
+            if (event.target === document.getElementById('akinatorModal')) closeAkinatorModal();
+        };
+    </script>
+</body>
+</html>

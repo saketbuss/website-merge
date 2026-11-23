@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vitric Flow - Liquid Glass Puzzle</title>
+    <style>
+        :root { --glass-bg: rgba(20, 25, 40, 0.4); --glass-border: rgba(255, 255, 255, 0.1); --neon-cyan: #0ff; --neon-pink: #f0f; --text-main: #e0f0ff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+        body, html { width: 100%; height: 100%; background-color: #050508; overflow: hidden; touch-action: none; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--text-main); touch-action: none; }
+        #gameCanvas { display: block; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+        .ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; }
+        .hud-top { padding: 20px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .hud-bottom { padding: 20px; display: flex; justify-content: center; gap: 15px; pointer-events: auto; }
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px 25px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
+        .level-info { pointer-events: none; }
+        .level-info h1 { font-size: 1.5rem; margin-bottom: 5px; text-shadow: 0 0 10px rgba(255,255,255,0.3); letter-spacing: 2px; text-transform: uppercase; }
+        .level-info p { font-size: 0.9rem; color: #aaa; }
+        .resource-container { width: 200px; pointer-events: none; }
+        .resource-label { font-size: 0.8rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; color: var(--neon-cyan); }
+        .resource-bar-bg { width: 100%; height: 10px; background: rgba(0,0,0,0.5); border-radius: 5px; border: 1px solid var(--glass-border); overflow: hidden; }
+        .resource-bar-fill { height: 100%; background: linear-gradient(90deg, #0055ff, var(--neon-cyan)); width: 100%; transition: width 0.2s ease-out; box-shadow: 0 0 10px var(--neon-cyan); }
+        .btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(5px); text-transform: uppercase; letter-spacing: 1px; }
+        .btn:hover { background: rgba(255,255,255,0.15); border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 255, 255, 0.3); transform: translateY(-2px); }
+        .btn:active { transform: translateY(0); }
+        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 5, 8, 0.85); backdrop-filter: blur(10px); z-index: 20; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
+        .hidden { opacity: 0; pointer-events: none; }
+        .title-glow { font-size: 4rem; font-weight: bold; color: #fff; text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #00f, 0 0 80px #00f; margin-bottom: 20px; text-align: center; }
+        .subtitle { font-size: 1.2rem; color: #aaa; margin-bottom: 40px; max-width: 600px; text-align: center; line-height: 1.5; }
+        .victory-title { color: #fff; text-shadow: 0 0 10px #f0f, 0 0 20px #f0f, 0 0 40px #f00; }
+        #attribution { position: fixed; bottom: 8px; right: 14px; font-size: 10px; color: rgba(0,255,255,0.35); letter-spacing: 2px; text-transform: uppercase; pointer-events: none; z-index: 100; font-family: 'Courier New', monospace; }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="attribution">VITRIC FLOW · BY SAKET</div>
+    <div id="hud" class="ui-layer hidden">
+        <div class="hud-top">
+            <div class="glass-panel level-info">
+                <h1 id="levelName">Level 1</h1>
+                <p id="levelDesc">Guide the liquid glass.</p>
+            </div>
+            <div class="glass-panel resource-container">
+                <div class="resource-label">Silica Reserves (Ink)</div>
+                <div class="resource-bar-bg"><div id="inkBar" class="resource-bar-fill"></div></div>
+            </div>
+        </div>
+        <div class="hud-bottom">
+            <button class="btn" id="btnUndo">Undo Line</button>
+            <button class="btn" id="btnClear">Clear All</button>
+            <button class="btn" id="btnMenu">Menu</button>
+        </div>
+    </div>
+    <div id="mainMenu" class="screen">
+        <h1 class="title-glow">VITRIC FLOW</h1>
+        <p class="subtitle">Draw refractive panes to guide the superheated liquid glass into the molds. Combine primary colors to form secondary colors. Manage your silica reserves carefully.</p>
+        <button class="btn" style="font-size: 1.5rem; padding: 15px 40px;" id="btnStart">Ignite Furnace</button>
+    </div>
+    <div id="levelComplete" class="screen hidden">
+        <h1 class="title-glow victory-title">MOLD FILLED</h1>
+        <p class="subtitle" id="victoryStats">Liquid glass routed efficiently.</p>
+        <button class="btn" style="font-size: 1.5rem; padding: 15px 40px;" id="btnNextLevel">Next Blueprint</button>
+    </div>
+    <div id="gameOver" class="screen hidden">
+        <h1 class="title-glow" style="text-shadow: 0 0 10px #f00, 0 0 20px #f00, 0 0 40px #800;">FURNACE DEPLETED</h1>
+        <p class="subtitle">You ran out of silica or failed to route the glass.</p>
+        <button class="btn" style="font-size: 1.5rem; padding: 15px 40px;" id="btnRestart">Restart Blueprint</button>
+    </div>
+<script>
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const sfx = {
+    playTink: (freq = 800) => {
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gainNode = audioCtx.createGain();
+        osc.type = 'sine'; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+        osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+    }
+};
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+let width, height;
+const COLORS = {
+    R: { r: 255, g: 40,  b: 40,  hex: '#ff2828' },
+    G: { r: 40,  g: 255, b: 40,  hex: '#28ff28' },
+    B: { r: 40,  g: 100, b: 255, hex: '#2864ff' },
+    Y: { r: 255, g: 255, b: 40,  hex: '#ffff28' },
+    P: { r: 255, g: 40,  b: 255, hex: '#ff28ff' },
+    C: { r: 40,  g: 255, b: 255, hex: '#28ffff' },
+    W: { r: 255, g: 255, b: 255, hex: '#ffffff' }
+};
+let particles = [], lines = [], emitters = [], receptacles = [], obstacles = [];
+let currentLevel = 0, gameState = 'MENU', maxInk = 1000, currentInk = 1000;
+let isDrawing = false, currentLine = null;
+const GRAVITY = 0.15, PARTICLE_RADIUS = 7, BOUNCE_DAMPING = 0.3, FRICTION = 0.995, MAX_SPEED = 12;
+function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+window.addEventListener('resize', resize); resize();
+function distance(x1,y1,x2,y2) { return Math.sqrt((x2-x1)**2+(y2-y1)**2); }
+function distToSegment(p,v,w) {
+    const l2=(w.x-v.x)**2+(w.y-v.y)**2;
+    if(l2==0) return distance(p.x,p.y,v.x,v.y);
+    let t=((p.x-v.x)*(w.x-v.x)+(p.y-v.y)*(w.y-v.y))/l2;
+    t=Math.max(0,Math.min(1,t));
+    const proj={x:v.x+t*(w.x-v.x),y:v.y+t*(w.y-v.y)};
+    return{dist:distance(p.x,p.y,proj.x,proj.y),point:proj,t:t};
+}
+class Particle {
+    constructor(x,y,colorKey) { this.x=x; this.y=y; this.vx=(Math.random()-0.5)*2; this.vy=(Math.random()-0.5)*2; this.colorKey=colorKey; this.color=COLORS[colorKey]; this.life=1.0; this.stuckTimer=0; }
+    update() {
+        this.vy+=GRAVITY;
+        const speed=Math.sqrt(this.vx**2+this.vy**2);
+        if(speed>MAX_SPEED){this.vx=(this.vx/speed)*MAX_SPEED;this.vy=(this.vy/speed)*MAX_SPEED;}
+        this.x+=this.vx; this.y+=this.vy;
+        let collision=false;
+        for(let line of lines){
+            const seg=distToSegment(this,line.start,line.end);
+            if(seg.dist<PARTICLE_RADIUS){
+                collision=true;
+                const overlap=PARTICLE_RADIUS-seg.dist;
+                const dx=this.x-seg.point.x; const dy=this.y-seg.point.y;
+                let nx=0,ny=-1;
+                if(seg.dist>0.001){nx=dx/seg.dist;ny=dy/seg.dist;}
+                this.x+=nx*overlap; this.y+=ny*overlap;
+                const vDotN=this.vx*nx+this.vy*ny;
+                if(vDotN<0){
+                    const vnX=vDotN*nx; const vnY=vDotN*ny;
+                    const vtX=this.vx-vnX; const vtY=this.vy-vnY;
+                    this.vx=(vtX*FRICTION)-(vnX*BOUNCE_DAMPING);
+                    this.vy=(vtY*FRICTION)-(vnY*BOUNCE_DAMPING);
+                    this.vx+=(Math.random()-0.5)*0.15;
+                    this.vy+=(Math.random()-0.5)*0.15;
+                }
+            }
+        }
+        for(let obs of obstacles){
+            if(this.x>obs.x&&this.x<obs.x+obs.w&&this.y>obs.y&&this.y<obs.y+obs.h){
+                this.y=obs.y-PARTICLE_RADIUS;
+                if(this.vy>0)this.vy*=-BOUNCE_DAMPING;
+                this.vx*=FRICTION; collision=true;
+            }
+        }
+        if(this.x<-100||this.x>width+100||this.y>height+100) this.life=0;
+        for(let rec of receptacles){
+            if(this.x>rec.x&&this.x<rec.x+rec.w&&this.y>rec.y&&this.y<rec.y+rec.h){rec.receive(this.colorKey);this.life=0;}
+        }
+        if(speed<0.2&&collision){this.stuckTimer++;if(this.stuckTimer>90)this.life-=0.02;}
+        else this.stuckTimer=0;
+    }
+    draw(ctx) {
+        if(this.life<=0) return;
+        const rad=ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,PARTICLE_RADIUS*2.2);
+        rad.addColorStop(0,`rgba(255,255,255,${this.life})`);
+        rad.addColorStop(0.3,`rgba(${this.color.r},${this.color.g},${this.color.b},${this.life*0.8})`);
+        rad.addColorStop(1,`rgba(${this.color.r},${this.color.g},${this.color.b},0)`);
+        ctx.fillStyle=rad; ctx.beginPath(); ctx.arc(this.x,this.y,PARTICLE_RADIUS*2.2,0,Math.PI*2); ctx.fill();
+    }
+}
+class Emitter {
+    constructor(x,y,colorKey,angle,rate) { this.rx=x;this.ry=y;this.colorKey=colorKey;this.angle=angle*Math.PI/180;this.rate=rate;this.frameCounter=0;this.color=COLORS[colorKey]; }
+    get x(){return this.rx*width;} get y(){return this.ry*height;}
+    update() {
+        this.frameCounter++;
+        if(this.frameCounter>=this.rate){
+            this.frameCounter=0;
+            let px=this.x+(Math.random()-0.5)*8; let py=this.y+(Math.random()-0.5)*8;
+            let p=new Particle(px,py,this.colorKey);
+            const speed=2+Math.random()*2;
+            p.vx=Math.cos(this.angle)*speed+(Math.random()-0.5)*0.5;
+            p.vy=Math.sin(this.angle)*speed+(Math.random()-0.5)*0.5;
+            particles.push(p);
+        }
+    }
+    draw(ctx) {
+        ctx.fillStyle='#334';ctx.strokeStyle='#556';ctx.lineWidth=2;
+        ctx.beginPath();ctx.arc(this.x,this.y,15,0,Math.PI*2);ctx.fill();ctx.stroke();
+        ctx.shadowBlur=15;ctx.shadowColor=this.color.hex;ctx.fillStyle=this.color.hex;
+        ctx.beginPath();ctx.arc(this.x,this.y,8,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+    }
+}
+class Receptacle {
+    constructor(x,y,w,h,targetColors,capacity) {
+        this.rx=x;this.ry=y;this.rw=w;this.rh=h;this.targetColors=targetColors;this.capacity=capacity;
+        this.contents={R:0,G:0,B:0};this.totalReceived=0;this.isFull=false;
+        this.reqR=targetColors.R||0;this.reqG=targetColors.G||0;this.reqB=targetColors.B||0;
+    }
+    get x(){return this.rx*width;} get y(){return this.ry*height;} get w(){return this.rw*width;} get h(){return this.rh*height;}
+    receive(colorKey) {
+        if(this.isFull) return;
+        if(colorKey==='R')this.contents.R++;
+        if(colorKey==='G')this.contents.G++;
+        if(colorKey==='B')this.contents.B++;
+        if(colorKey==='Y'){this.contents.R++;this.contents.G++;}
+        if(colorKey==='P'){this.contents.R++;this.contents.B++;}
+        if(colorKey==='C'){this.contents.G++;this.contents.B++;}
+        this.totalReceived++;sfx.playTink(600+Math.random()*400);this.checkCompletion();
+    }
+    checkCompletion() {
+        let targetTotal=this.reqR+this.reqG+this.reqB;
+        if(targetTotal===0) return;
+        let rR=this.contents.R/this.totalReceived||0,rG=this.contents.G/this.totalReceived||0,rB=this.contents.B/this.totalReceived||0;
+        let tR=this.reqR/targetTotal,tG=this.reqG/targetTotal,tB=this.reqB/targetTotal;
+        const tol=0.15;
+        let valid=!(Math.abs(rR-tR)>tol||Math.abs(rG-tG)>tol||Math.abs(rB-tB)>tol);
+        if(this.totalReceived>=this.capacity&&valid){this.isFull=true;checkLevelVictory();}
+        if(this.totalReceived>this.capacity*1.5&&!valid){this.contents={R:0,G:0,B:0};this.totalReceived=0;}
+    }
+    draw(ctx) {
+        ctx.strokeStyle='#88a';ctx.lineWidth=4;ctx.beginPath();
+        ctx.moveTo(this.x,this.y);ctx.lineTo(this.x,this.y+this.h);ctx.lineTo(this.x+this.w,this.y+this.h);ctx.lineTo(this.x+this.w,this.y);ctx.stroke();
+        let tr=this.reqR>0?255:0,tg=this.reqG>0?255:0,tb=this.reqB>0?255:0;
+        ctx.shadowBlur=20;ctx.shadowColor=`rgb(${tr},${tg},${tb})`;
+        ctx.fillStyle=`rgba(${tr},${tg},${tb},0.2)`;ctx.fillRect(this.x,this.y,this.w,this.h);ctx.shadowBlur=0;
+        let fillRatio=Math.min(1,this.totalReceived/this.capacity);
+        let cr=Math.min(255,(this.contents.R/this.totalReceived)*255*2||0);
+        let cg=Math.min(255,(this.contents.G/this.totalReceived)*255*2||0);
+        let cb=Math.min(255,(this.contents.B/this.totalReceived)*255*2||0);
+        if(this.totalReceived>0){ctx.fillStyle=`rgba(${cr},${cg},${cb},0.8)`;ctx.fillRect(this.x,this.y+this.h*(1-fillRatio),this.w,this.h*fillRatio);}
+        if(this.isFull){ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.strokeRect(this.x-5,this.y-5,this.w+10,this.h+10);}
+    }
+}
+class Obstacle {
+    constructor(x,y,w,h){this.rx=x;this.ry=y;this.rw=w;this.rh=h;}
+    get x(){return this.rx*width;} get y(){return this.ry*height;} get w(){return this.rw*width;} get h(){return this.rh*height;}
+    draw(ctx){
+        ctx.fillStyle='rgba(20,30,40,0.8)';ctx.strokeStyle='rgba(100,150,255,0.3)';ctx.lineWidth=2;
+        ctx.fillRect(this.x,this.y,this.w,this.h);ctx.strokeRect(this.x,this.y,this.w,this.h);
+        ctx.beginPath();ctx.moveTo(this.x,this.y);ctx.lineTo(this.x+this.w,this.y+this.h);
+        ctx.moveTo(this.x+this.w,this.y);ctx.lineTo(this.x,this.y+this.h);
+        ctx.strokeStyle='rgba(100,150,255,0.1)';ctx.stroke();
+    }
+}
+class LineSegment {
+    constructor(x1,y1,x2,y2){this.start={x:x1,y:y1};this.end={x:x2,y:y2};this.length=distance(x1,y1,x2,y2);}
+    draw(ctx){
+        ctx.strokeStyle='rgba(150,220,255,0.8)';ctx.lineWidth=10;ctx.lineCap='round';
+        ctx.beginPath();ctx.moveTo(this.start.x,this.start.y);ctx.lineTo(this.end.x,this.end.y);ctx.stroke();
+        ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+    }
+}
+const LEVELS=[
+    {name:"Level 1: The Descent",desc:"Draw a sloped pane to slide the liquid into the mold. (Click & Drag)",ink:800,emitters:[{x:0.1,y:0.1,color:'R',angle:90,rate:4}],receptacles:[{x:0.7,y:0.8,w:0.1,h:0.15,targets:{R:1},capacity:100}],obstacles:[]},
+    {name:"Level 2: Convergence",desc:"Two crucibles, one mold. Route both streams into the central mold.",ink:1500,emitters:[{x:0.2,y:0.1,color:'R',angle:90,rate:4},{x:0.8,y:0.1,color:'B',angle:90,rate:4}],receptacles:[{x:0.45,y:0.8,w:0.1,h:0.15,targets:{R:1,B:1},capacity:200}],obstacles:[{x:0.45,y:0.4,w:0.1,h:0.2}]},
+    {name:"Level 3: Synthesis",desc:"Combine Red and Blue to create Purple.",ink:2000,emitters:[{x:0.2,y:0.1,color:'R',angle:45,rate:4},{x:0.8,y:0.1,color:'B',angle:135,rate:4}],receptacles:[{x:0.45,y:0.7,w:0.1,h:0.2,targets:{R:1,B:1},capacity:150}],obstacles:[{x:0.4,y:0.3,w:0.2,h:0.05}]},
+    {name:"Level 4: The Filter",desc:"Combine Green and Blue to make Cyan. Watch out for the pillars!",ink:4000,emitters:[{x:0.4,y:0.1,color:'G',angle:90,rate:3},{x:0.1,y:0.3,color:'B',angle:0,rate:3}],receptacles:[{x:0.7,y:0.8,w:0.15,h:0.15,targets:{G:1,B:1},capacity:200}],obstacles:[{x:0.45,y:0.3,w:0.1,h:0.3},{x:0.2,y:0.6,w:0.15,h:0.05},{x:0.8,y:0.4,w:0.15,h:0.05}]},
+    {name:"Level 5: The Splitter",desc:"One source, two molds. Divide the stream!",ink:4000,emitters:[{x:0.5,y:0.1,color:'R',angle:90,rate:3}],receptacles:[{x:0.2,y:0.8,w:0.1,h:0.15,targets:{R:1},capacity:100},{x:0.7,y:0.8,w:0.1,h:0.15,targets:{R:1},capacity:100}],obstacles:[{x:0.48,y:0.4,w:0.04,h:0.1}]},
+    {name:"Level 6: Pure White",desc:"Combine Red, Green, and Blue to create White glass.",ink:5000,emitters:[{x:0.2,y:0.1,color:'R',angle:90,rate:3},{x:0.5,y:0.1,color:'G',angle:90,rate:3},{x:0.8,y:0.1,color:'B',angle:90,rate:3}],receptacles:[{x:0.45,y:0.8,w:0.1,h:0.15,targets:{R:1,G:1,B:1},capacity:300}],obstacles:[{x:0.35,y:0.5,w:0.3,h:0.05}]},
+    {name:"Level 7: The Sieve",desc:"Navigate the fragmented glass blocks.",ink:4500,emitters:[{x:0.4,y:0.1,color:'R',angle:90,rate:4},{x:0.6,y:0.1,color:'G',angle:90,rate:4}],receptacles:[{x:0.45,y:0.85,w:0.1,h:0.1,targets:{R:1,G:1},capacity:150}],obstacles:[{x:0.3,y:0.3,w:0.05,h:0.05},{x:0.5,y:0.3,w:0.05,h:0.05},{x:0.7,y:0.3,w:0.05,h:0.05},{x:0.4,y:0.5,w:0.05,h:0.05},{x:0.6,y:0.5,w:0.05,h:0.05}]},
+    {name:"Level 8: Crossroads",desc:"Red goes Right. Blue goes Left. They must cross paths.",ink:6000,emitters:[{x:0.2,y:0.1,color:'R',angle:90,rate:3},{x:0.8,y:0.1,color:'B',angle:90,rate:3}],receptacles:[{x:0.75,y:0.8,w:0.1,h:0.15,targets:{R:1},capacity:120},{x:0.15,y:0.8,w:0.1,h:0.15,targets:{B:1},capacity:120}],obstacles:[{x:0.45,y:0.2,w:0.1,h:0.6}]},
+    {name:"Level 9: The Chalice",desc:"The mold is heavily guarded. Pour carefully.",ink:3500,emitters:[{x:0.5,y:0.1,color:'B',angle:90,rate:4}],receptacles:[{x:0.45,y:0.6,w:0.1,h:0.15,targets:{B:1},capacity:100}],obstacles:[{x:0.35,y:0.5,w:0.05,h:0.3},{x:0.6,y:0.5,w:0.05,h:0.3},{x:0.35,y:0.8,w:0.3,h:0.05}]},
+    {name:"Level 10: RGB Drop",desc:"A true test of routing efficiency.",ink:7000,emitters:[{x:0.1,y:0.1,color:'R',angle:90,rate:3},{x:0.5,y:0.1,color:'G',angle:90,rate:3},{x:0.9,y:0.1,color:'B',angle:90,rate:3}],receptacles:[{x:0.85,y:0.8,w:0.1,h:0.1,targets:{R:1},capacity:80},{x:0.05,y:0.8,w:0.1,h:0.1,targets:{G:1},capacity:80},{x:0.45,y:0.8,w:0.1,h:0.1,targets:{B:1},capacity:80}],obstacles:[{x:0.0,y:0.4,w:0.3,h:0.05},{x:0.7,y:0.6,w:0.3,h:0.05}]}
+];
+const baseColors=['R','G','B'];
+for(let i=11;i<=54;i++){
+    let ne=1+Math.floor(Math.random()*3),le=[],targets={};
+    let sx=0.1+Math.random()*0.2,sp=0.6/ne;
+    for(let e=0;e<ne;e++){let c=baseColors[Math.floor(Math.random()*baseColors.length)];le.push({x:sx+(e*sp),y:0.05+Math.random()*0.1,color:c,angle:70+Math.random()*40,rate:3+Math.floor(Math.random()*2)});targets[c]=1;}
+    let no=2+Math.floor(Math.random()*4),obs=[];
+    for(let o=0;o<no;o++)obs.push({x:0.1+Math.random()*0.6,y:0.3+Math.random()*0.4,w:0.05+Math.random()*0.15,h:0.05+Math.random()*0.15});
+    LEVELS.push({name:`Level ${i}: Forge Sector ${1000+i*7}`,desc:"Procedurally generated glassworks.",ink:4000+i*100,emitters:le,receptacles:[{x:0.4+(Math.random()-0.5)*0.4,y:0.8+Math.random()*0.05,w:0.1+Math.random()*0.1,h:0.15,targets:targets,capacity:80*ne}],obstacles:obs});
+}
+function loadLevel(index){
+    if(index>=LEVELS.length){showScreen('mainMenu');document.querySelector('.title-glow').innerText="MASTER WEAVER";document.querySelector('.subtitle').innerText="You have completed all blueprints.";currentLevel=0;return;}
+    const data=LEVELS[index];
+    document.getElementById('levelName').innerText=data.name;document.getElementById('levelDesc').innerText=data.desc;
+    maxInk=data.ink;currentInk=maxInk;updateInkUI();
+    particles=[];lines=[];emitters=[];receptacles=[];obstacles=[];
+    data.emitters.forEach(e=>emitters.push(new Emitter(e.x,e.y,e.color,e.angle,e.rate)));
+    data.receptacles.forEach(r=>receptacles.push(new Receptacle(r.x,r.y,r.w,r.h,r.targets,r.capacity)));
+    data.obstacles.forEach(o=>obstacles.push(new Obstacle(o.x,o.y,o.w,o.h)));
+    gameState='PLAYING';showScreen('hud');
+}
+function checkLevelVictory(){
+    if(receptacles.every(r=>r.isFull)&&gameState==='PLAYING'){
+        gameState='LEVEL_COMPLETE';sfx.playTink(1200);
+        setTimeout(()=>sfx.playTink(1600),200);setTimeout(()=>showScreen('levelComplete'),1000);
+    }
+}
+function getCanvasPos(e){
+    const rect=canvas.getBoundingClientRect();
+    if(e.touches&&e.touches.length>0)return{x:e.touches[0].clientX-rect.left,y:e.touches[0].clientY-rect.top};
+    return{x:e.clientX-rect.left,y:e.clientY-rect.top};
+}
+function startDrawing(e){if(gameState!=='PLAYING')return;isDrawing=true;const pos=getCanvasPos(e);currentLine={start:{x:pos.x,y:pos.y},end:{x:pos.x,y:pos.y}};}
+function moveDrawing(e){if(!isDrawing||gameState!=='PLAYING')return;const pos=getCanvasPos(e);currentLine.end={x:pos.x,y:pos.y};}
+function endDrawing(e){
+    if(!isDrawing||gameState!=='PLAYING')return;isDrawing=false;
+    const len=distance(currentLine.start.x,currentLine.start.y,currentLine.end.x,currentLine.end.y);
+    if(len>10&&currentInk>=len){
+        let valid=true;
+        for(let obs of obstacles){if(currentLine.start.x>obs.x&&currentLine.start.x<obs.x+obs.w&&currentLine.start.y>obs.y&&currentLine.start.y<obs.y+obs.h)valid=false;if(currentLine.end.x>obs.x&&currentLine.end.x<obs.x+obs.w&&currentLine.end.y>obs.y&&currentLine.end.y<obs.y+obs.h)valid=false;}
+        if(valid){lines.push(new LineSegment(currentLine.start.x,currentLine.start.y,currentLine.end.x,currentLine.end.y));currentInk-=len;updateInkUI();sfx.playTink(400+Math.random()*200);}
+    }
+    currentLine=null;
+}
+canvas.addEventListener('mousedown',startDrawing);canvas.addEventListener('mousemove',moveDrawing);window.addEventListener('mouseup',endDrawing);
+canvas.addEventListener('touchstart',(e)=>{e.preventDefault();startDrawing(e);},{passive:false});
+canvas.addEventListener('touchmove',(e)=>{e.preventDefault();moveDrawing(e);},{passive:false});
+window.addEventListener('touchend',endDrawing);
+document.getElementById('btnStart').addEventListener('click',()=>{if(audioCtx.state==='suspended')audioCtx.resume();currentLevel=0;loadLevel(currentLevel);});
+document.getElementById('btnNextLevel').addEventListener('click',()=>{currentLevel++;loadLevel(currentLevel);});
+document.getElementById('btnRestart').addEventListener('click',()=>loadLevel(currentLevel));
+document.getElementById('btnMenu').addEventListener('click',()=>{gameState='MENU';showScreen('mainMenu');});
+document.getElementById('btnUndo').addEventListener('click',()=>{if(lines.length>0){const last=lines.pop();currentInk+=last.length;if(currentInk>maxInk)currentInk=maxInk;updateInkUI();}});
+document.getElementById('btnClear').addEventListener('click',()=>{lines=[];currentInk=maxInk;updateInkUI();particles=particles.filter(p=>p.life>0.5);});
+function updateInkUI(){
+    const bar=document.getElementById('inkBar');
+    const pct=Math.max(0,(currentInk/maxInk)*100);
+    bar.style.width=pct+'%';
+    if(pct<20){bar.style.background='linear-gradient(90deg,#ff0000,#ff5500)';bar.style.boxShadow='0 0 10px #ff0000';}
+    else{bar.style.background='linear-gradient(90deg,#0055ff,var(--neon-cyan))';bar.style.boxShadow='0 0 10px var(--neon-cyan)';}
+    if(currentInk<=0&&gameState==='PLAYING'){setTimeout(()=>{if(!receptacles.every(r=>r.isFull)&&gameState==='PLAYING'){gameState='GAME_OVER';showScreen('gameOver');}},5000);}
+}
+function showScreen(id){
+    ['hud','mainMenu','levelComplete','gameOver'].forEach(s=>document.getElementById(s).classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+}
+let lastTime=0;
+function gameLoop(timestamp){
+    requestAnimationFrame(gameLoop);
+    ctx.fillStyle='#050508';ctx.fillRect(0,0,width,height);
+    if(gameState==='PLAYING'||gameState==='LEVEL_COMPLETE'){
+        emitters.forEach(e=>e.update());
+        for(let i=particles.length-1;i>=0;i--){particles[i].update();if(particles[i].life<=0)particles.splice(i,1);}
+        ctx.globalCompositeOperation='source-over';
+        obstacles.forEach(o=>o.draw(ctx));receptacles.forEach(r=>r.draw(ctx));emitters.forEach(e=>e.draw(ctx));lines.forEach(l=>l.draw(ctx));
+        if(isDrawing&&currentLine){
+            ctx.strokeStyle='rgba(255,255,255,0.4)';ctx.lineWidth=4;ctx.setLineDash([10,10]);
+            ctx.beginPath();ctx.moveTo(currentLine.start.x,currentLine.start.y);ctx.lineTo(currentLine.end.x,currentLine.end.y);ctx.stroke();ctx.setLineDash([]);
+            const len=distance(currentLine.start.x,currentLine.start.y,currentLine.end.x,currentLine.end.y);
+            ctx.fillStyle=currentInk>=len?'#0ff':'#f00';ctx.font='14px Arial';ctx.fillText(Math.floor(len)+' units',currentLine.end.x+10,currentLine.end.y-10);
+        }
+        ctx.globalCompositeOperation='lighter';particles.forEach(p=>p.draw(ctx));ctx.globalCompositeOperation='source-over';
+    } else {
+        ctx.globalCompositeOperation='lighter';
+        const time=timestamp*0.001;
+        for(let i=0;i<20;i++){
+            const x=width/2+Math.sin(time+i)*200,y=height/2+Math.cos(time*0.8+i)*150,r=50+Math.sin(time*2+i)*20;
+            const grad=ctx.createRadialGradient(x,y,0,x,y,r);grad.addColorStop(0,'rgba(0,255,255,0.1)');grad.addColorStop(1,'rgba(0,0,0,0)');
+            ctx.fillStyle=grad;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+        }
+        ctx.globalCompositeOperation='source-over';
+    }
+}
+requestAnimationFrame(gameLoop);
+</script>
+</body>
+</html>

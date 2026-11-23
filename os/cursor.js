@@ -1,0 +1,1058 @@
+/* ArcadeOS liquid-blob + neon-paint cursor.
+   Derived from the original coursor2.html demo (since removed; see git history). The original physics and shader are kept verbatim; changes are limited to
+   (1) a transparent overlay canvas instead of a white page, (2) start/stop/suspend/resume so Settings can turn it off,
+   (3) tracked event listeners so stop() cleans up. A full-screen fragment shader runs every frame while active,
+   so it is off by default on low-end devices / reduced-effects mode (see OS.syncCursor in wm.js). */
+(function(){
+'use strict';
+const _ls = [];
+function on(t, f, o) { window.addEventListener(t, f, o); _ls.push([t, f, o]); }
+const startPos = { x: innerWidth * 0.5, y: innerHeight * 0.5 };
+window.addEventListener('pointermove', e => { startPos.x = e.clientX; startPos.y = e.clientY; }, { passive: true });
+let inst = null;
+function create() {
+        // --- WebGL Setup ---
+        const canvas = document.createElement('canvas');
+        canvas.id = 'fx-cursor'; canvas.setAttribute('aria-hidden', 'true');
+        Object.assign(canvas.style, { position: 'fixed', left: '0', top: '0', width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: '99999' });
+        // transparent canvas: the shader still paints on white, then we convert "difference from white" into alpha (see end of main())
+        const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, powerPreference: 'low-power' });
+        if (!gl) return null;
+        document.body.append(canvas);
+
+        // Viewport dimensions & Dynamic Chromebook Performance Scaler
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        const isMobileOrChromeOS = /CrOS|Android|Mobile/i.test(navigator.userAgent);
+        let perfScale = 1.0;
+
+        function getEffectiveDpr() {
+            const maxDpr = isMobileOrChromeOS ? 1.0 : 1.25;
+            return Math.min(window.devicePixelRatio || 1, maxDpr) * perfScale;
+        }
+
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            const dpr = getEffectiveDpr();
+            canvas.width = Math.floor(width * dpr);
+            canvas.height = Math.floor(height * dpr);
+            if (gl) {
+                gl.viewport(0, 0, canvas.width, canvas.height);
+            }
+        }
+        on('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Vertex Shader (Fullscreen Quad)
+        const vsSource = `
+            attribute vec2 a_position;
+            void main() {
+                gl_Position = vec4(a_position, 0.0, 1.0);
+            }
+        `;
+
+        // Fragment Shader with Liquid Blob, Fluid Neon Paint & Standby Colliding Orbs
+        const fsSource = `
+            precision mediump float;
+
+            uniform vec2 u_resolution;
+            uniform float u_time;
+            uniform vec2 u_dormant_center;
+            uniform float u_dormant_factor; // 0.0 = Active Cursor, 1.0 = Fully Dormant Orbs
+            uniform vec4 u_dormant_orbs[8]; // Up to 8 Dormant Orbs (x, y, radius, phase)
+            uniform int u_dormant_orb_count;
+            uniform float u_oct_ring_alpha; // Intensity of the fluid octagonal line shape stage
+            uniform float u_oct_progress;   // 0.0 to 1.0 fluid drawing progress around the octagon
+            uniform float u_ferro_alpha;    // Intensity of the magnetic spiky ferrofluid stage
+
+            // Jet Transformation & Laser Beam Uniforms (Triggered by 2x Loop-de-Loop)
+            uniform float u_jet_alpha;      // 0.0 = Liquid Blob, 1.0 = Sleek Liquid Jet
+            uniform float u_jet_angle;      // Heading angle of the jet in WebGL coordinates
+            uniform vec4 u_lasers[12];      // Active laser beams (x, y, angle, life)
+            uniform int u_laser_count;
+            uniform vec4 u_plasma_wave;     // Click plasma shockwave (x, y, radius, life)
+
+            // Liquid Black Blob Node Array (x, y, radius, noise_phase)
+            uniform vec4 u_black_blobs[6];
+            uniform int u_black_count;
+
+            // Glowing Neon Paint Trail & Impact Splash Droplets (x, y, radius, color_type)
+            uniform vec4 u_neon_blobs[48];
+            uniform int u_neon_count;
+
+            // Smooth 4-Color Neon Gradient Palette (Cyan -> Magenta -> Ultraviolet -> Mint)
+            vec3 getNeonColor(float t) {
+                float p = fract(t) * 4.0;
+                vec3 cyan    = vec3(0.0, 0.90, 1.0);
+                vec3 magenta = vec3(1.0, 0.08, 0.65);
+                vec3 violet  = vec3(0.55, 0.15, 1.0);
+                vec3 mint    = vec3(0.0, 0.96, 0.62);
+
+                if (p < 1.0) return mix(cyan, magenta, smoothstep(0.0, 1.0, p));
+                if (p < 2.0) return mix(magenta, violet, smoothstep(1.0, 2.0, p));
+                if (p < 3.0) return mix(violet, mint, smoothstep(2.0, 3.0, p));
+                return mix(mint, cyan, smoothstep(3.0, 4.0, p));
+            }
+
+            void main() {
+                vec2 st = gl_FragCoord.xy;
+                
+                // Base Canvas Background: Pure White
+                vec3 finalColor = vec3(1.0, 1.0, 1.0);
+                float bodyMask = 0.0;
+
+                // --- 1. Compute Fluid Neon Paint Trail & Splash Field ---
+                float neonField = 0.0;
+                vec3 neonColorAccum = vec3(0.0);
+                float totalWeight = 0.0;
+
+                for (int i = 0; i < 48; i++) {
+                    if (i >= u_neon_count) break;
+                    vec4 b = u_neon_blobs[i];
+                    float r = b.z;
+                    if (r <= 0.1) continue;
+
+                    vec2 d = st - b.xy;
+                    float distSq = dot(d, d);
+                    float maxDistSq = r * r * 14.0;
+                    if (distSq < maxDistSq) {
+                        float influence = (r * r) / (distSq + 28.0);
+                        neonField += influence;
+
+                        vec3 blobCol = getNeonColor(b.w);
+                        neonColorAccum += blobCol * influence;
+                        totalWeight += influence;
+                    }
+                }
+
+                // Blend Smooth Neon Paint Field onto Pure White Background
+                if (neonField > 0.015 && totalWeight > 0.0) {
+                    vec3 avgNeonCol = neonColorAccum / totalWeight;
+                    float outerGlow = smoothstep(0.015, 0.35, neonField);
+                    float coreGlow = smoothstep(0.35, 1.35, neonField);
+                    vec3 neonTint = mix(vec3(1.0), avgNeonCol, 0.85);
+                    finalColor = mix(finalColor, neonTint, outerGlow * 0.58);
+                    finalColor = mix(finalColor, avgNeonCol, coreGlow * 0.82);
+                }
+
+                // --- 1.5 Compute Neon Laser Beams & Click Plasma Shockwave (When in Jet Mode) ---
+                for (int i = 0; i < 12; i++) {
+                    if (i >= u_laser_count) break;
+                    vec4 lz = u_lasers[i];
+                    if (lz.w <= 0.01) continue;
+
+                    vec2 dir = vec2(cos(lz.z), sin(lz.z));
+                    vec2 norm = vec2(-dir.y, dir.x);
+                    vec2 rel = st - lz.xy;
+                    float along = dot(rel, dir);
+                    float perp = abs(dot(rel, norm));
+
+                    // Elongated high-energy laser bolt
+                    if (along > -25.0 && along < 95.0 && perp < 24.0) {
+                        float lengthFade = smoothstep(-25.0, 5.0, along) * (1.0 - smoothstep(55.0, 95.0, along));
+                        float beamHalo = exp(-perp * 0.22) * lengthFade * lz.w;
+                        float beamCore = smoothstep(4.2, 0.5, perp) * lengthFade * lz.w;
+
+                        vec3 laserGlowCol = vec3(0.0, 0.92, 1.0);
+                        vec3 laserCoreCol = vec3(1.0, 0.15, 0.75);
+                        finalColor = mix(finalColor, laserGlowCol, min(1.0, beamHalo * 0.85));
+                        finalColor = mix(finalColor, laserCoreCol, min(1.0, beamCore * 0.95));
+                    }
+                }
+
+                // Expanding Neon Plasma Shockwave Ring on Jet Click
+                if (u_plasma_wave.w > 0.01) {
+                    vec2 wRel = st - u_plasma_wave.xy;
+                    float wDist = length(wRel);
+                    float ringDiff = abs(wDist - u_plasma_wave.z);
+                    if (ringDiff < 38.0) {
+                        float waveEnv = exp(-ringDiff * 0.11) * u_plasma_wave.w;
+                        float waveCore = smoothstep(7.5, 0.8, ringDiff) * u_plasma_wave.w;
+                        float angHue = atan(wRel.y, wRel.x) / 6.2831853 + u_time * 0.4;
+                        vec3 waveCol = getNeonColor(angHue);
+                        finalColor = mix(finalColor, waveCol, min(1.0, waveEnv * 0.78));
+                        finalColor = mix(finalColor, vec3(1.0, 0.1, 0.7), min(1.0, waveCore * 0.85));
+                    }
+                }
+
+                // --- 2. Compute Active Liquid Black Cursor & Liquid Jet Field ---
+                float activeBlackField = 0.0;
+                vec2 headPos = u_black_blobs[0].xy;
+                if (u_dormant_factor < 0.995) {
+                    if (u_jet_alpha < 0.995) {
+                        for (int i = 0; i < 6; i++) {
+                            if (i >= u_black_count) break;
+                            vec4 b = u_black_blobs[i];
+                            float r = b.z;
+                            vec2 d = st - b.xy;
+                            float distSq = dot(d, d);
+                            if (distSq < r * r * 16.0) {
+                                float angle = atan(d.y, d.x);
+                                float wave = sin(angle * 3.0 + u_time * 4.2 + b.w) * (r * 0.075);
+                                float effR = r + wave;
+                                activeBlackField += ((effR * effR) / (distSq + 0.001)) * (1.0 - u_jet_alpha);
+                            }
+                        }
+                    }
+
+                    // Sleek Morphing Liquid Fighter Jet SDF
+                    if (u_jet_alpha > 0.005) {
+                        vec2 rel = st - headPos;
+                        if (dot(rel, rel) < 11000.0) {
+                            float c = cos(-u_jet_angle);
+                            float s = sin(-u_jet_angle);
+                            // Local jet coordinates: +x is nose, -x is tail, y is wingspan
+                            vec2 jp = vec2(rel.x * c - rel.y * s, abs(rel.x * s + rel.y * c));
+
+                            // Sleek tapered fuselage
+                            float fuseLen = 30.0 * u_jet_alpha;
+                            float fuseX = clamp(jp.x, -fuseLen * 0.75, fuseLen);
+                            float fuseT = (fuseX + fuseLen * 0.75) / (fuseLen * 1.75);
+                            float fuseR = mix(5.8, 1.6, fuseT) * u_jet_alpha;
+                            float dFuse = length(jp - vec2(fuseX, 0.0)) - fuseR;
+
+                            // Swept delta wings
+                            vec2 wA = vec2(4.0, 2.0) * u_jet_alpha;
+                            vec2 wB = vec2(-18.0, 28.0) * u_jet_alpha;
+                            vec2 pa = jp - wA;
+                            vec2 ba = wB - wA;
+                            float h = clamp(dot(pa, ba) / max(0.001, dot(ba, ba)), 0.0, 1.0);
+                            float dWing = length(pa - ba * h) - mix(4.2, 1.8, h) * u_jet_alpha;
+
+                            // Twin rear tail stabilizers
+                            vec2 tA = vec2(-15.0, 2.0) * u_jet_alpha;
+                            vec2 tB = vec2(-25.0, 12.0) * u_jet_alpha;
+                            vec2 tpa = jp - tA;
+                            vec2 tba = tB - tA;
+                            float th = clamp(dot(tpa, tba) / max(0.001, dot(tba, tba)), 0.0, 1.0);
+                            float dTail = length(tpa - tba * th) - 2.2 * u_jet_alpha;
+
+                            float dJet = min(dFuse, min(dWing, dTail));
+                            float jetField = clamp(1.0 - dJet * 0.22, 0.0, 2.0);
+                            activeBlackField += jetField * u_jet_alpha;
+                        }
+                    }
+                }
+
+                // --- 3. Compute Standby Multi-Stage Orbiting, Fluid Octagon & "are you there" Field ---
+                float dormantBlackField = 0.0;
+                if (u_dormant_factor > 0.005) {
+                    // Render active dormant orbs (2 orbs -> 4 orbs -> 8 octagon vertices -> merge)
+                    for (int i = 0; i < 8; i++) {
+                        if (i >= u_dormant_orb_count) break;
+                        vec4 orb = u_dormant_orbs[i];
+                        float r = orb.z;
+                        if (r <= 0.2) continue;
+
+                        vec2 d = st - orb.xy;
+                        float distSq = dot(d, d);
+                        if (distSq < r * r * 18.0) {
+                            float a = atan(d.y, d.x);
+                            float w = r + sin(a * 3.0 + u_time * 4.5 + orb.w) * (r * 0.085) + cos(a * 5.0 - u_time * 3.2) * (r * 0.04);
+                            dormantBlackField += (w * w) / (distSq + 0.001);
+                        }
+                    }
+
+                    // Render fluid, progressively drawn octagonal line shape during Stage 3
+                    if (u_oct_ring_alpha > 0.01 && u_oct_progress > 0.01) {
+                        vec2 rel = st - u_dormant_center;
+                        float distFromCenter = length(rel);
+                        if (distFromCenter < 120.0) {
+                            float rot = -u_time * 1.15;
+                            float c = cos(rot);
+                            float s = sin(rot);
+                            vec2 p = vec2(rel.x * c - rel.y * s, rel.x * s + rel.y * c);
+
+                            float ang = atan(p.y, p.x);
+                            float normAng = fract(ang / 6.2831853);
+                            float arcMask = 1.0 - smoothstep(u_oct_progress - 0.12, u_oct_progress + 0.02, normAng);
+
+                            if (arcMask > 0.01) {
+                                float sector = 0.78539816;
+                                float localAng = mod(ang + sector * 0.5, sector) - sector * 0.5;
+                                float liquidWave = sin(ang * 8.0 + u_time * 6.0) * 1.8 * u_oct_ring_alpha;
+                                float octDist = length(p) * cos(localAng) + liquidWave;
+
+                                float targetOctR = 54.0;
+                                float lineDist = abs(octDist - targetOctR);
+                                float lineThickness = 4.2 * u_oct_ring_alpha * arcMask;
+                                dormantBlackField += (lineThickness * lineThickness) / (lineDist * lineDist + 1.1);
+                            }
+                        }
+                    }
+
+                    // Render spiky magnetic ferrofluid crown core during Stage 5
+                    if (u_ferro_alpha > 0.01) {
+                        vec2 rel = st - u_dormant_center;
+                        float distSq = dot(rel, rel);
+                        if (distSq < 13000.0) {
+                            float ang = atan(rel.y, rel.x);
+                            // Multi-harmonic magnetic Rosensweig-style ferrofluid spikes
+                            float s1 = pow(max(0.0, cos(ang * 7.0 - u_time * 3.8)), 3.0);
+                            float s2 = pow(max(0.0, sin(ang * 11.0 + u_time * 5.2)), 3.0);
+                            float s3 = pow(max(0.0, cos(ang * 5.0 + u_time * 2.4)), 2.0);
+                            float breathe = 0.85 + 0.15 * sin(u_time * 4.0);
+                            float spikeHeight = (s1 * 21.0 + s2 * 14.0 + s3 * 10.0) * u_ferro_alpha * breathe;
+                            float baseCore = 23.0 * u_ferro_alpha * breathe;
+                            float effFerroR = baseCore + spikeHeight;
+                            dormantBlackField += (effFerroR * effFerroR) / (distSq + 0.001);
+                        }
+                    }
+                }
+
+                // --- 4. Continuously Blend Active Cursor & Standby Orbs ---
+                float smoothFactor = smoothstep(0.0, 1.0, u_dormant_factor);
+                float combinedField = mix(activeBlackField, dormantBlackField, smoothFactor);
+                float effectiveDensity = smoothstep(0.5, 0.96, combinedField);
+
+                // --- 5. Render Anti-Aliased Liquid Black Core & Specular Rim Glow ---
+                if (effectiveDensity > 0.01 || combinedField > 0.5) {
+                    vec3 blackBody = vec3(0.04, 0.04, 0.06);
+                    vec3 rimColor = mix(vec3(0.8, 0.98, 1.0), vec3(1.0, 0.35, 0.9), 0.5 + 0.5 * sin(u_time * 1.8));
+
+                    if (effectiveDensity >= 0.88 || combinedField >= 0.98) {
+                        finalColor = blackBody;
+                        bodyMask = 1.0;
+
+                        vec2 targetCenter = mix(headPos, u_dormant_center, smoothFactor);
+                        vec2 lightDir = vec2(-0.6139, 0.7893);
+                        vec2 dHead = normalize(st - targetCenter + vec2(5.0, -5.0));
+                        float dDot = max(0.0, dot(dHead, lightDir));
+                        float d2 = dDot * dDot;
+                        float d4 = d2 * d2;
+                        float spec = (d4 * d4) * 0.35;
+                        finalColor += vec3(spec);
+                    } else if (effectiveDensity > 0.01) {
+                        float rimAlpha = smoothstep(0.01, 0.45, effectiveDensity) * (1.0 - smoothstep(0.45, 0.85, effectiveDensity));
+                        finalColor = mix(finalColor, rimColor, rimAlpha * 0.92);
+                        if (effectiveDensity > 0.45) {
+                            float fillAlpha = (effectiveDensity - 0.45) / 0.43;
+                            finalColor = mix(finalColor, blackBody, fillAlpha);
+                        }
+                    }
+                }
+
+                float outA = clamp(1.0 - min(finalColor.r, min(finalColor.g, finalColor.b)), 0.0, 1.0);
+                vec3 outRGB = max(finalColor - vec3(1.0 - outA), 0.0);   // premultiplied
+                if (bodyMask > 0.5) { outRGB = finalColor; outA = 1.0; }   // solid black body keeps its specular highlight
+                gl_FragColor = vec4(outRGB, outA);
+            }
+        `;
+
+        // Compile Shaders & Link WebGL Program
+        function compileShader(type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error('Shader compile error:', gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+            return shader;
+        }
+
+        const vertexShader = compileShader(gl.VERTEX_SHADER, vsSource);
+        const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fsSource);
+
+        const program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            console.error('Program link error:', gl.getProgramInfoLog(program));
+        }
+        gl.useProgram(program);
+
+        // Fullscreen Quad Geometry Buffer
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([
+                -1.0, -1.0,
+                 1.0, -1.0,
+                -1.0,  1.0,
+                -1.0,  1.0,
+                 1.0, -1.0,
+                 1.0,  1.0
+            ]),
+            gl.STATIC_DRAW
+        );
+
+        const positionLocation = gl.getAttribLocation(program, 'a_position');
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+        // Cache Uniform Locations
+        const uResolution = gl.getUniformLocation(program, 'u_resolution');
+        const uTime = gl.getUniformLocation(program, 'u_time');
+        const uDormantCenter = gl.getUniformLocation(program, 'u_dormant_center');
+        const uDormantFactor = gl.getUniformLocation(program, 'u_dormant_factor');
+        const uDormantOrbCount = gl.getUniformLocation(program, 'u_dormant_orb_count');
+        const uOctRingAlpha = gl.getUniformLocation(program, 'u_oct_ring_alpha');
+        const uOctProgress = gl.getUniformLocation(program, 'u_oct_progress');
+        const uFerroAlpha = gl.getUniformLocation(program, 'u_ferro_alpha');
+        const uJetAlpha = gl.getUniformLocation(program, 'u_jet_alpha');
+        const uJetAngle = gl.getUniformLocation(program, 'u_jet_angle');
+        const uLaserCount = gl.getUniformLocation(program, 'u_laser_count');
+        const uPlasmaWave = gl.getUniformLocation(program, 'u_plasma_wave');
+        const uBlackCount = gl.getUniformLocation(program, 'u_black_count');
+        const uNeonCount = gl.getUniformLocation(program, 'u_neon_count');
+
+        const uLasersLoc = [];
+        for (let i = 0; i < 12; i++) {
+            uLasersLoc.push(gl.getUniformLocation(program, `u_lasers[${i}]`));
+        }
+
+        const uDormantOrbsLoc = [];
+        for (let i = 0; i < 8; i++) {
+            uDormantOrbsLoc.push(gl.getUniformLocation(program, `u_dormant_orbs[${i}]`));
+        }
+
+        const uBlackBlobsLoc = [];
+        for (let i = 0; i < 6; i++) {
+            uBlackBlobsLoc.push(gl.getUniformLocation(program, `u_black_blobs[${i}]`));
+        }
+
+        const uNeonBlobsLoc = [];
+        for (let i = 0; i < 48; i++) {
+            uNeonBlobsLoc.push(gl.getUniformLocation(program, `u_neon_blobs[${i}]`));
+        }
+
+        // --- Cursor, Fluid Neon Paint & Standby Multi-Stage Physics State ---
+        let mouseX = startPos.x;
+        let mouseY = startPos.y;
+        let targetX = mouseX;
+        let targetY = mouseY;
+        let lastSpawnX = mouseX;
+        let lastSpawnY = mouseY;
+        let dormantCenterX = mouseX;
+        let dormantCenterY = mouseY;
+
+        let isUserInteracting = false;
+        let lastMoveTime = Date.now() - 2000;
+        let dormantFactor = 0.0;
+        const IDLE_THRESHOLD_MS = 1100;
+
+        // Standby Extended Multi-Stage Loop State
+        let orbPhase = 0.0;
+        let lastEventMarker = -1;
+        let octRingAlpha = 0.0;
+        let octProgress = 0.0;
+        let ferroAlpha = 0.0;
+
+        // Initialize 8 dormant orbs array
+        const dormantOrbs = [];
+        for (let i = 0; i < 8; i++) {
+            dormantOrbs.push({ x: mouseX, y: mouseY, r: 0.0, phase: i * 0.85 });
+        }
+
+        const NUM_BLACK_NODES = 6;
+        const blackNodes = [];
+        const BASE_HEAD_RADIUS = 17.5;
+        for (let i = 0; i < NUM_BLACK_NODES; i++) {
+            blackNodes.push({
+                x: mouseX,
+                y: mouseY,
+                vx: 0.0,
+                vy: 0.0,
+                radius: BASE_HEAD_RADIUS * Math.pow(0.75, i),
+                phase: i * 1.15
+            });
+        }
+
+        const MAX_NEON_DROPLETS = 48;
+        const neonDroplets = [];
+
+        // Loop-de-Loop Gesture Detector & Jet Laser Mode State
+        let jetModeTimer = 0.0;
+        let jetAlpha = 0.0;
+        let jetAngle = 0.0;
+        let jetRecoil = 0.0;
+        let laserFireTimer = 0.0;
+        let laserBarrelSide = 1;
+        const lasers = [];
+        const plasmaWave = { x: 0, y: 0, radius: 0, life: 0 };
+        const loopHistory = [];
+        let loopCooldown = 0.0;
+
+        function triggerJetSpecialAttack(x, y) {
+            // Trigger giant expanding neon plasma shockwave ring
+            plasmaWave.x = x;
+            plasmaWave.y = height - y;
+            plasmaWave.radius = 12.0;
+            plasmaWave.life = 1.0;
+
+            // Jet thruster recoil kick & extend jet mode slightly
+            jetRecoil = 18.0;
+            jetModeTimer = Math.max(jetModeTimer, 2.2);
+
+            // Fire a 6-way spread volley of overdrive neon lasers
+            const noseX = x + Math.cos(jetAngle) * 24.0;
+            const noseY = (height - y) + Math.sin(jetAngle) * 24.0;
+            const spreadAngles = [-0.42, -0.25, -0.08, 0.08, 0.25, 0.42];
+            for (let i = 0; i < spreadAngles.length; i++) {
+                lasers.push({
+                    x: noseX,
+                    y: noseY,
+                    angle: jetAngle + spreadAngles[i],
+                    speed: 1750.0,
+                    life: 1.25
+                });
+                if (lasers.length > 12) lasers.shift();
+            }
+
+            // Directional neon plasma blast droplets
+            const baseHue = (performance.now() * 0.0004) % 1.0;
+            for (let i = 0; i < 20; i++) {
+                const coneOffset = (Math.random() - 0.5) * 1.4;
+                const blastAngle = -jetAngle + coneOffset;
+                const speed = 5.0 + Math.random() * 8.5;
+                neonDroplets.push({
+                    x: x + Math.cos(jetAngle) * 16.0,
+                    y: y - Math.sin(jetAngle) * 16.0,
+                    vx: Math.cos(blastAngle) * speed,
+                    vy: Math.sin(blastAngle) * speed,
+                    radius: 8.5 + Math.random() * 6.5,
+                    life: 1.0,
+                    decay: 0.015 + Math.random() * 0.008,
+                    colorType: (baseHue + i * 0.05) % 1.0,
+                    isSatellite: false
+                });
+            }
+        }
+
+        function detectDoubleLoop(x, y, nowMs) {
+            if (loopCooldown > 0.0) return;
+            loopHistory.push({ x, y, t: nowMs });
+            // Keep last 2.4 seconds of movement points
+            while (loopHistory.length > 0 && nowMs - loopHistory[0].t > 2400) {
+                loopHistory.shift();
+            }
+            if (loopHistory.length < 18) return;
+
+            // Compute cumulative turning angle across movement segments
+            let totalTurn = 0.0;
+            let prevAng = null;
+            let pathLen = 0.0;
+            for (let i = 1; i < loopHistory.length; i++) {
+                const dx = loopHistory[i].x - loopHistory[i - 1].x;
+                const dy = loopHistory[i].y - loopHistory[i - 1].y;
+                const seg = Math.hypot(dx, dy);
+                if (seg < 4.0) continue;
+                pathLen += seg;
+                const ang = Math.atan2(dy, dx);
+                if (prevAng !== null) {
+                    let diff = ang - prevAng;
+                    while (diff > Math.PI) diff -= Math.PI * 2;
+                    while (diff < -Math.PI) diff += Math.PI * 2;
+                    totalTurn += diff;
+                }
+                prevAng = ang;
+            }
+
+            // 2 full loops = ~4 * PI radians (~11.2 rad threshold for responsive feel)
+            if (Math.abs(totalTurn) >= 11.2 && pathLen > 260) {
+                jetModeTimer = 6.5;
+                loopCooldown = 2.5;
+                loopHistory.length = 0;
+                squishVel = 11.0;
+
+                // Shockwave neon burst on Jet transformation!
+                const baseHue = (performance.now() * 0.0003) % 1.0;
+                for (let i = 0; i < 16; i++) {
+                    const a = (Math.PI * 2 / 16) * i;
+                    const spd = 4.5 + Math.random() * 5.0;
+                    neonDroplets.push({
+                        x: mouseX,
+                        y: mouseY,
+                        vx: Math.cos(a) * spd,
+                        vy: Math.sin(a) * spd,
+                        radius: 8.0 + Math.random() * 5.0,
+                        life: 1.0,
+                        decay: 0.016,
+                        colorType: (baseHue + i * 0.06) % 1.0,
+                        isSatellite: false
+                    });
+                }
+            }
+        }
+
+        let squish = 1.0;
+        let squishVel = 0.0;
+        let smoothSpeed = 0.0;
+
+        function registerActivity(x, y) {
+            isUserInteracting = true;
+            lastMoveTime = Date.now();
+            targetX = x;
+            targetY = y;
+            detectDoubleLoop(x, y, performance.now());
+        }
+
+        on('mousemove', (e) => {
+            registerActivity(e.clientX, e.clientY);
+        });
+
+        on('mousedown', (e) => {
+            registerActivity(e.clientX, e.clientY);
+            if (jetAlpha > 0.45) {
+                triggerJetSpecialAttack(mouseX, mouseY);
+                return;
+            }
+            squishVel = -9.5;
+            const splashCount = 12;
+            const baseHue = (performance.now() * 0.00025) % 1.0;
+            for (let i = 0; i < splashCount; i++) {
+                const angle = (Math.PI * 2 / splashCount) * i + (Math.random() - 0.5) * 0.35;
+                const speed = 3.0 + Math.random() * 5.5;
+                neonDroplets.push({
+                    x: mouseX,
+                    y: mouseY,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    radius: 8.5 + Math.random() * 6.5,
+                    life: 1.0,
+                    decay: 0.015 + Math.random() * 0.009,
+                    colorType: (baseHue + i * 0.06) % 1.0,
+                    isSatellite: false
+                });
+            }
+        });
+
+        on('touchstart', (e) => {
+            if (e.touches.length > 0) {
+                const t = e.touches[0];
+                registerActivity(t.clientX, t.clientY);
+                if (jetAlpha > 0.45) {
+                    triggerJetSpecialAttack(mouseX, mouseY);
+                    return;
+                }
+                mouseX = t.clientX;
+                mouseY = t.clientY;
+                lastSpawnX = t.clientX;
+                lastSpawnY = t.clientY;
+                squishVel = -9.5;
+            }
+        }, { passive: true });
+
+        on('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                const t = e.touches[0];
+                registerActivity(t.clientX, t.clientY);
+            }
+        }, { passive: true });
+
+        // --- Animation Loop & Dynamic Chromebook Frame Monitor ---
+        const startTime = performance.now();
+        let lastFrameTime = startTime;
+        let slowFrameCounter = 0;
+
+        function render(now) {
+            const rawDt = (now - lastFrameTime) * 0.001;
+            const dt = Math.min(rawDt, 0.05);
+            lastFrameTime = now;
+            const elapsed = (now - startTime) * 0.001;
+
+            if (rawDt > 0.025) {
+                slowFrameCounter++;
+                if (slowFrameCounter > 25 && perfScale > 0.65) {
+                    perfScale = Math.max(0.65, perfScale - 0.15);
+                    resizeCanvas();
+                    slowFrameCounter = 0;
+                }
+            } else {
+                slowFrameCounter = Math.max(0, slowFrameCounter - 1);
+            }
+
+            // 1. Active Cursor Spring-Damper Movement & Continuous Fluid Paint Ribbon
+            const prevMouseX = mouseX;
+            const prevMouseY = mouseY;
+            const followFactor = 1.0 - Math.exp(-dt * 28.0);
+            mouseX += (targetX - mouseX) * followFactor;
+            mouseY += (targetY - mouseY) * followFactor;
+
+            const vx = mouseX - prevMouseX;
+            const vy = mouseY - prevMouseY;
+            const instSpeed = Math.hypot(vx, vy);
+            smoothSpeed += (instSpeed - smoothSpeed) * (1.0 - Math.exp(-dt * 16.0));
+
+            // Update Jet Mode & Laser Firing State
+            if (loopCooldown > 0.0) loopCooldown = Math.max(0.0, loopCooldown - dt);
+            if (jetModeTimer > 0.0) {
+                jetModeTimer = Math.max(0.0, jetModeTimer - dt);
+            }
+            const targetJetAlpha = jetModeTimer > 0.0 ? 1.0 : 0.0;
+            jetAlpha += (targetJetAlpha - jetAlpha) * (1.0 - Math.exp(-dt * 7.5));
+            jetRecoil *= Math.exp(-dt * 12.0);
+
+            if (plasmaWave.life > 0.0) {
+                plasmaWave.radius += 680.0 * dt;
+                plasmaWave.life = Math.max(0.0, plasmaWave.life - dt * 1.45);
+            }
+
+            if (instSpeed > 0.35) {
+                const targetAngle = Math.atan2(-vy, vx); // Flip Y for WebGL coordinates
+                let angleDiff = targetAngle - jetAngle;
+                while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+                while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+                jetAngle += angleDiff * (1.0 - Math.exp(-dt * 14.0));
+            }
+
+            if (jetAlpha > 0.45) {
+                // Rapidly fire alternating wing-mounted neon lasers
+                laserFireTimer -= dt;
+                if (laserFireTimer <= 0.0) {
+                    laserFireTimer = 0.13;
+                    laserBarrelSide *= -1;
+                    const wingOffset = laserBarrelSide * 11.0;
+                    const perpX = -Math.sin(jetAngle);
+                    const perpY = Math.cos(jetAngle);
+                    const noseX = Math.cos(jetAngle) * 18.0;
+                    const noseY = Math.sin(jetAngle) * 18.0;
+
+                    lasers.push({
+                        x: mouseX + noseX + perpX * wingOffset,
+                        y: (height - mouseY) + noseY + perpY * wingOffset,
+                        angle: jetAngle,
+                        speed: 1450.0,
+                        life: 1.0
+                    });
+                    if (lasers.length > 12) lasers.shift();
+                }
+
+                // Afterburner neon exhaust stream from tail
+                if (Math.random() < 0.75) {
+                    const tailX = mouseX - Math.cos(jetAngle) * 20.0;
+                    const tailY = mouseY + Math.sin(jetAngle) * 20.0;
+                    neonDroplets.push({
+                        x: tailX + (Math.random() - 0.5) * 3.0,
+                        y: tailY + (Math.random() - 0.5) * 3.0,
+                        vx: -Math.cos(jetAngle) * 3.2 + (Math.random() - 0.5) * 0.8,
+                        vy: Math.sin(jetAngle) * 3.2 + (Math.random() - 0.5) * 0.8,
+                        radius: 6.5 + Math.random() * 3.5,
+                        life: 1.0,
+                        decay: 0.032,
+                        colorType: (elapsed * 0.4) % 1.0,
+                        isSatellite: false
+                    });
+                }
+            }
+
+            for (let i = lasers.length - 1; i >= 0; i--) {
+                const lz = lasers[i];
+                lz.x += Math.cos(lz.angle) * lz.speed * dt;
+                lz.y += Math.sin(lz.angle) * lz.speed * dt;
+                lz.life -= dt * 1.15;
+                if (lz.life <= 0.0 || lz.x < -120 || lz.x > width + 120 || lz.y < -120 || lz.y > height + 120) {
+                    lasers.splice(i, 1);
+                }
+            }
+
+            const distFromLastSpawn = Math.hypot(mouseX - lastSpawnX, mouseY - lastSpawnY);
+            if (distFromLastSpawn > 2.2 && dormantFactor < 0.75) {
+                const steps = Math.min(8, Math.ceil(distFromLastSpawn / 3.0));
+                const hueBase = (elapsed * 0.22) % 1.0;
+                for (let s = 1; s <= steps; s++) {
+                    const frac = s / steps;
+                    const px = lastSpawnX + (mouseX - lastSpawnX) * frac;
+                    const py = lastSpawnY + (mouseY - lastSpawnY) * frac;
+                    const speedRadius = Math.min(13.5, 7.2 + smoothSpeed * 0.16);
+
+                    neonDroplets.push({
+                        x: px + (Math.random() - 0.5) * 0.5,
+                        y: py + (Math.random() - 0.5) * 0.5,
+                        vx: vx * 0.22 + (Math.random() - 0.5) * 0.18,
+                        vy: vy * 0.22 + (Math.random() - 0.5) * 0.18,
+                        radius: speedRadius * (1.0 - dormantFactor * 0.6),
+                        life: 1.0,
+                        decay: 0.017 + Math.random() * 0.005,
+                        colorType: (hueBase + frac * 0.035) % 1.0,
+                        isSatellite: false
+                    });
+                }
+                lastSpawnX = mouseX;
+                lastSpawnY = mouseY;
+            }
+
+            // 2. Smooth Dormant Transition Envelope (suppressed while flying in Jet mode)
+            const idleDuration = Date.now() - lastMoveTime;
+            const isIdle = idleDuration > IDLE_THRESHOLD_MS && jetModeTimer <= 0.0;
+            const targetDormant = isIdle ? 1.0 : 0.0;
+            const dormantRate = isIdle ? 1.8 : 6.5;
+            dormantFactor += (targetDormant - dormantFactor) * (1.0 - Math.exp(-dt * dormantRate));
+
+            // 3. Extended Standby Animation: 2 Orbs -> 4 Circling Orbs -> Fluid Octagon -> Vortex Spiral -> Ferrofluid -> Loop
+            if (dormantFactor > 0.005) {
+                orbPhase += dt;
+
+                const driftFactor = 1.0 - Math.exp(-dt * 3.0);
+                dormantCenterX += (targetX + Math.cos(elapsed * 1.1) * 6.0 - dormantCenterX) * driftFactor;
+                dormantCenterY += (targetY + Math.sin(elapsed * 1.5) * 6.0 - dormantCenterY) * driftFactor;
+
+                const LOOP_DURATION = 16.5;
+                const loopT = orbPhase % LOOP_DURATION;
+                const loopCount = Math.floor(orbPhase / LOOP_DURATION);
+
+                const smoothRamp = (t, start, peakStart, peakEnd, end) => {
+                    if (t < start || t > end) return 0.0;
+                    if (t < peakStart) {
+                        const u = (t - start) / (peakStart - start);
+                        return u * u * (3.0 - 2.0 * u);
+                    }
+                    if (t > peakEnd) {
+                        const u = 1.0 - (t - peakEnd) / (end - peakEnd);
+                        return u * u * (3.0 - 2.0 * u);
+                    }
+                    return 1.0;
+                };
+
+                // Seamless wrap-around ramp helper so the end of the loop overlaps cleanly with the start
+                const cyclicRamp = (t, duration, start, peakStart, peakEnd, end) => {
+                    const w1 = smoothRamp(t, start, peakStart, peakEnd, end);
+                    const w2 = smoothRamp(t - duration, start, peakStart, peakEnd, end);
+                    const w3 = smoothRamp(t + duration, start, peakStart, peakEnd, end);
+                    return Math.max(w1, Math.max(w2, w3));
+                };
+
+                const stage2Weight      = cyclicRamp(loopT, LOOP_DURATION, -1.1, 0.2,  3.2,  4.0);
+                const stage4Weight      = cyclicRamp(loopT, LOOP_DURATION,  3.2, 4.0,  6.6,  7.4);
+                const stage8Weight      = cyclicRamp(loopT, LOOP_DURATION,  6.6, 7.4,  10.2, 11.0);
+                const stageSpiralWeight = cyclicRamp(loopT, LOOP_DURATION, 10.2, 10.9, 12.6, 13.4);
+                const stageFerroWeight  = cyclicRamp(loopT, LOOP_DURATION, 12.4, 13.2, 15.1, 16.5);
+
+                octRingAlpha = stage8Weight * dormantFactor;
+                const rawOctTrace = Math.max(0.0, Math.min(1.15, (loopT - 6.7) / 1.4));
+                octProgress = rawOctTrace * (stage8Weight > 0.01 ? 1.0 : 0.0);
+                ferroAlpha = stageFerroWeight * dormantFactor;
+
+                // Trigger neon paint bursts on stage transitions and magnetic ferrofluid pulse
+                let markerId = -1;
+                if (loopT >= 1.6 && loopT < 2.0) markerId = loopCount * 10 + 1;
+                else if (loopT >= 3.6 && loopT < 4.0) markerId = loopCount * 10 + 2;
+                else if (loopT >= 7.1 && loopT < 7.5) markerId = loopCount * 10 + 3;
+                else if (loopT >= 12.8 && loopT < 13.2) markerId = loopCount * 10 + 4;
+                else if (loopT >= 15.3 && loopT < 15.7) markerId = loopCount * 10 + 5;
+
+                if (markerId !== -1 && markerId !== lastEventMarker && dormantFactor > 0.45) {
+                    lastEventMarker = markerId;
+                    const splashCount = 15;
+                    const baseHue = (elapsed * 0.25) % 1.0;
+                    for (let s = 0; s < splashCount; s++) {
+                        const sAngle = (Math.PI * 2 / splashCount) * s + (Math.random() - 0.5) * 0.3;
+                        const sSpeed = (3.5 + Math.random() * 6.5) * dormantFactor;
+                        neonDroplets.push({
+                            x: dormantCenterX,
+                            y: dormantCenterY,
+                            vx: Math.cos(sAngle) * sSpeed,
+                            vy: Math.sin(sAngle) * sSpeed,
+                            radius: (6.5 + Math.random() * 6.0) * dormantFactor,
+                            life: 1.0,
+                            decay: 0.015 + Math.random() * 0.01,
+                            colorType: (baseHue + s * 0.05) % 1.0,
+                            isSatellite: false
+                        });
+                    }
+                }
+
+                const baseAngle = elapsed * 1.15;
+                for (let i = 0; i < 8; i++) {
+                    const parent2Idx = i < 4 ? 0 : 1;
+                    const parent4Idx = Math.floor(i / 2);
+
+                    // Stage 1: 2 Orbs spinning & colliding smoothly (emerges from center at loop start)
+                    const bounce2 = Math.pow(Math.abs(Math.sin((loopT / 3.5) * Math.PI * 2.0)), 0.75);
+                    const rad2 = (2.0 + bounce2 * 42.0);
+                    const ang2 = elapsed * 3.2 + parent2Idx * Math.PI + Math.sin(elapsed * 2.0) * 0.25;
+                    const x2 = dormantCenterX + Math.cos(ang2) * rad2;
+                    const y2 = dormantCenterY + Math.sin(ang2) * rad2;
+                    const r2 = (i % 4 === 0) ? (14.5 - bounce2 * 1.5) : 0.0;
+
+                    // Stage 2: 4 Orbs circling with organic figure-8 breathing wave
+                    const rad4 = 44.0 + Math.sin(elapsed * 4.2 + parent4Idx * 1.57) * 6.5;
+                    const ang4 = elapsed * 2.5 + parent4Idx * (Math.PI * 0.5) + Math.cos(elapsed * 2.5 + parent4Idx) * 0.18;
+                    const x4 = dormantCenterX + Math.cos(ang4) * rad4;
+                    const y4 = dormantCenterY + Math.sin(ang4) * rad4;
+                    const r4 = (i % 2 === 0) ? (10.8 + Math.sin(elapsed * 5.0 + parent4Idx) * 1.0) : 0.0;
+
+                    // Stage 3: 8 Octagon vertices with traveling liquid wave
+                    const rad8 = 54.0 + Math.sin(elapsed * 5.5 + i * 0.785) * 3.8;
+                    const ang8 = baseAngle + i * (Math.PI * 0.25);
+                    const x8 = dormantCenterX + Math.cos(ang8) * rad8;
+                    const y8 = dormantCenterY + Math.sin(ang8) * rad8;
+                    const r8 = 7.8 + Math.cos(elapsed * 6.0 + i) * 0.8;
+
+                    // Stage 4: Accelerating Vortex Spiral collapsing inward from the Octagon
+                    const spiralNorm = Math.max(0.0, Math.min(1.0, (loopT - 10.2) / 3.0));
+                    const spiralCurve = spiralNorm * spiralNorm * (3.0 - 2.0 * spiralNorm);
+                    const radSpiral = 54.0 * (1.0 - spiralCurve * 0.86);
+                    const angSpiral = baseAngle + i * (Math.PI * 0.25) + spiralCurve * 12.5;
+                    const xs = dormantCenterX + Math.cos(angSpiral) * radSpiral;
+                    const ys = dormantCenterY + Math.sin(angSpiral) * radSpiral;
+                    const rs = 7.8 * (1.0 - spiralCurve * 0.22);
+
+                    // Stage 5: Orbiting Ferrofluid satellite droplets smoothly retracting into the core at loop end
+                    const ferroEndPull = 1.0 - smoothRamp(loopT, 15.0, 16.5, 17.0, 17.5);
+                    const ferroPulse = (37.0 + Math.sin(elapsed * 7.2 + i * 1.4) * 12.0) * ferroEndPull;
+                    const angFerro = baseAngle * 2.3 + i * (Math.PI * 0.25) + Math.sin(elapsed * 3.5 + i) * 0.2;
+                    const xf = dormantCenterX + Math.cos(angFerro) * ferroPulse;
+                    const yf = dormantCenterY + Math.sin(angFerro) * ferroPulse;
+                    const rf = (4.8 + Math.sin(elapsed * 8.0 + i) * 1.4) * (0.2 + 0.8 * ferroEndPull);
+                    const totalW = Math.max(0.001, stage2Weight + stage4Weight + stage8Weight + stageSpiralWeight + stageFerroWeight);
+                    const bx = (x2 * stage2Weight + x4 * stage4Weight + x8 * stage8Weight + xs * stageSpiralWeight + xf * stageFerroWeight) / totalW;
+                    const by = (y2 * stage2Weight + y4 * stage4Weight + y8 * stage8Weight + ys * stageSpiralWeight + yf * stageFerroWeight) / totalW;
+                    const br = (r2 * stage2Weight + r4 * stage4Weight + r8 * stage8Weight + rs * stageSpiralWeight + rf * stageFerroWeight) / totalW;
+
+                    dormantOrbs[i].x = dormantCenterX + (bx - dormantCenterX) * dormantFactor;
+                    dormantOrbs[i].y = dormantCenterY + (by - dormantCenterY) * dormantFactor;
+                    dormantOrbs[i].r = br * dormantFactor;
+                }
+
+                // Emit continuous neon aura trails during Spiral & Ferrofluid stages
+                if (dormantFactor > 0.3 && Math.random() < 0.52) {
+                    const activeIdx = Math.floor(Math.random() * 8);
+                    const srcOrb = dormantOrbs[activeIdx];
+                    if (srcOrb.r > 2.0) {
+                        const radialOut = stageFerroWeight > 0.3 ? 1.4 : 0.4;
+                        const angOut = Math.atan2(srcOrb.y - dormantCenterY, srcOrb.x - dormantCenterX);
+                        neonDroplets.push({
+                            x: srcOrb.x,
+                            y: srcOrb.y,
+                            vx: Math.cos(angOut) * radialOut + (Math.random() - 0.5) * 0.5,
+                            vy: Math.sin(angOut) * radialOut + (Math.random() - 0.5) * 0.5,
+                            radius: (5.2 + Math.random() * 3.5) * dormantFactor,
+                            life: 1.0,
+                            decay: 0.02 + Math.random() * 0.01,
+                            colorType: (elapsed * 0.24 + activeIdx * 0.125) % 1.0,
+                            isSatellite: true
+                        });
+                    }
+                }
+            } else {
+                orbPhase = 0.0;
+                lastEventMarker = -1;
+                octRingAlpha = 0.0;
+                octProgress = 0.0;
+                ferroAlpha = 0.0;
+                dormantCenterX = targetX;
+                dormantCenterY = targetY;
+                for (let i = 0; i < 8; i++) {
+                    dormantOrbs[i].x = targetX;
+                    dormantOrbs[i].y = targetY;
+                    dormantOrbs[i].r = i === 0 ? BASE_HEAD_RADIUS : 0.0;
+                }
+            }
+
+            // 4. Squish & Elasticity Physics
+            squishVel += (1.0 - squish) * 150.0 * dt;
+            squishVel *= Math.exp(-dt * 13.0);
+            // Update Liquid Black Blob Chain with Velocity-Tapered Teardrop Stretch & Jet Recoil
+            const moveDirX = instSpeed > 0.05 ? vx / instSpeed : 0.0;
+            const moveDirY = instSpeed > 0.05 ? vy / instSpeed : 0.0;
+            const headStretch = Math.min(0.28, smoothSpeed * 0.011);
+            const recoilOffsetX = -Math.cos(jetAngle) * jetRecoil * jetAlpha;
+            const recoilOffsetY = Math.sin(jetAngle) * jetRecoil * jetAlpha;
+
+            blackNodes[0].x = mouseX + moveDirX * (headStretch * 10.0) + recoilOffsetX;
+            blackNodes[0].y = mouseY + moveDirY * (headStretch * 10.0) + recoilOffsetY;
+            blackNodes[0].radius = BASE_HEAD_RADIUS * squish * (1.0 - headStretch * 0.35);
+
+            for (let i = 1; i < NUM_BLACK_NODES; i++) {
+                const prev = blackNodes[i - 1];
+                const curr = blackNodes[i];
+                const nodeStiffness = 1.0 - Math.exp(-dt * (34.0 - i * 2.2));
+                curr.x += (prev.x - curr.x) * nodeStiffness;
+                curr.y += (prev.y - curr.y) * nodeStiffness;
+                const stretchScale = Math.max(0.42, 1.0 - smoothSpeed * 0.010 * i);
+                curr.radius = BASE_HEAD_RADIUS * Math.pow(0.77, i) * stretchScale;
+            }
+
+            // 5. Update Fluid Neon Paint Droplets
+            while (neonDroplets.length > MAX_NEON_DROPLETS) {
+                neonDroplets.shift();
+            }
+
+            for (let i = neonDroplets.length - 1; i >= 0; i--) {
+                const d = neonDroplets[i];
+                // Subtle fluid curl drift
+                const curlAngle = (d.x * 0.012 + d.y * 0.012 + elapsed * 1.4);
+                d.vx = d.vx * 0.94 + Math.cos(curlAngle) * 0.08;
+                d.vy = d.vy * 0.94 + Math.sin(curlAngle) * 0.08;
+                d.x += d.vx;
+                d.y += d.vy;
+                d.life -= d.decay * (dt * 60.0);
+                if (d.life <= 0.01) {
+                    neonDroplets.splice(i, 1);
+                }
+            }
+
+            // 6. Upload Uniforms to GPU
+            const dpr = getEffectiveDpr();
+            gl.uniform2f(uResolution, canvas.width, canvas.height);
+            gl.uniform1f(uTime, elapsed);
+
+            // Dormant state uniforms
+            gl.uniform2f(uDormantCenter, dormantCenterX * dpr, (height - dormantCenterY) * dpr);
+            gl.uniform1f(uDormantFactor, dormantFactor);
+            gl.uniform1f(uOctRingAlpha, octRingAlpha);
+            gl.uniform1f(uOctProgress, octProgress);
+            gl.uniform1f(uFerroAlpha, ferroAlpha);
+            gl.uniform1f(uJetAlpha, jetAlpha);
+            gl.uniform1f(uJetAngle, jetAngle);
+            gl.uniform4f(uPlasmaWave, plasmaWave.x * dpr, plasmaWave.y * dpr, plasmaWave.radius * dpr, plasmaWave.life);
+            const activeLaserCount = Math.min(lasers.length, 12);
+            gl.uniform1i(uLaserCount, activeLaserCount);
+            for (let i = 0; i < activeLaserCount; i++) {
+                const lz = lasers[i];
+                gl.uniform4f(uLasersLoc[i], lz.x * dpr, lz.y * dpr, lz.angle, lz.life);
+            }
+            gl.uniform1i(uDormantOrbCount, 8);
+            for (let i = 0; i < 8; i++) {
+                const dob = dormantOrbs[i];
+                gl.uniform4f(uDormantOrbsLoc[i], dob.x * dpr, (height - dob.y) * dpr, Math.max(0.0, dob.r * dpr), dob.phase);
+            }
+
+            // Black blob chain uniforms
+            gl.uniform1i(uBlackCount, NUM_BLACK_NODES);
+            for (let i = 0; i < NUM_BLACK_NODES; i++) {
+                const bn = blackNodes[i];
+                gl.uniform4f(uBlackBlobsLoc[i], bn.x * dpr, (height - bn.y) * dpr, bn.radius * dpr, bn.phase);
+            }
+
+            // Neon paint droplet uniforms
+            const activeNeonCount = Math.min(neonDroplets.length, MAX_NEON_DROPLETS);
+            gl.uniform1i(uNeonCount, activeNeonCount);
+            for (let i = 0; i < activeNeonCount; i++) {
+                const nd = neonDroplets[i];
+                const currentR = nd.radius * Math.sin(nd.life * Math.PI * 0.5) * dpr;
+                gl.uniform4f(uNeonBlobsLoc[i], nd.x * dpr, (height - nd.y) * dpr, Math.max(0.0, currentR), nd.colorType);
+            }
+
+            // Draw Fullscreen Quad
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+            raf = (running && !suspended) ? requestAnimationFrame(render) : 0;
+        }
+
+        let running = true, suspended = false, raf = 0;
+        raf = requestAnimationFrame(render);
+        function stop() {
+            running = false; cancelAnimationFrame(raf);
+            _ls.splice(0).forEach(([t, f, o]) => window.removeEventListener(t, f, o));
+            try { const ext = gl.getExtension('WEBGL_lose_context'); if (ext) ext.loseContext(); } catch (e) {}
+            canvas.remove();
+        }
+        function suspend() { if (suspended) return; suspended = true; cancelAnimationFrame(raf); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); }
+        function resume() { if (!suspended || !running) return; suspended = false; lastFrameTime = performance.now(); raf = requestAnimationFrame(render); }
+        return { stop, suspend, resume };
+}
+window.OSCursor = {
+  start() { if (!inst) { try { inst = create(); } catch (e) { console.warn('cursor failed', e); inst = null; } } return !!inst; },
+  stop() { if (inst) { inst.stop(); inst = null; } },
+  suspend() { inst && inst.suspend(); },
+  resume() { inst && inst.resume(); },
+  running() { return !!inst; }
+};
+})();
