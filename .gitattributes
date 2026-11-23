@@ -1,0 +1,5 @@
+# ArcadeOS files are LF everywhere. This overrides core.autocrlf=true for these paths, which is what caused
+# GitHub Desktop's "LF will be replaced by CRLF" warning. Older committed files (games/, CLAUDE.md) are left as they are.
+index.html text eol=lf
+os/** text eol=lf
+.gitattributes text eol=lf
