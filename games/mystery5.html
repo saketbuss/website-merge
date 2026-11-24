@@ -1,1095 +1,929 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Ultimate Portal of Randomness</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
-    
-    <style>
-        body {
-            font-family: 'Outfit', sans-serif;
-            background: #090d16;
-            color: #f8fafc;
-            min-height: 100vh;
-            overflow-x: hidden;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aether — Music Discovery & Player</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+            }
+          }
         }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbar for sleek dark theme */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
 
-        .font-fun {
-            font-family: 'Fredoka', cursive;
-        }
+    /* Range slider custom styling */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 5px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      margin-top: -4px;
+      background-color: #10b981;
+      height: 13px;
+      width: 13px;
+      border-radius: 50%;
+      transition: transform 0.15s ease;
+    }
+    input[type="range"]:hover::-webkit-slider-thumb {
+      transform: scale(1.25);
+    }
 
-        /* Glassmorphism Card Style */
-        .glass-card {
-            background: rgba(22, 30, 49, 0.75);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Animated Glowing Buttons */
-        .glow-btn-1 {
-            background: linear-gradient(135deg, #ec4899, #8b5cf6);
-            box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .glow-btn-1:hover {
-            box-shadow: 0 0 30px rgba(236, 72, 153, 0.8);
-            transform: translateY(-3px) scale(1.02);
-        }
-
-        .glow-btn-2 {
-            background: linear-gradient(135deg, #06b6d4, #3b82f6);
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .glow-btn-2:hover {
-            box-shadow: 0 0 30px rgba(6, 182, 212, 0.8);
-            transform: translateY(-3px) scale(1.02);
-        }
-
-        .glow-btn-3 {
-            background: linear-gradient(135deg, #10b981, #f59e0b);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .glow-btn-3:hover {
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.8);
-            transform: translateY(-3px) scale(1.02);
-        }
-
-        .glow-btn-4 {
-            background: linear-gradient(135deg, #a855f7, #ec4899);
-            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .glow-btn-4:hover {
-            box-shadow: 0 0 30px rgba(168, 85, 247, 0.8);
-            transform: translateY(-3px) scale(1.02);
-        }
-
-        .glow-btn-5 {
-            background: linear-gradient(135deg, #f59e0b, #ef4444);
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .glow-btn-5:hover {
-            box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
-            transform: translateY(-3px) scale(1.02);
-        }
-
-        .glow-btn-6 {
-            background: linear-gradient(135deg, #f43f5e, #eab308);
-            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .glow-btn-6:hover {
-            box-shadow: 0 0 30px rgba(244, 63, 94, 0.8);
-            transform: translateY(-3px) scale(1.02);
-        }
-
-        .glow-wildcard {
-            background: linear-gradient(135deg, #ff007f, #7928ca, #4299e1);
-            background-size: 200% 200%;
-            animation: gradientShift 4s ease infinite;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Floating background elements */
-        .floating-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .blob {
-            position: absolute;
-            filter: blur(90px);
-            opacity: 0.2;
-            border-radius: 50%;
-            animation: float 22s infinite ease-in-out;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(40px, -60px) scale(1.15); }
-            66% { transform: translate(-30px, 30px) scale(0.85); }
-        }
-
-        /* Speech bubble pop */
-        .speech-bubble {
-            animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0.9) translateY(12px); opacity: 0; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #090d16;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #334155;
-        }
-
-        /* Modal Fullscreen Utility */
-        .modal-fullscreen {
-            max-width: 98vw !important;
-            height: 94vh !important;
-        }
-    </style>
+    /* Equalizer animation bars */
+    @keyframes eqBounce {
+      0%, 100% { height: 25%; }
+      50% { height: 100%; }
+    }
+    .eq-bar {
+      animation: eqBounce 0.8s ease-in-out infinite;
+    }
+    .eq-bar:nth-child(2) { animation-delay: 0.2s; }
+    .eq-bar:nth-child(3) { animation-delay: 0.4s; }
+  </style>
 </head>
-<body class="relative flex flex-col justify-between min-h-screen">
+<body class="bg-zinc-950 text-zinc-100 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-200 overflow-x-hidden">
 
-    <div class="floating-bg">
-        <div class="blob bg-pink-500 w-96 h-96 -top-10 -left-10"></div>
-        <div class="blob bg-cyan-500 w-96 h-96 top-1/2 -right-10"></div>
-        <div class="blob bg-amber-500 w-80 h-80 -bottom-10 left-1/3"></div>
-        <div class="blob bg-purple-600 w-96 h-96 top-1/4 left-1/2"></div>
+  <!-- Toast Notification Banner (Replaces alert()) -->
+  <div id="toast" class="fixed top-4 right-4 z-50 transform translate-x-full opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-zinc-800 border border-zinc-700 text-zinc-100 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 max-w-sm">
+      <span id="toast-icon" class="text-emerald-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      </span>
+      <p id="toast-message" class="text-sm font-medium"></p>
     </div>
+  </div>
 
-    <header class="relative z-10 w-full max-w-7xl mx-auto px-4 py-6 flex flex-wrap justify-between items-center gap-4">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 flex items-center justify-center text-white text-2xl shadow-lg transform -rotate-6">
-                <i class="fa-solid fa-dice-d20 animate-spin" style="animation-duration: 12s;"></i>
+  <!-- Main App Shell -->
+  <div class="min-h-screen flex flex-col lg:flex-row pb-28">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="w-full lg:w-64 bg-zinc-900/60 border-b lg:border-b-0 lg:border-r border-zinc-800/80 p-4 lg:p-6 flex flex-col justify-between shrink-0">
+      <div>
+        <!-- Brand Header -->
+        <div class="flex items-center justify-between lg:justify-start gap-3 mb-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+              <svg class="w-6 h-6 text-zinc-950" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+              </svg>
             </div>
             <div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold font-fun tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-pink-400 via-purple-300 to-cyan-400">
-                    Portal of Randomness
-                </h1>
-                <p class="text-xs text-slate-400">Where endless curiosity meets total unexpected fun ✨</p>
+              <h1 class="text-xl font-bold tracking-tight text-white">Aether</h1>
+              <p class="text-xs text-zinc-400">Live Catalog & Embeds</p>
             </div>
+          </div>
+
+          <!-- Mobile Spotify Modal Button -->
+          <button onclick="toggleSpotifyModal(true)" class="lg:hidden px-3 py-2 rounded-xl bg-[#1DB954]/15 text-[#1DB954] border border-[#1DB954]/30 text-xs font-semibold flex items-center gap-1.5 hover:bg-[#1DB954]/25 transition">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+            Spotify Link
+          </button>
         </div>
 
-        <div class="flex items-center gap-3 glass-card px-4 py-2 rounded-2xl">
-            <button id="soundToggle" onclick="toggleSound()" class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-700/50 transition" title="Toggle Sound FX">
-                <i id="soundIcon" class="fa-solid fa-volume-high text-lg"></i>
-            </button>
-            <div class="h-6 w-px bg-slate-700"></div>
-            <div class="flex items-center gap-2 text-sm font-semibold">
-                <span class="text-slate-400">Rolls:</span>
-                <span id="clickCounter" class="text-pink-400 font-bold font-fun text-lg">0</span>
-            </div>
-            <div class="h-6 w-px bg-slate-700"></div>
-            <button onclick="clearHistory()" class="text-xs text-slate-400 hover:text-red-400 transition" title="Clear History">
-                <i class="fa-solid fa-trash-can"></i>
-            </button>
-        </div>
-    </header>
+        <!-- Navigation Tabs -->
+        <nav class="flex lg:flex-col gap-2 overflow-x-auto pb-2 lg:pb-0">
+          <button id="nav-home" onclick="switchView('home')" class="nav-btn active flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-zinc-800 text-white transition whitespace-nowrap">
+            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            Home
+          </button>
+          <button id="nav-discover" onclick="switchView('discover')" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition whitespace-nowrap">
+            <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            Search Results
+          </button>
+          <button id="nav-favorites" onclick="switchView('favorites')" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition whitespace-nowrap">
+            <svg class="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+            Liked Tracks
+            <span id="fav-count" class="ml-auto bg-zinc-800 text-zinc-300 text-xs px-2 py-0.5 rounded-full">0</span>
+          </button>
+          <button id="nav-spotify" onclick="toggleSpotifyModal(true)" class="hidden lg:flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition whitespace-nowrap">
+            <svg class="w-5 h-5 text-[#1DB954]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+            Spotify Link Player
+          </button>
+        </nav>
 
-    <main class="relative z-10 flex-1 max-w-7xl mx-auto px-4 py-4 w-full flex flex-col gap-8">
-        
-        <div class="text-center max-w-2xl mx-auto space-y-2">
-            <h2 class="text-3xl sm:text-4xl font-extrabold font-fun text-white">Choose Your Portal 🎯</h2>
-            <p class="text-slate-300 text-sm">
-                Explore secret websites, teleport in Street View, test our Akinator Mind Reader, or unleash weird audio & facts!
+        <!-- Curated Genres / Quick Queries -->
+        <div class="hidden lg:block mt-8">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-500 px-3 mb-3">Quick Moods & Genres</h3>
+          <div class="space-y-1">
+            <button onclick="quickSearch('Synthwave Retrowave')" class="w-full text-left px-3 py-2 rounded-lg text-sm text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition">🌆 Synthwave & Neon</button>
+            <button onclick="quickSearch('Lo-Fi Chill Beats')" class="w-full text-left px-3 py-2 rounded-lg text-sm text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition">☕ Lo-Fi Study Beats</button>
+            <button onclick="quickSearch('Indie Pop Hits')" class="w-full text-left px-3 py-2 rounded-lg text-sm text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition">🎸 Indie Pop Essentials</button>
+            <button onclick="quickSearch('Jazz Piano Instrumental')" class="w-full text-left px-3 py-2 rounded-lg text-sm text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition">🎷 Midnight Jazz</button>
+            <button onclick="quickSearch('Cyberpunk Electronic')" class="w-full text-left px-3 py-2 rounded-lg text-sm text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition">⚡ Electronic & Bass</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Source Badge -->
+      <div class="hidden lg:block mt-6 p-3.5 rounded-xl bg-zinc-950/80 border border-zinc-800/80">
+        <div class="flex items-center gap-2 text-xs font-medium text-emerald-400 mb-1">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Live Catalog Connected
+        </div>
+        <p class="text-[11px] text-zinc-400 leading-relaxed">
+          Streaming instant audio previews via iTunes API + native Spotify iframe embed support.
+        </p>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+      
+      <!-- Search Header -->
+      <header class="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between mb-8">
+        <form id="search-form" class="relative flex-1 max-w-2xl">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Search any song, artist, or album..." 
+            class="w-full bg-zinc-900 border border-zinc-800 text-zinc-100 placeholder-zinc-500 text-sm rounded-2xl pl-11 pr-24 py-3.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition shadow-inner"
+          />
+          <button type="submit" class="absolute right-2 top-1.5 bottom-1.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs rounded-xl transition">
+            Search
+          </button>
+        </form>
+
+        <!-- Mobile Genre Pills -->
+        <div class="flex lg:hidden gap-2 overflow-x-auto pb-1">
+          <button onclick="quickSearch('Top Hits 2026')" class="px-3 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300 whitespace-nowrap">🔥 Top Hits</button>
+          <button onclick="quickSearch('Lo-Fi Chill')" class="px-3 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300 whitespace-nowrap">☕ Lo-Fi</button>
+          <button onclick="quickSearch('Synthwave')" class="px-3 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300 whitespace-nowrap">🌆 Synthwave</button>
+          <button onclick="quickSearch('Hip Hop')" class="px-3 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-zinc-300 whitespace-nowrap">🎤 Hip-Hop</button>
+        </div>
+      </header>
+
+      <!-- Home Hub View (Hero Search + Browse Categories + Diverse Trending Mix) -->
+      <div id="home-view" class="space-y-8 mb-8">
+        <!-- Hero Search Banner -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500/20 via-zinc-900 to-teal-900/30 border border-zinc-800/90 p-6 sm:p-10">
+          <div class="max-w-2xl">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-semibold mb-4">
+              ✨ Discover Millions of Tracks
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
+              What do you want to listen to today?
+            </h2>
+            <p class="text-sm sm:text-base text-zinc-300 mb-6 leading-relaxed">
+              Search any artist, song, or mood above—or jump right in with popular artists and genres below.
             </p>
+            <!-- Popular Artist Quick Chips -->
+            <div class="flex flex-wrap gap-2">
+              <button onclick="quickSearch('The Weeknd')" class="px-3.5 py-2 rounded-xl bg-zinc-900/90 hover:bg-emerald-500 hover:text-zinc-950 border border-zinc-700/80 text-xs font-semibold text-zinc-200 transition">The Weeknd</button>
+              <button onclick="quickSearch('Sabrina Carpenter')" class="px-3.5 py-2 rounded-xl bg-zinc-900/90 hover:bg-emerald-500 hover:text-zinc-950 border border-zinc-700/80 text-xs font-semibold text-zinc-200 transition">Sabrina Carpenter</button>
+              <button onclick="quickSearch('Kendrick Lamar')" class="px-3.5 py-2 rounded-xl bg-zinc-900/90 hover:bg-emerald-500 hover:text-zinc-950 border border-zinc-700/80 text-xs font-semibold text-zinc-200 transition">Kendrick Lamar</button>
+              <button onclick="quickSearch('Billie Eilish')" class="px-3.5 py-2 rounded-xl bg-zinc-900/90 hover:bg-emerald-500 hover:text-zinc-950 border border-zinc-700/80 text-xs font-semibold text-zinc-200 transition">Billie Eilish</button>
+              <button onclick="quickSearch('Bruno Mars')" class="px-3.5 py-2 rounded-xl bg-zinc-900/90 hover:bg-emerald-500 hover:text-zinc-950 border border-zinc-700/80 text-xs font-semibold text-zinc-200 transition">Bruno Mars</button>
+              <button onclick="quickSearch('Tame Impala')" class="px-3.5 py-2 rounded-xl bg-zinc-900/90 hover:bg-emerald-500 hover:text-zinc-950 border border-zinc-700/80 text-xs font-semibold text-zinc-200 transition">Tame Impala</button>
+            </div>
+          </div>
         </div>
 
-        <!-- PORTAL BUTTONS GRID -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-6 gap-5">
-            
-            <!-- PORTAL 1: Random Website -->
-            <div class="glass-card rounded-3xl p-5 flex flex-col justify-between items-center text-center group hover:border-pink-500/50 transition-all duration-300">
-                <div class="space-y-3 w-full">
-                    <div class="w-16 h-16 mx-auto rounded-2xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 text-2xl group-hover:scale-110 transition duration-300">
-                        <i class="fa-solid fa-globe"></i>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-pink-400 bg-pink-500/10 px-2.5 py-0.5 rounded-full border border-pink-500/20">Portal #1</span>
-                        <h3 class="text-lg font-extrabold text-white font-fun mt-1.5">Random Website</h3>
-                        <p class="text-slate-400 text-xs mt-1">Discover fascinating, safe & cool web projects.</p>
-                    </div>
-                </div>
-
-                <button onclick="launchRandomWebsite()" class="glow-btn-1 w-full mt-5 py-3.5 px-4 rounded-xl font-fun text-sm font-bold text-white flex items-center justify-center gap-2">
-                    <span>Teleport Web</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </button>
-            </div>
-
-            <!-- PORTAL 2: Street View Teleport -->
-            <div class="glass-card rounded-3xl p-5 flex flex-col justify-between items-center text-center group hover:border-cyan-500/50 transition-all duration-300">
-                <div class="space-y-3 w-full">
-                    <div class="w-16 h-16 mx-auto rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl group-hover:scale-110 transition duration-300">
-                        <i class="fa-solid fa-compass"></i>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-cyan-400 bg-cyan-500/10 px-2.5 py-0.5 rounded-full border border-cyan-500/20">Portal #2</span>
-                        <h3 class="text-lg font-extrabold text-white font-fun mt-1.5">Street View</h3>
-                        <p class="text-slate-400 text-xs mt-1">Jump to breathtaking & crazy places on Google Maps!</p>
-                    </div>
-                </div>
-
-                <button onclick="launchRandomStreetView()" class="glow-btn-2 w-full mt-5 py-3.5 px-4 rounded-xl font-fun text-sm font-bold text-white flex items-center justify-center gap-2">
-                    <span>Explore Spot</span>
-                    <i class="fa-solid fa-street-view"></i>
-                </button>
-            </div>
-
-            <!-- PORTAL 3: Goofy Sentence -->
-            <div class="glass-card rounded-3xl p-5 flex flex-col justify-between items-center text-center group hover:border-emerald-500/50 transition-all duration-300">
-                <div class="space-y-3 w-full">
-                    <div class="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl group-hover:scale-110 transition duration-300">
-                        <i class="fa-solid fa-face-grin-tears"></i>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">Portal #3</span>
-                        <h3 class="text-lg font-extrabold text-white font-fun mt-1.5">Goofy Sentence</h3>
-                        <p class="text-slate-400 text-xs mt-1">Nonsensical wisdom & random quote generator.</p>
-                    </div>
-                </div>
-
-                <button onclick="generateGoofySentence()" class="glow-btn-3 w-full mt-5 py-3.5 px-4 rounded-xl font-fun text-sm font-bold text-white flex items-center justify-center gap-2">
-                    <span>Generate Goof</span>
-                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                </button>
-            </div>
-
-            <!-- PORTAL 4: Akinator Mind Reader -->
-            <div class="glass-card rounded-3xl p-5 flex flex-col justify-between items-center text-center group hover:border-purple-500/50 transition-all duration-300 border border-purple-500/20">
-                <div class="space-y-3 w-full">
-                    <div class="w-16 h-16 mx-auto rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-2xl group-hover:scale-110 transition duration-300">
-                        <i class="fa-solid fa-brain"></i>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-purple-400 bg-purple-500/10 px-2.5 py-0.5 rounded-full border border-purple-500/20">Portal #4</span>
-                        <h3 class="text-lg font-extrabold text-white font-fun mt-1.5">Akinator Genie</h3>
-                        <p class="text-slate-400 text-xs mt-1">Think of a character & I'll guess who it is!</p>
-                    </div>
-                </div>
-
-                <button onclick="openAkinatorModal()" class="glow-btn-4 w-full mt-5 py-3.5 px-4 rounded-xl font-fun text-sm font-bold text-white flex items-center justify-center gap-2">
-                    <span>Play Akinator</span>
-                    <i class="fa-solid fa-hat-wizard"></i>
-                </button>
-            </div>
-
-            <!-- PORTAL 5: Weird Fact / Sound Synth -->
-            <div class="glass-card rounded-3xl p-5 flex flex-col justify-between items-center text-center group hover:border-amber-500/50 transition-all duration-300">
-                <div class="space-y-3 w-full">
-                    <div class="w-16 h-16 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl group-hover:scale-110 transition duration-300">
-                        <i class="fa-solid fa-lightbulb"></i>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">Portal #5</span>
-                        <h3 class="text-lg font-extrabold text-white font-fun mt-1.5">Weird Facts</h3>
-                        <p class="text-slate-400 text-xs mt-1">Bizarre & shocking real-world trivia.</p>
-                    </div>
-                </div>
-
-                <button onclick="generateWeirdFact()" class="glow-btn-5 w-full mt-5 py-3.5 px-4 rounded-xl font-fun text-sm font-bold text-white flex items-center justify-center gap-2">
-                    <span>Uncover Fact</span>
-                    <i class="fa-solid fa-bolt"></i>
-                </button>
-            </div>
-
-            <!-- PORTAL 6: Random Jokes & Puns -->
-            <div class="glass-card rounded-3xl p-5 flex flex-col justify-between items-center text-center group hover:border-rose-500/50 transition-all duration-300">
-                <div class="space-y-3 w-full">
-                    <div class="w-16 h-16 mx-auto rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 text-2xl group-hover:scale-110 transition duration-300">
-                        <i class="fa-solid fa-face-laugh-squint"></i>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-rose-400 bg-rose-500/10 px-2.5 py-0.5 rounded-full border border-rose-500/20">Portal #6</span>
-                        <h3 class="text-lg font-extrabold text-white font-fun mt-1.5">Jokes & Puns</h3>
-                        <p class="text-slate-400 text-xs mt-1">Hilarious one-liners, dad jokes & clever puns!</p>
-                    </div>
-                </div>
-
-                <button onclick="generateRandomJoke()" class="glow-btn-6 w-full mt-5 py-3.5 px-4 rounded-xl font-fun text-sm font-bold text-white flex items-center justify-center gap-2">
-                    <span>Tell Joke</span>
-                    <i class="fa-solid fa-face-laugh-beam"></i>
-                </button>
-            </div>
-
-        </div>
-
-        <!-- WILDCARD / SURPRISE ME BAR -->
-        <div class="glass-card p-5 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4 border border-purple-500/30">
-            <div class="flex items-center gap-4 text-center sm:text-left">
-                <div class="w-12 h-12 rounded-2xl bg-purple-500/20 flex items-center justify-center text-purple-300 text-xl shrink-0 mx-auto sm:mx-0">
-                    <i class="fa-solid fa-shuffle"></i>
-                </div>
-                <div>
-                    <h4 class="font-fun text-base font-bold text-white">Can't decide? Try the Wildcard!</h4>
-                    <p class="text-xs text-slate-400">Roll the cosmic wheel to launch a completely surprise experience.</p>
-                </div>
-            </div>
-            <button onclick="triggerWildcard()" class="glow-wildcard px-8 py-3.5 rounded-2xl font-fun text-white font-bold hover:opacity-90 active:scale-95 transition shadow-lg w-full sm:w-auto shrink-0 text-sm">
-                🎲 Surprise Me!
+        <!-- Browse Genres Grid -->
+        <div>
+          <h3 class="text-lg font-bold text-white mb-4">Browse by Vibe</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+            <button onclick="quickSearch('Pop Hits')" class="p-4 rounded-2xl bg-gradient-to-br from-pink-500/20 to-rose-600/10 border border-pink-500/20 hover:border-pink-500/50 text-left transition group">
+              <div class="text-2xl mb-2">🔥</div>
+              <div class="text-sm font-bold text-white group-hover:text-pink-300">Pop Hits</div>
             </button>
+            <button onclick="quickSearch('Hip Hop Rap')" class="p-4 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-600/10 border border-amber-500/20 hover:border-amber-500/50 text-left transition group">
+              <div class="text-2xl mb-2">🎤</div>
+              <div class="text-sm font-bold text-white group-hover:text-amber-300">Hip-Hop</div>
+            </button>
+            <button onclick="quickSearch('R&B Soul')" class="p-4 rounded-2xl bg-gradient-to-br from-purple-500/20 to-indigo-600/10 border border-purple-500/20 hover:border-purple-500/50 text-left transition group">
+              <div class="text-2xl mb-2">💜</div>
+              <div class="text-sm font-bold text-white group-hover:text-purple-300">R&B & Soul</div>
+            </button>
+            <button onclick="quickSearch('Rock Classics')" class="p-4 rounded-2xl bg-gradient-to-br from-red-500/20 to-zinc-800/40 border border-red-500/20 hover:border-red-500/50 text-left transition group">
+              <div class="text-2xl mb-2">🎸</div>
+              <div class="text-sm font-bold text-white group-hover:text-red-300">Rock</div>
+            </button>
+            <button onclick="quickSearch('Electronic Dance')" class="p-4 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-600/10 border border-cyan-500/20 hover:border-cyan-500/50 text-left transition group">
+              <div class="text-2xl mb-2">⚡</div>
+              <div class="text-sm font-bold text-white group-hover:text-cyan-300">Electronic</div>
+            </button>
+            <button onclick="quickSearch('Lo-Fi Chill')" class="p-4 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-600/10 border border-emerald-500/20 hover:border-emerald-500/50 text-left transition group">
+              <div class="text-2xl mb-2">☕</div>
+              <div class="text-sm font-bold text-white group-hover:text-emerald-300">Chill & Lo-Fi</div>
+            </button>
+          </div>
         </div>
+      </div>
 
-        <!-- DYNAMIC SENTENCE / FACT DISPLAY BANNER -->
-        <div id="textOutputContainer" class="hidden speech-bubble glass-card p-6 rounded-3xl border border-emerald-500/40 relative overflow-hidden">
-            <div id="outputAccentBar" class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div class="space-y-2 flex-1">
-                    <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider" id="outputBadge">
-                        <i class="fa-solid fa-quote-left"></i>
-                        <span>Freshly Baked Goofiness</span>
-                    </div>
-                    <p id="textOutput" class="text-xl sm:text-2xl font-fun font-bold text-slate-100 leading-snug">
-                        "Loading sentence..."
-                    </p>
-                </div>
-                <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
-                    <button onclick="speakText()" class="p-3 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-xl transition border border-slate-700" title="Read Aloud">
-                        <i class="fa-solid fa-volume-high"></i>
-                    </button>
-                    <button onclick="copyText()" class="p-3 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-xl transition border border-slate-700" title="Copy to Clipboard">
-                        <i class="fa-solid fa-copy"></i>
-                    </button>
-                </div>
-            </div>
+      <!-- Section Title & Status -->
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 id="section-title" class="text-2xl font-bold text-white tracking-tight">Fresh Mix For You</h2>
+          <p id="section-subtitle" class="text-sm text-zinc-400 mt-0.5">A curated mix of different artists — click any track to play</p>
         </div>
+      </header>
 
-        <!-- HISTORY RECENT ROLLS -->
-        <div class="glass-card p-6 rounded-3xl space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="font-fun text-lg font-bold text-slate-200 flex items-center gap-2">
-                    <i class="fa-solid fa-clock-rotate-left text-purple-400"></i>
-                    Recent Portal Log
-                </h3>
-                <span class="text-xs text-slate-500" id="historyCount">0 items logged</span>
-            </div>
-
-            <div id="historyList" class="flex flex-col gap-2 max-h-56 overflow-y-auto pr-1">
-                <p id="emptyHistoryMsg" class="text-center py-6 text-xs text-slate-500 italic">
-                    No random journeys yet! Click any portal button above to log your adventures here.
-                </p>
-            </div>
+      <!-- Section Title & Status -->
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 id="section-title" class="text-2xl font-bold text-white tracking-tight">Trending & Featured</h2>
+          <p id="section-subtitle" class="text-sm text-zinc-400 mt-0.5">Click any track to stream high-quality audio preview</p>
         </div>
+        <div id="results-badge" class="hidden sm:inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-zinc-900 border border-zinc-800 text-zinc-400">
+          0 tracks
+        </div>
+      </div>
+
+      <!-- Loading Skeleton Grid -->
+      <div id="loading-grid" class="hidden grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5">
+        <!-- Populated via JS -->
+      </div>
+
+      <!-- Tracks Grid -->
+      <div id="tracks-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5">
+        <!-- Populated via JS -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="empty-state" class="hidden flex-col items-center justify-center py-20 text-center">
+        <div class="w-16 h-16 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-4 text-zinc-500">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+        </div>
+        <h3 id="empty-title" class="text-lg font-semibold text-white">No tracks found</h3>
+        <p id="empty-desc" class="text-sm text-zinc-400 max-w-md mt-1">Try searching for another artist, track title, or genre.</p>
+      </div>
 
     </main>
+  </div>
 
-    <!-- STREET VIEW MODAL -->
-    <div id="streetViewModal" class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
-        <div id="streetViewCard" class="glass-card w-full max-w-5xl rounded-3xl overflow-hidden flex flex-col h-[85vh] transition-all duration-300 border border-cyan-500/30">
-            <!-- Modal Header -->
-            <div class="px-5 py-3.5 border-b border-slate-800 flex justify-between items-center bg-slate-900/80 shrink-0">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
-                        <i class="fa-solid fa-location-dot"></i>
-                    </div>
-                    <div>
-                        <h3 id="modalLocTitle" class="font-fun font-bold text-white text-base sm:text-lg">Mysterious Location</h3>
-                        <p id="modalLocCoords" class="text-[11px] text-slate-400">Lat: 0.00, Lng: 0.00</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="toggleStreetViewFullscreen()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition" title="Toggle Fullscreen">
-                        <i id="fsIcon" class="fa-solid fa-expand"></i>
-                    </button>
-                    <button onclick="closeStreetViewModal()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Modal Content - Street View Embed -->
-            <div class="relative flex-1 bg-slate-950 w-full h-full overflow-hidden flex items-center justify-center">
-                <iframe id="streetViewIframe" class="w-full h-full border-0" loading="lazy" allowfullscreen src=""></iframe>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="px-5 py-3.5 bg-slate-900/80 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-3 shrink-0">
-                <p id="modalLocDescription" class="text-xs text-slate-300 text-center sm:text-left">
-                    Use mouse drag or touch to look around 360 degrees!
-                </p>
-                <div class="flex items-center gap-2 w-full sm:w-auto">
-                    <button onclick="launchRandomStreetView()" class="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-dice"></i>
-                        <span>Another Spot</span>
-                    </button>
-                    <a id="modalDirectLink" target="_blank" rel="noopener noreferrer" href="#" class="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold transition flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20">
-                        <span>Open Maps</span>
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    </a>
-                </div>
-            </div>
+  <!-- Spotify Link Embed Modal -->
+  <div id="spotify-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl transform transition-all">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2.5">
+          <svg class="w-6 h-6 text-[#1DB954]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          <h3 class="text-lg font-bold text-white">Spotify URL Embedder</h3>
         </div>
+        <button onclick="toggleSpotifyModal(false)" class="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <p class="text-xs text-zinc-400 mb-4 leading-relaxed">
+        Paste any Spotify Track, Playlist, Album, or Artist link below to load the official Spotify player directly inside Aether.
+      </p>
+
+      <div class="flex gap-2 mb-4">
+        <input 
+          type="text" 
+          id="spotify-url-input" 
+          placeholder="https://open.spotify.com/track/..." 
+          value="https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M"
+          class="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-[#1DB954]"
+        />
+        <button onclick="loadSpotifyEmbed()" class="px-4 py-2.5 bg-[#1DB954] hover:bg-[#1ed760] text-zinc-950 font-bold text-xs rounded-xl transition whitespace-nowrap">
+          Load Player
+        </button>
+      </div>
+
+      <!-- Iframe Container -->
+      <div id="spotify-iframe-wrapper" class="rounded-xl overflow-hidden bg-zinc-950 border border-zinc-800 min-h-[152px] flex items-center justify-center">
+        <iframe 
+          id="spotify-iframe"
+          style="border-radius:12px" 
+          src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" 
+          width="100%" 
+          height="352" 
+          frameBorder="0" 
+          allowfullscreen="" 
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+          loading="lazy">
+        </iframe>
+      </div>
     </div>
+  </div>
 
-    <!-- WEBSITE PREVIEW MODAL -->
-    <div id="websiteModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-card w-full max-w-lg rounded-3xl p-6 border border-pink-500/30 text-center space-y-5">
-            <div class="w-16 h-16 mx-auto rounded-2xl bg-pink-500/20 text-pink-400 flex items-center justify-center text-3xl">
-                <i class="fa-solid fa-paper-plane"></i>
-            </div>
-            <div>
-                <span id="webCategoryTag" class="text-xs font-bold text-pink-400 bg-pink-500/10 px-3 py-1 rounded-full border border-pink-500/20">Interactive Experience</span>
-                <h3 id="webModalTitle" class="text-2xl font-extrabold font-fun text-white mt-2">Awesome Website</h3>
-                <p id="webModalDesc" class="text-xs text-slate-300 mt-2 leading-relaxed">Description goes here...</p>
-            </div>
-
-            <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-center text-xs font-mono text-pink-300 truncate" id="webModalUrl">
-                https://example.com
-            </div>
-
-            <div class="flex items-center gap-3 pt-2">
-                <button onclick="closeWebsiteModal()" class="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-fun text-sm font-bold transition">
-                    Cancel
-                </button>
-                <a id="webModalLaunchBtn" target="_blank" rel="noopener noreferrer" href="#" onclick="closeWebsiteModal()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white font-fun text-sm font-bold shadow-lg shadow-pink-500/30 transition flex items-center justify-center gap-2">
-                    <span>Visit Site</span>
-                    <i class="fa-solid fa-external-link"></i>
-                </a>
-            </div>
+  <!-- Persistent Bottom Audio Player Bar -->
+  <footer class="fixed bottom-0 inset-x-0 z-40 bg-zinc-900/95 backdrop-blur-xl border-t border-zinc-800/90 px-4 py-3 shadow-2xl">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      
+      <!-- Left: Track Info -->
+      <div class="flex items-center gap-3.5 w-full sm:w-1/3 min-w-0">
+        <div class="relative w-12 h-12 rounded-xl overflow-hidden bg-zinc-800 shrink-0 shadow-md">
+          <img id="player-artwork" src="https://placehold.co/120x120/18181b/34d399?text=♪" alt="Album Art" class="w-full h-full object-cover" />
+          <div id="player-eq" class="hidden absolute inset-0 bg-black/50 items-end justify-center gap-1 p-3">
+            <span class="eq-bar w-1 bg-emerald-400 rounded-full"></span>
+            <span class="eq-bar w-1 bg-emerald-400 rounded-full"></span>
+            <span class="eq-bar w-1 bg-emerald-400 rounded-full"></span>
+          </div>
         </div>
-    </div>
-
-    <!-- AKINATOR GENIE MODAL -->
-    <div id="akinatorModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-card w-full max-w-xl rounded-3xl p-6 sm:p-8 border border-purple-500/40 relative overflow-hidden flex flex-col space-y-6">
-            
-            <!-- Modal Close Header -->
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-purple-500/20 text-purple-300 flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-hat-wizard animate-bounce"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-fun text-xl font-bold text-white">Akinator - Mind Reader</h3>
-                        <p class="text-xs text-purple-300">Think of a character or celebrity!</p>
-                    </div>
-                </div>
-                <button onclick="closeAkinatorModal()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <!-- AKINATOR SCREEN 1: INTRO -->
-            <div id="akiIntroScreen" class="text-center space-y-5 py-4">
-                <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-tr from-purple-600 to-pink-500 p-1 shadow-xl shadow-purple-500/30">
-                    <div class="w-full h-full bg-slate-900 rounded-full flex items-center justify-center text-4xl text-purple-300">
-                        🧙‍♂️
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <h4 class="font-fun text-2xl text-white font-extrabold">Think of ANY famous character!</h4>
-                    <p class="text-xs text-slate-300 max-w-md mx-auto leading-relaxed">
-                        It could be SpongeBob, Batman, Pikachu, Harry Potter, Mario, Santa Claus, Mona Lisa, or Minecraft Steve! I will read your mind with a few questions!
-                    </p>
-                </div>
-                <button onclick="startAkinatorGame()" class="glow-btn-4 w-full py-4 rounded-2xl font-fun text-lg font-bold text-white shadow-lg">
-                    🔮 Start Mind Reading!
-                </button>
-            </div>
-
-            <!-- AKINATOR SCREEN 2: QUESTIONS -->
-            <div id="akiQuestionScreen" class="hidden space-y-6 py-2">
-                <div class="flex justify-between items-center text-xs text-purple-300 font-bold">
-                    <span id="akiQNum">Question #1</span>
-                    <span id="akiConfidence">Confidence: 10%</span>
-                </div>
-                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                    <div id="akiProgressBar" class="bg-gradient-to-r from-purple-500 to-pink-500 h-full w-0 transition-all duration-300"></div>
-                </div>
-
-                <div class="p-6 rounded-2xl bg-slate-900/90 border border-purple-500/30 text-center min-h-[120px] flex items-center justify-center">
-                    <p id="akiQuestionText" class="font-fun text-xl sm:text-2xl text-white font-bold">
-                        "Is your character real in real life?"
-                    </p>
-                </div>
-
-                <!-- Answer Buttons -->
-                <div class="grid grid-cols-2 gap-3">
-                    <button onclick="answerAkinator('yes')" class="p-3.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/40 border border-emerald-500/50 text-emerald-300 font-fun font-bold text-base transition active:scale-95">
-                        ✅ Yes
-                    </button>
-                    <button onclick="answerAkinator('no')" class="p-3.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/40 border border-rose-500/50 text-rose-300 font-fun font-bold text-base transition active:scale-95">
-                        ❌ No
-                    </button>
-                    <button onclick="answerAkinator('probably')" class="p-3.5 rounded-xl bg-amber-600/20 hover:bg-amber-600/40 border border-amber-500/50 text-amber-300 font-fun font-bold text-sm transition active:scale-95">
-                        🤔 Probably
-                    </button>
-                    <button onclick="answerAkinator('unknown')" class="p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-fun font-bold text-sm transition active:scale-95">
-                        🤷 Don't Know
-                    </button>
-                </div>
-            </div>
-
-            <!-- AKINATOR SCREEN 3: GUESS REVEAL -->
-            <div id="akiRevealScreen" class="hidden text-center space-y-5 py-4">
-                <div class="w-28 h-28 mx-auto rounded-3xl bg-gradient-to-tr from-purple-500 via-pink-500 to-amber-400 p-1 shadow-2xl shadow-purple-500/40 animate-pulse">
-                    <div class="w-full h-full bg-slate-900 rounded-[22px] flex items-center justify-center text-5xl" id="akiRevealEmoji">
-                        🧙‍♂️
-                    </div>
-                </div>
-                <div class="space-y-1">
-                    <span class="text-xs font-bold text-purple-400 uppercase tracking-widest">I think of...</span>
-                    <h4 id="akiGuessName" class="font-fun text-3xl font-extrabold text-white">SpongeBob SquarePants!</h4>
-                    <p id="akiGuessDesc" class="text-xs text-slate-300 pt-1">Lives in a pineapple under the sea!</p>
-                </div>
-
-                <div class="flex gap-3 pt-2">
-                    <button onclick="restartAkinator()" class="flex-1 py-3.5 rounded-2xl bg-purple-600 hover:bg-purple-500 font-fun text-white text-sm font-bold transition shadow-lg">
-                        🎉 You Got It! Play Again
-                    </button>
-                    <button onclick="restartAkinator()" class="flex-1 py-3.5 rounded-2xl bg-slate-800 hover:bg-slate-700 font-fun text-slate-300 text-sm font-bold transition">
-                        😅 Wrong Guess! Retry
-                    </button>
-                </div>
-            </div>
-
+        <div class="min-w-0 flex-1">
+          <h4 id="player-title" class="text-sm font-semibold text-white truncate">Select a track to play</h4>
+          <p id="player-artist" class="text-xs text-zinc-400 truncate">Ready to stream</p>
         </div>
+        <button id="player-fav-btn" onclick="toggleCurrentFavorite()" class="p-2 rounded-xl text-zinc-400 hover:text-rose-400 transition shrink-0" title="Save to Liked Tracks">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+        </button>
+      </div>
+
+      <!-- Center: Playback Controls & Scrubber -->
+      <div class="flex flex-col items-center w-full sm:w-1/3 max-w-md">
+        <div class="flex items-center gap-5 mb-1.5">
+          <button onclick="playPrevious()" class="p-2 text-zinc-400 hover:text-white transition" title="Previous Track">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+          </button>
+          
+          <button id="play-pause-btn" onclick="togglePlayPause()" class="w-10 h-10 rounded-full bg-white hover:bg-emerald-400 text-zinc-950 flex items-center justify-center transition transform active:scale-95 shadow-lg">
+            <svg id="play-icon" class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <svg id="pause-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          </button>
+
+          <button onclick="playNext()" class="p-2 text-zinc-400 hover:text-white transition" title="Next Track">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          </button>
+        </div>
+
+        <div class="w-full flex items-center gap-2.5 text-[11px] font-medium text-zinc-400">
+          <span id="current-time" class="w-8 text-right tabular-nums">0:00</span>
+          <input type="range" id="seek-slider" min="0" max="100" value="0" class="flex-1" />
+          <span id="total-duration" class="w-8 tabular-nums">0:30</span>
+        </div>
+      </div>
+
+      <!-- Right: Volume & External Links -->
+      <div class="hidden sm:flex items-center justify-end gap-3 w-1/3">
+        <a id="open-spotify-search" href="https://open.spotify.com" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-300 flex items-center gap-1.5 transition" title="Find full track on Spotify">
+          <span>Full Track</span>
+          <svg class="w-3.5 h-3.5 text-[#1DB954]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        </a>
+
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+          <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.8" class="w-20" />
+        </div>
+      </div>
+
     </div>
+  </footer>
 
-    <!-- TOAST NOTIFICATION -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl glass-card border border-emerald-500/50 text-emerald-300 text-xs sm:text-sm font-bold shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300">
-        <i class="fa-solid fa-circle-check text-base"></i>
-        <span id="toastMsg">Action completed!</span>
-    </div>
+  <!-- Hidden HTML5 Audio Element -->
+  <audio id="audio-player" preload="none"></audio>
 
-    <footer class="relative z-10 py-6 text-center text-xs text-slate-500 border-t border-slate-800/50 mt-10">
-        <p>Built for endless curiosity & silly moments. Safe & fun for everyone!</p>
-    </footer>
+  <script>
+    // ==========================================
+    // Application State
+    // ==========================================
+    const state = {
+      tracks: [],
+      homeMixTracks: [],
+      favorites: JSON.parse(localStorage.getItem('aether_favorites') || '[]'),
+      currentTrack: null,
+      currentIndex: -1,
+      isPlaying: false,
+      currentView: 'home', // 'home' | 'discover' | 'favorites'
+      lastQuery: ''
+    };
 
-    <script>
-        let soundEnabled = true;
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        let audioCtx;
+    // DOM Elements
+    const audio = document.getElementById('audio-player');
+    const tracksGrid = document.getElementById('tracks-grid');
+    const loadingGrid = document.getElementById('loading-grid');
+    const emptyState = document.getElementById('empty-state');
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input');
+    const seekSlider = document.getElementById('seek-slider');
+    const volumeSlider = document.getElementById('volume-slider');
 
-        function playSound(type) {
-            if (!soundEnabled) return;
-            try {
-                if (!audioCtx) audioCtx = new AudioContext();
-                if (audioCtx.state === 'suspended') audioCtx.resume();
+    // ==========================================
+    // Initialization & Event Listeners
+    // ==========================================
+    window.addEventListener('DOMContentLoaded', () => {
+      updateFavCount();
+      renderSkeletons();
+      fetchHomeMix();
+      audio.volume = volumeSlider.value;
+    });
 
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
+    searchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const query = searchInput.value.trim();
+      if (!query) return;
+      state.lastQuery = query;
+      switchView('discover', false);
+      fetchMusic(query);
+    });
 
-                const now = audioCtx.currentTime;
+    // Audio Events
+    audio.addEventListener('timeupdate', () => {
+      if (!audio.duration) return;
+      const progress = (audio.currentTime / audio.duration) * 100;
+      seekSlider.value = progress;
+      document.getElementById('current-time').textContent = formatTime(audio.currentTime);
+      document.getElementById('total-duration').textContent = formatTime(audio.duration);
+    });
 
-                if (type === 'click') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(400, now);
-                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.1);
-                    gain.gain.setValueAtTime(0.15, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-                    osc.start(now);
-                    osc.stop(now + 0.1);
-                } else if (type === 'teleport') {
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(200, now);
-                    osc.frequency.exponentialRampToValueAtTime(700, now + 0.25);
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-                    osc.start(now);
-                    osc.stop(now + 0.25);
-                } else if (type === 'goofy') {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(300, now);
-                    osc.frequency.setValueAtTime(550, now + 0.08);
-                    osc.frequency.setValueAtTime(280, now + 0.16);
-                    gain.gain.setValueAtTime(0.12, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-                    osc.start(now);
-                    osc.stop(now + 0.25);
-                } else if (type === 'magic') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(523.25, now);
-                    osc.frequency.setValueAtTime(659.25, now + 0.08);
-                    osc.frequency.setValueAtTime(783.99, now + 0.16);
-                    osc.frequency.setValueAtTime(1046.50, now + 0.24);
-                    gain.gain.setValueAtTime(0.15, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-                    osc.start(now);
-                    osc.stop(now + 0.35);
-                } else if (type === 'joke') {
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(350, now);
-                    osc.frequency.exponentialRampToValueAtTime(700, now + 0.15);
-                    osc.frequency.exponentialRampToValueAtTime(450, now + 0.3);
-                    gain.gain.setValueAtTime(0.18, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-                    osc.start(now);
-                    osc.stop(now + 0.35);
-                }
-            } catch (e) {
-                console.log('Audio playback prevented');
-            }
-        }
+    audio.addEventListener('ended', () => {
+      playNext();
+    });
 
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            const icon = document.getElementById('soundIcon');
-            if (soundEnabled) {
-                icon.className = 'fa-solid fa-volume-high text-lg';
-                showToast('Sound Effects Enabled 🔊');
-            } else {
-                icon.className = 'fa-solid fa-volume-xmark text-lg text-slate-500';
-                showToast('Sound Effects Muted 🔇');
-            }
-        }
+    audio.addEventListener('play', () => {
+      state.isPlaying = true;
+      updatePlayerUI();
+    });
 
-        const coolWebsites = [
-            { name: "Neal.fun", url: "https://neal.fun/", desc: "A mind-blowing universe of creative mini-games & web simulations.", category: "Interactive Games" },
-            { name: "Quick, Draw!", url: "https://quickdraw.withgoogle.com/", desc: "Can an AI recognize your doodles? Help train neural networks by drawing!", category: "AI & Games" },
-            { name: "Radio Garden", url: "https://radio.garden/", desc: "Rotate a 3D globe to tune into live radio stations anywhere on Earth.", category: "Music & World" },
-            { name: "Window Swap", url: "https://window-swap.com/", desc: "Look out through someone else's window somewhere in the world.", category: "Relaxing Experience" },
-            { name: "Hacker Typer", url: "https://hackertyper.net/", desc: "Type randomly on your keyboard and look like a Hollywood computing hacker!", category: "Fun & Pranks" },
-            { name: "Zoomquilt", url: "https://zoomquilt.org/", desc: "An infinitely zooming, mesmerizing piece of collaborative fantasy art.", category: "Visual Art" },
-            { name: "Pointer Pointer", url: "https://pointerpointer.com/", desc: "Move your cursor anywhere, and it finds a photo of someone pointing at it!", category: "Classic Web Magic" },
-            { name: "Stellarium Web", url: "https://stellarium-web.org/", desc: "An interactive planetarium that shows realistic 3D stars & constellations.", category: "Astronomy" },
-            { name: "Fluid Simulation", url: "https://fluid-simulation.netlify.app/", desc: "Play with colorful, satisfying fluid physics right in your browser.", category: "Visual Physics" },
-            { name: "Earth Nullschool", url: "https://earth.nullschool.net/", desc: "A live global 3D visualization of weather, ocean currents, and wind.", category: "Science & Geography" },
-            { name: "Silk - Generative Art", url: "http://weavesilk.com/", desc: "Create breathtaking, symmetrical flame artwork with cursor movements.", category: "Creativity" },
-            { name: "Incredibox", url: "https://www.incredibox.com/demo/", desc: "Create cool beatbox tunes with a crew of animated musical characters.", category: "Music Creator" },
-            { name: "AirPano", url: "https://www.airpano.com/", desc: "High-resolution 360-degree aerial panoramas of world landmarks.", category: "Virtual Travel" },
-            { name: "SuperCook", url: "https://www.supercook.com/", desc: "Tell it what ingredients you have, and it gives you matching recipes!", category: "Useful Tool" },
-            { name: "Sandspiel", url: "https://sandspiel.club/", desc: "A falling sand physics sandbox game where elements react together.", category: "Physics Sandbox" },
-            { name: "Drive & Listen", url: "https://driveandlisten.herokuapp.com/", desc: "Drive through world cities while listening to local radio stations.", category: "Virtual Travel" },
-            { name: "Bouncy Balls", url: "https://bouncyballs.org/", desc: "Bouncy balls that react to sound from your microphone or mouse clicks.", category: "Interactive Physics" },
-            { name: "Procjam Map Generator", url: "https://watabou.itch.io/medieval-fantasy-city-generator", desc: "Procedurally generate fantasy medieval city maps instantly.", category: "Fantasy Generator" }
-        ];
+    audio.addEventListener('pause', () => {
+      state.isPlaying = false;
+      updatePlayerUI();
+    });
 
-        const streetViewLocations = [
-            { title: "Grand Canyon Rim", lat: 36.0544, lng: -112.1401, country: "USA 🇺🇸", desc: "Stand on the edge of one of the world's seven natural wonders!" },
-            { title: "Eiffel Tower Grounds", lat: 48.8584, lng: 2.2945, country: "France 🇫🇷", desc: "Gaze directly up at the iconic iron tower in Paris." },
-            { title: "The Colosseum", lat: 41.8902, lng: 12.4922, country: "Italy 🇮🇹", desc: "Walk around the ancient Roman amphitheater built in 80 AD." },
-            { title: "Taj Mahal Gardens", lat: 27.1751, lng: 78.0421, country: "India 🇮🇳", desc: "Admire the stunning white marble monument along the Yamuna river." },
-            { title: "Machu Picchu Citadel", lat: -13.1631, lng: -72.5450, country: "Peru 🇵🇪", desc: "High in the Andes mountains, explore the mysterious Inca sanctuary." },
-            { title: "Shibuya Crossing", lat: 35.6595, lng: 139.7005, country: "Japan 🇯🇵", desc: "Experience the world's busiest pedestrian intersection under neon lights." },
-            { title: "Penguins in Antarctica", lat: -64.7327, lng: -62.5938, country: "Antarctica ❄️", desc: "Chill with real wild penguins in icy Antarctica!" },
-            { title: "Stonehenge Monoliths", lat: 51.1789, lng: -1.8262, country: "UK 🇬🇧", desc: "Prehistoric stone circle set in the rolling green hills." },
-            { title: "Great Pyramids of Giza", lat: 29.9792, lng: 31.1342, country: "Egypt 🇪🇬", desc: "Marvel at the oldest of the Seven Wonders of the Ancient World." },
-            { title: "Venice Canals", lat: 45.4371, lng: 12.3326, country: "Italy 🇮🇹", desc: "Float through the romantic waterways and historic bridges of Venice." },
-            { title: "NASA Rocket Garden", lat: 28.5729, lng: -80.6490, country: "USA 🇺🇸", desc: "Check out space shuttle launch pads & giant space rockets!" },
-            { title: "Mount Fuji Crater Summit", lat: 35.3606, lng: 138.7274, country: "Japan 🇯🇵", desc: "Look out from the crater rim of Japan's highest volcano." },
-            { title: "Easter Island Moai Statues", lat: -27.1212, lng: -109.3667, country: "Chile 🇨🇱", desc: "Discover the giant stone monoliths carved centuries ago." },
-            { title: "Hollywood Sign Trail", lat: 34.1341, lng: -118.3215, country: "USA 🇺🇸", desc: "Enjoy the iconic scenic view looking over Los Angeles." },
-            { title: "Santorini Cliffside", lat: 36.3932, lng: 25.4615, country: "Greece 🇬🇷", desc: "Walk past blue-domed white houses overlooking the Aegean Sea." },
-            { title: "Banff National Park Lake", lat: 51.4254, lng: -116.1773, country: "Canada 🇨🇦", desc: "Crystal turquoise glacial lake surrounded by majestic Rocky Mountains." }
-        ];
+    seekSlider.addEventListener('input', () => {
+      if (!audio.duration) return;
+      audio.currentTime = (seekSlider.value / 100) * audio.duration;
+    });
 
-        const subjects = ["A hyperactive squirrel", "An emotional potato", "A secret agent flamingo", "My neighbor's toaster", "A disco-dancing Yeti", "A confused astronaut", "An aristocratic llama", "A cosmic jellybean", "A rubber chicken named Bob", "A detective penguin", "A caffeinated sloth", "A taco with trust issues"];
-        const verbs = ["accidentally hacked", "tried to challenge", "enthusiastically high-fived", "started a union with", "wrote a love letter to", "challenged a duel against", "teleported inside", "tried to hypnotize", "sang opera to", "invented a rocket for", "stole a unicycle from"];
-        const objects = ["a bowl of soggy cereal", "a rogue roomba", "the local mayor", "a mysterious disco ball", "a giant inflatable duck", "a slice of pineapple pizza", "a guarded golden waffle", "a sentient jukebox", "a bucket of glitter", "a pair of sparkling crocs"];
-        const locations = ["inside a Walmart at 3 AM.", "on top of Mount Everest.", "during a quiet library study session.", "in an underground badger fortress.", "at a high-stakes bingo tournament.", "in zero gravity.", "inside a giant jar of pickles.", "while riding a riding lawnmower."];
+    volumeSlider.addEventListener('input', () => {
+      audio.volume = volumeSlider.value;
+    });
 
-        const weirdFacts = [
-            "Bananas are naturally slightly radioactive because they contain potassium-40!",
-            "Wombats are the only known animals in the universe that produce cube-shaped poop.",
-            "Sharks existed on Earth before trees were ever formed!",
-            "Honey never expires. Edible 3,000-year-old honey was discovered in ancient Egyptian tombs.",
-            "Octopuses have three hearts, blue blood, and nine brains!",
-            "A group of flamingos is officially called a 'Flamboyance'.",
-            "Cows have best friends and get stressed out when they are separated from them.",
-            "Nintendo was founded all the way back in 1889 as a playing card company!",
-            "Sloths can hold their breath underwater longer than dolphins can (up to 40 minutes).",
-            "The total weight of all ants on Earth is roughly equal to the total weight of all humans."
-        ];
+    // ==========================================
+    // API Fetching (iTunes Search API)
+    // ==========================================
+    async function fetchHomeMix() {
+      showLoading(true);
+      document.getElementById('section-title').textContent = 'Fresh Mix For You';
+      document.getElementById('section-subtitle').textContent = 'Loading a variety of trending artists...';
 
-        const randomJokes = [
-            "An apple a day keeps anyone away if you throw it hard enough.",
-            "I told my computer I needed a break, and now it won't stop sending me KitKats.",
-            "My daily routine: 1. Wake up. 2. Be epic. 3. Go back to sleep.",
-            "I’m not lazy, I’m just on energy-saving mode.",
-            "I don't need a hair dryer, my life is already full of hot air.",
-            "Why do we tell actors to 'break a leg'? Because every play has a cast.",
-            "I asked my dog what 2 minus 2 is. He said nothing.",
-            "My wallet is like an onion: opening it makes me cry.",
-            "I am on a seafood diet. I see food and I eat it.",
-            "I told my friend to embrace his mistakes. He gave me a hug.",
-            "I'm reading a book about anti-gravity. It’s impossible to put down.",
-            "My teacher told me not to worry about spelling, but it really bothers me.",
-            "Why don't skeletons fight each other? They don't have the guts.",
-            "I didn't fail the test. I just found 100 ways to do it wrong.",
-            "My Wi-Fi went down for 5 minutes, so I talked to my family. They seem like nice people.",
-            "I'm not arguing, I'm just explaining why I'm right.",
-            "If at first you don't succeed, then skydiving definitely isn't for you.",
-            "I used to think I was indecisive, but now I'm not so sure.",
-            "Knowledge is knowing a tomato is a fruit; wisdom is not putting it in a fruit salad.",
-            "I put my phone on airplane mode, but it’s still on the table.",
-            "I asked the barista for something cold and sweet, so she gave me a frozen ice cube.",
-            "What do you call a fake noodle? An impasta.",
-            "I only know 25 letters of the alphabet. I don't know y.",
-            "Why did the scarecrow win an award? Because he was outstanding in his field.",
-            "What do you call a belt made of watches? A waist of time.",
-            "Why do cows have hooves instead of feet? Because they lactose.",
-            "I would tell you a joke about construction, but I'm still working on it.",
-            "Why don't scientists trust atoms? Because they make up everything.",
-            "What do you call a sleeping dinosaur? A dino-snore.",
-            "Why did the bicycle fall over? Because it was two-tired.",
-            "What starts with E, ends with E, but only contains one letter? An envelope.",
-            "How does a penguin build its house? Igloos it together.",
-            "Why did the math book look sad? Because it had too many problems.",
-            "What do you call a cheese that isn't yours? Nacho cheese.",
-            "Why was the broom late? It over-swept.",
-            "What do you call a bear with no teeth? A gummy bear.",
-            "Why did the golfer bring two pairs of pants? In case he got a hole in one.",
-            "How do trees access the internet? They log in.",
-            "What do you call a fish without eyes? A fsh.",
-            "Why couldn't the pony sing a solo? Because he was a little hoarse."
-        ];
+      // Fetch a diverse set of popular artists so Home isn't stuck on one artist
+      const seedArtists = ['The Weeknd', 'Billie Eilish', 'Kendrick Lamar', 'Sabrina Carpenter', 'Tame Impala'];
+      try {
+        const requests = seedArtists.map(artist =>
+          fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(artist)}&media=music&entity=song&limit=4`)
+            .then(res => res.json())
+        );
 
-        const akinatorCharacters = [
-            { name: "SpongeBob SquarePants", desc: "Yellow sponge who lives in a pineapple under the sea!", emoji: "🧽", real: false, animated: true, hero: true, human: false, game: false },
-            { name: "Batman / Bruce Wayne", desc: "The Dark Knight defender of Gotham City!", emoji: "🦇", real: false, animated: false, hero: true, human: true, game: false },
-            { name: "Pikachu", desc: "Iconic yellow electric mouse Pokemon!", emoji: "⚡", real: false, animated: true, hero: true, human: false, game: true },
-            { name: "Harry Potter", desc: "The Boy Who Lived, wizard at Hogwarts!", emoji: "⚡", real: false, animated: false, hero: true, human: true, game: false },
-            { name: "Mario", desc: "Nintendo's famous Italian plumber!", emoji: "🍄", real: false, animated: true, hero: true, human: true, game: true },
-            { name: "Santa Claus", desc: "Delivers presents down the chimney on Christmas!", emoji: "🎅", real: false, animated: false, hero: true, human: true, game: false },
-            { name: "Minecraft Steve", desc: "The blocky survival hero from Minecraft!", emoji: "🟩", real: false, animated: true, hero: true, human: true, game: true },
-            { name: "Mona Lisa", desc: "Famous mysterious portrait painted by Da Vinci!", emoji: "🖼️", real: true, animated: false, hero: false, human: true, game: false },
-            { name: "Albert Einstein", desc: "Genius theoretical physicist who developed relativity!", emoji: "🧠", real: true, animated: false, hero: false, human: true, game: false },
-            { name: "Darth Vader", desc: "Sith Lord with a red lightsaber from Star Wars!", emoji: "⚔️", real: false, animated: false, hero: false, human: true, game: false }
-        ];
+        const responses = await Promise.all(requests);
+        const mixed = [];
 
-        const akiQuestions = [
-            { key: "real", text: "Is your character a real person from real life?" },
-            { key: "animated", text: "Is your character animated or from a cartoon/anime?" },
-            { key: "game", text: "Is your character originally from a video game?" },
-            { key: "human", text: "Is your character a human being?" },
-            { key: "hero", text: "Is your character considered a good guy or hero?" }
-        ];
-
-        let akiCurrentQIndex = 0;
-        let akiCandidates = [];
-        let clickCount = 0;
-        let currentTextOutput = "";
-        let history = [];
-
-        function incrementClicks() {
-            clickCount++;
-            document.getElementById('clickCounter').innerText = clickCount;
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastMsg').innerText = message;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
-        }
-
-        function logHistory(type, title, detail, actionUrl = null) {
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            history.unshift({ type, title, detail, time, actionUrl });
-            if (history.length > 20) history.pop();
-            renderHistory();
-        }
-
-        function renderHistory() {
-            const historyList = document.getElementById('historyList');
-            const emptyMsg = document.getElementById('emptyHistoryMsg');
-            document.getElementById('historyCount').innerText = `${history.length} logged`;
-
-            if (history.length === 0) {
-                emptyMsg.classList.remove('hidden');
-                historyList.innerHTML = '';
-                historyList.appendChild(emptyMsg);
-                return;
-            }
-
-            emptyMsg.classList.add('hidden');
-            historyList.innerHTML = '';
-
-            history.forEach((item) => {
-                let badgeClass = "bg-pink-500/10 text-pink-400 border-pink-500/20";
-                let icon = "fa-globe";
-
-                if (item.type === 'Street View') { badgeClass = "bg-cyan-500/10 text-cyan-400 border-cyan-500/20"; icon = "fa-compass"; }
-                else if (item.type === 'Goofy Sentence') { badgeClass = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"; icon = "fa-face-grin-tears"; }
-                else if (item.type === 'Akinator') { badgeClass = "bg-purple-500/10 text-purple-400 border-purple-500/20"; icon = "fa-brain"; }
-                else if (item.type === 'Weird Fact') { badgeClass = "bg-amber-500/10 text-amber-400 border-amber-500/20"; icon = "fa-lightbulb"; }
-                else if (item.type === 'Joke & Pun') { badgeClass = "bg-rose-500/10 text-rose-400 border-rose-500/20"; icon = "fa-face-laugh-squint"; }
-
-                const div = document.createElement('div');
-                div.className = "flex items-center justify-between p-3 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs hover:border-slate-700 transition";
-                
-                div.innerHTML = `
-                    <div class="flex items-center gap-3 overflow-hidden pr-2">
-                        <span class="px-2.5 py-1 rounded-xl font-bold border ${badgeClass} shrink-0 flex items-center gap-1.5">
-                            <i class="fa-solid ${icon}"></i>
-                            ${item.type}
-                        </span>
-                        <div class="truncate">
-                            <span class="font-bold text-slate-200">${item.title}</span>
-                            <p class="text-slate-400 truncate text-[11px]">${item.detail}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 shrink-0">
-                        <span class="text-[10px] text-slate-500">${item.time}</span>
-                        ${item.actionUrl ? `<a href="${item.actionUrl}" target="_blank" class="p-1.5 text-slate-400 hover:text-white transition"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>` : ''}
-                    </div>
-                `;
-                historyList.appendChild(div);
+        responses.forEach(data => {
+          (data.results || [])
+            .filter(item => item.previewUrl)
+            .forEach(item => {
+              mixed.push({
+                id: item.trackId,
+                title: item.trackName,
+                artist: item.artistName,
+                album: item.collectionName,
+                artwork: item.artworkUrl100 ? item.artworkUrl100.replace('100x100bb', '400x400bb') : 'https://placehold.co/400x400/18181b/34d399?text=Music',
+                previewUrl: item.previewUrl,
+                genre: item.primaryGenreName || 'Music'
+              });
             });
+        });
+
+        // Shuffle the mixed tracks so different artists appear side-by-side
+        for (let i = mixed.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [mixed[i], mixed[j]] = [mixed[j], mixed[i]];
         }
 
-        function clearHistory() {
-            history = [];
-            renderHistory();
-            showToast("History log cleared!");
+        state.homeMixTracks = mixed;
+        showLoading(false);
+        if (state.currentView === 'home') {
+          renderTracks(state.homeMixTracks);
+        }
+      } catch (error) {
+        showLoading(false);
+        showToast('Could not load home recommendations.');
+      }
+    }
+
+    async function fetchMusic(query) {
+      showLoading(true);
+      document.getElementById('section-title').textContent = `Results for "${query}"`;
+      document.getElementById('section-subtitle').textContent = 'Fetching live audio previews...';
+
+      try {
+        const encodedQuery = encodeURIComponent(query);
+        const response = await fetch(`https://itunes.apple.com/search?term=${encodedQuery}&media=music&entity=song&limit=25`);
+        
+        if (!response.ok) {
+          throw new Error('Network response failed');
         }
 
-        function launchRandomWebsite() {
-            playSound('click');
-            incrementClicks();
+        const data = await response.json();
+        
+        // Filter out items without a previewUrl and map to clean objects
+        state.tracks = (data.results || [])
+          .filter(item => item.previewUrl)
+          .map(item => ({
+            id: item.trackId,
+            title: item.trackName,
+            artist: item.artistName,
+            album: item.collectionName,
+            // Upgrade 100x100 artwork to crisp 400x400 high-res artwork
+            artwork: item.artworkUrl100 ? item.artworkUrl100.replace('100x100bb', '400x400bb') : 'https://placehold.co/400x400/18181b/34d399?text=Music',
+            previewUrl: item.previewUrl,
+            genre: item.primaryGenreName || 'Music'
+          }));
 
-            const randomSite = coolWebsites[Math.floor(Math.random() * coolWebsites.length)];
+        showLoading(false);
+        renderTracks(state.tracks);
+      } catch (error) {
+        showLoading(false);
+        showToast('Failed to fetch music catalog. Check your connection.');
+        renderTracks([]);
+      }
+    }
 
-            document.getElementById('webCategoryTag').innerText = randomSite.category;
-            document.getElementById('webModalTitle').innerText = randomSite.name;
-            document.getElementById('webModalDesc').innerText = randomSite.desc;
-            document.getElementById('webModalUrl').innerText = randomSite.url;
-            document.getElementById('webModalLaunchBtn').href = randomSite.url;
+    function quickSearch(term) {
+      searchInput.value = term;
+      state.lastQuery = term;
+      switchView('discover', false);
+      fetchMusic(term);
+    }
 
-            const modal = document.getElementById('websiteModal');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            modal.classList.add('opacity-100', 'pointer-events-auto');
+    // ==========================================
+    // Rendering Functions
+    // ==========================================
+    function renderSkeletons() {
+      loadingGrid.innerHTML = Array(10).fill(0).map(() => `
+        <div class="bg-zinc-900/70 border border-zinc-800/80 rounded-2xl p-3.5 animate-pulse">
+          <div class="aspect-square rounded-xl bg-zinc-800 mb-3"></div>
+          <div class="h-4 bg-zinc-800 rounded w-3/4 mb-2"></div>
+          <div class="h-3 bg-zinc-800 rounded w-1/2"></div>
+        </div>
+      `).join('');
+    }
 
-            logHistory('Random Web', randomSite.name, randomSite.desc, randomSite.url);
+    function showLoading(isLoading) {
+      if (isLoading) {
+        loadingGrid.classList.remove('hidden');
+        loadingGrid.classList.add('grid');
+        tracksGrid.classList.add('hidden');
+        emptyState.classList.add('hidden');
+      } else {
+        loadingGrid.classList.add('hidden');
+        loadingGrid.classList.remove('grid');
+      }
+    }
+
+    function renderTracks(trackList) {
+      const badge = document.getElementById('results-badge');
+      badge.textContent = `${trackList.length} ${trackList.length === 1 ? 'track' : 'tracks'}`;
+
+      if (trackList.length === 0) {
+        tracksGrid.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+        document.getElementById('section-subtitle').textContent = 'No playable tracks matched your view';
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      emptyState.classList.remove('flex');
+      tracksGrid.classList.remove('hidden');
+      tracksGrid.classList.add('grid');
+
+      if (state.currentView === 'discover') {
+        document.getElementById('section-subtitle').textContent = 'Click any card to stream 30s high-quality preview';
+      } else if (state.currentView === 'home') {
+        document.getElementById('section-subtitle').textContent = 'A curated mix of different artists — click any track to play';
+      }
+
+      tracksGrid.innerHTML = trackList.map((track, idx) => {
+        const isCurrent = state.currentTrack && state.currentTrack.id === track.id;
+        const isFav = state.favorites.some(f => f.id === track.id);
+
+        return `
+          <div class="group relative bg-zinc-900/60 hover:bg-zinc-800/80 border ${isCurrent ? 'border-emerald-500/70 ring-1 ring-emerald-500/30' : 'border-zinc-800/80'} rounded-2xl p-3.5 transition-all duration-200 flex flex-col justify-between">
+            <div>
+              <!-- Artwork & Play Overlay -->
+              <div onclick="playTrackAtIndex(${idx})" class="relative aspect-square rounded-xl overflow-hidden bg-zinc-800 mb-3 cursor-pointer shadow-md">
+                <img 
+                  src="${track.artwork}" 
+                  alt="${escapeHtml(track.title)}" 
+                  onerror="this.src='https://placehold.co/400x400/18181b/34d399?text=♪'"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-black/40 ${isCurrent && state.isPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity flex items-center justify-center">
+                  <div class="w-12 h-12 rounded-full bg-emerald-500 text-zinc-950 flex items-center justify-center shadow-xl transform scale-95 group-hover:scale-100 transition">
+                    ${isCurrent && state.isPlaying 
+                      ? '<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'
+                      : '<svg class="w-6 h-6 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>'
+                    }
+                  </div>
+                </div>
+                <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/65 backdrop-blur-md text-[10px] font-medium text-zinc-200">
+                  ${escapeHtml(track.genre)}
+                </span>
+              </div>
+
+              <!-- Title & Artist -->
+              <h3 onclick="playTrackAtIndex(${idx})" class="text-sm font-semibold ${isCurrent ? 'text-emerald-400' : 'text-white'} truncate cursor-pointer hover:underline" title="${escapeHtml(track.title)}">
+                ${escapeHtml(track.title)}
+              </h3>
+              <p class="text-xs text-zinc-400 truncate mt-0.5" title="${escapeHtml(track.artist)}">
+                ${escapeHtml(track.artist)}
+              </p>
+            </div>
+
+            <!-- Card Footer Actions -->
+            <div class="flex items-center justify-between mt-3 pt-2.5 border-t border-zinc-800/80">
+              <span class="text-[11px] text-zinc-500 truncate max-w-[70%]" title="${escapeHtml(track.album)}">
+                ${escapeHtml(track.album)}
+              </span>
+              <button onclick="toggleFavoriteById(${track.id})" class="p-1.5 rounded-lg hover:bg-zinc-700/60 transition ${isFav ? 'text-rose-500' : 'text-zinc-400 hover:text-rose-400'}" title="${isFav ? 'Remove from Liked' : 'Save to Liked'}">
+                <svg class="w-4 h-4" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ==========================================
+    // Playback Controls
+    // ==========================================
+    function getActiveList() {
+      if (state.currentView === 'favorites') return state.favorites;
+      if (state.currentView === 'home') return state.homeMixTracks;
+      return state.tracks;
+    }
+
+    function playTrackAtIndex(index) {
+      const list = getActiveList();
+      if (index < 0 || index >= list.length) return;
+
+      const selected = list[index];
+
+      // If clicking the currently active track, toggle play/pause
+      if (state.currentTrack && state.currentTrack.id === selected.id) {
+        togglePlayPause();
+        return;
+      }
+
+      state.currentIndex = index;
+      state.currentTrack = selected;
+      audio.src = selected.previewUrl;
+      audio.play().catch(() => {
+        showToast('Playback blocked by browser. Click play to start.');
+      });
+
+      updatePlayerUI();
+      renderTracks(list);
+    }
+
+    function togglePlayPause() {
+      if (!state.currentTrack) {
+        const list = getActiveList();
+        if (list.length > 0) playTrackAtIndex(0);
+        return;
+      }
+
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    }
+
+    function playNext() {
+      const list = getActiveList();
+      if (list.length === 0) return;
+      const nextIdx = (state.currentIndex + 1) % list.length;
+      playTrackAtIndex(nextIdx);
+    }
+
+    function playPrevious() {
+      const list = getActiveList();
+      if (list.length === 0) return;
+      if (audio.currentTime > 3) {
+        audio.currentTime = 0;
+        return;
+      }
+      const prevIdx = (state.currentIndex - 1 + list.length) % list.length;
+      playTrackAtIndex(prevIdx);
+    }
+
+    function updatePlayerUI() {
+      const playIcon = document.getElementById('play-icon');
+      const pauseIcon = document.getElementById('pause-icon');
+      const eq = document.getElementById('player-eq');
+
+      if (state.isPlaying) {
+        playIcon.classList.add('hidden');
+        pauseIcon.classList.remove('hidden');
+        eq.classList.remove('hidden');
+        eq.classList.add('flex');
+      } else {
+        playIcon.classList.remove('hidden');
+        pauseIcon.classList.add('hidden');
+        eq.classList.add('hidden');
+        eq.classList.remove('flex');
+      }
+
+      if (state.currentTrack) {
+        document.getElementById('player-title').textContent = state.currentTrack.title;
+        document.getElementById('player-artist').textContent = state.currentTrack.artist;
+        document.getElementById('player-artwork').src = state.currentTrack.artwork;
+
+        // Update Spotify direct search link for full song
+        const spotifyQuery = encodeURIComponent(`${state.currentTrack.title} ${state.currentTrack.artist}`);
+        document.getElementById('open-spotify-search').href = `https://open.spotify.com/search/${spotifyQuery}`;
+
+        // Update heart icon in bottom player
+        const isFav = state.favorites.some(f => f.id === state.currentTrack.id);
+        const favBtn = document.getElementById('player-fav-btn');
+        favBtn.className = `p-2 rounded-xl transition shrink-0 ${isFav ? 'text-rose-500' : 'text-zinc-400 hover:text-rose-400'}`;
+        favBtn.innerHTML = `<svg class="w-5 h-5" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>`;
+      }
+
+      renderTracks(getActiveList());
+    }
+
+    // ==========================================
+    // Favorites & Navigation Views
+    // ==========================================
+    function toggleFavoriteById(trackId) {
+      const existingIndex = state.favorites.findIndex(f => f.id === trackId);
+      
+      if (existingIndex > -1) {
+        state.favorites.splice(existingIndex, 1);
+        showToast('Removed from Liked Tracks');
+      } else {
+        const trackObj =
+          state.tracks.find(t => t.id === trackId) ||
+          state.homeMixTracks.find(t => t.id === trackId) ||
+          (state.currentTrack && state.currentTrack.id === trackId ? state.currentTrack : null);
+        if (trackObj) {
+          state.favorites.unshift(trackObj);
+          showToast('Saved to Liked Tracks');
         }
+      }
 
-        function closeWebsiteModal() {
-            const modal = document.getElementById('websiteModal');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            modal.classList.remove('opacity-100', 'pointer-events-auto');
+      localStorage.setItem('aether_favorites', JSON.stringify(state.favorites));
+      updateFavCount();
+      updatePlayerUI();
+    }
+
+    function toggleCurrentFavorite() {
+      if (!state.currentTrack) return;
+      toggleFavoriteById(state.currentTrack.id);
+    }
+
+    function updateFavCount() {
+      document.getElementById('fav-count').textContent = state.favorites.length;
+    }
+
+    function switchView(view, shouldRender = true) {
+      state.currentView = view;
+
+      const homeBtn = document.getElementById('nav-home');
+      const discoverBtn = document.getElementById('nav-discover');
+      const favBtn = document.getElementById('nav-favorites');
+      const homeView = document.getElementById('home-view');
+
+      const activeClasses = 'nav-btn active flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-zinc-800 text-white transition whitespace-nowrap';
+      const inactiveClasses = 'nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition whitespace-nowrap';
+
+      homeBtn.className = view === 'home' ? activeClasses : inactiveClasses;
+      discoverBtn.className = view === 'discover' ? activeClasses : inactiveClasses;
+      favBtn.className = view === 'favorites' ? activeClasses : inactiveClasses;
+
+      if (view === 'home') {
+        homeView.classList.remove('hidden');
+        document.getElementById('section-title').textContent = 'Fresh Mix For You';
+        document.getElementById('section-subtitle').textContent = 'A curated mix of different artists — click any track to play';
+        if (shouldRender) renderTracks(state.homeMixTracks);
+      } else if (view === 'discover') {
+        homeView.classList.add('hidden');
+        document.getElementById('section-title').textContent = state.lastQuery
+          ? `Results for "${state.lastQuery}"`
+          : 'Search Results';
+        if (shouldRender) {
+          if (state.tracks.length === 0 && !state.lastQuery) {
+            document.getElementById('section-subtitle').textContent = 'Use the search bar above to find any song or artist';
+          }
+          renderTracks(state.tracks);
         }
+      } else {
+        homeView.classList.add('hidden');
+        document.getElementById('section-title').textContent = 'Your Liked Tracks';
+        document.getElementById('section-subtitle').textContent = 'Saved locally in your browser';
+        if (shouldRender) renderTracks(state.favorites);
+      }
+    }
 
-        function launchRandomStreetView() {
-            playSound('teleport');
-            incrementClicks();
+    // ==========================================
+    // Spotify Embed Modal Logic
+    // ==========================================
+    function toggleSpotifyModal(show) {
+      const modal = document.getElementById('spotify-modal');
+      if (show) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
 
-            const location = streetViewLocations[Math.floor(Math.random() * streetViewLocations.length)];
+    function loadSpotifyEmbed() {
+      const rawUrl = document.getElementById('spotify-url-input').value.trim();
+      // Match open.spotify.com/{type}/{id}
+      const match = rawUrl.match(/open\.spotify\.com\/(track|playlist|album|artist|episode|show)\/([a-zA-Z0-9]+)/);
 
-            document.getElementById('modalLocTitle').innerText = `${location.title} (${location.country})`;
-            document.getElementById('modalLocCoords').innerText = `Coordinates: ${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}`;
-            document.getElementById('modalLocDescription').innerText = location.desc;
+      if (!match) {
+        showToast('Please enter a valid Spotify track, album, or playlist URL.');
+        return;
+      }
 
-            const embedUrl = `https://maps.google.com/maps?q=&layer=c&cbll=${location.lat},${location.lng}&cbp=11,0,0,0,0&output=svembed`;
-            const directUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${location.lat},${location.lng}`;
+      const type = match[1];
+      const id = match[2];
+      const height = (type === 'track' || type === 'episode') ? '152' : '352';
+      const embedUrl = `https://open.spotify.com/embed/${type}/${id}?utm_source=generator&theme=0`;
 
-            document.getElementById('streetViewIframe').src = embedUrl;
-            document.getElementById('modalDirectLink').href = directUrl;
+      const iframe = document.getElementById('spotify-iframe');
+      iframe.src = embedUrl;
+      iframe.height = height;
 
-            const modal = document.getElementById('streetViewModal');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            modal.classList.add('opacity-100', 'pointer-events-auto');
+      // Pause internal preview player so audio doesn't overlap
+      if (!audio.paused) audio.pause();
+      showToast(`Loaded Spotify ${type}!`);
+    }
 
-            logHistory('Street View', location.title, location.country, directUrl);
-        }
+    // ==========================================
+    // Utilities
+    // ==========================================
+    function formatTime(seconds) {
+      if (isNaN(seconds)) return '0:00';
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
 
-        function toggleStreetViewFullscreen() {
-            const card = document.getElementById('streetViewCard');
-            const icon = document.getElementById('fsIcon');
-            card.classList.toggle('modal-fullscreen');
-            if (card.classList.contains('modal-fullscreen')) {
-                icon.className = "fa-solid fa-compress";
-                showToast("Expanded Street View mode!");
-            } else {
-                icon.className = "fa-solid fa-expand";
-            }
-        }
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
 
-        function closeStreetViewModal() {
-            const modal = document.getElementById('streetViewModal');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            modal.classList.remove('opacity-100', 'pointer-events-auto');
-            document.getElementById('streetViewIframe').src = '';
-        }
-
-        function generateGoofySentence() {
-            playSound('goofy');
-            incrementClicks();
-
-            const sub = subjects[Math.floor(Math.random() * subjects.length)];
-            const vrb = verbs[Math.floor(Math.random() * verbs.length)];
-            const obj = objects[Math.floor(Math.random() * objects.length)];
-            const loc = locations[Math.floor(Math.random() * locations.length)];
-            const sentence = `${sub} ${vrb} ${obj} ${loc}`;
-
-            currentTextOutput = sentence;
-            showTextBanner("Freshly Baked Goofiness", `"${sentence}"`, "bg-emerald-500", "text-emerald-400");
-            logHistory('Goofy Sentence', 'Random Goof', sentence);
-        }
-
-        function generateWeirdFact() {
-            playSound('magic');
-            incrementClicks();
-
-            const fact = weirdFacts[Math.floor(Math.random() * weirdFacts.length)];
-            currentTextOutput = fact;
-            showTextBanner("Mind-Blowing Real Fact", `"${fact}"`, "bg-amber-500", "text-amber-400");
-            logHistory('Weird Fact', 'Mind Reader Fact', fact);
-        }
-
-        function generateRandomJoke() {
-            playSound('joke');
-            incrementClicks();
-
-            const joke = randomJokes[Math.floor(Math.random() * randomJokes.length)];
-            currentTextOutput = joke;
-            showTextBanner("Hilarious Joke / Pun", `"${joke}"`, "bg-rose-500", "text-rose-400");
-            logHistory('Joke & Pun', 'Random Joke', joke);
-        }
-
-        function showTextBanner(badgeText, mainText, barColor, textColor) {
-            const container = document.getElementById('textOutputContainer');
-            document.getElementById('outputBadge').innerHTML = `<i class="fa-solid fa-quote-left"></i><span>${badgeText}</span>`;
-            document.getElementById('outputBadge').className = `flex items-center gap-2 text-xs font-bold uppercase tracking-wider ${textColor}`;
-            document.getElementById('outputAccentBar').className = `absolute top-0 left-0 w-2 h-full ${barColor}`;
-            document.getElementById('textOutput').innerText = mainText;
-
-            container.classList.remove('hidden');
-            container.classList.remove('speech-bubble');
-            void container.offsetWidth; 
-            container.classList.add('speech-bubble');
-        }
-
-        function speakText() {
-            if (!currentTextOutput) return;
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(currentTextOutput);
-                utterance.pitch = 1.2;
-                utterance.rate = 1.0;
-                window.speechSynthesis.speak(utterance);
-                showToast("Reading aloud! 🗣️");
-            } else {
-                showToast("Speech synthesis not supported in this browser.");
-            }
-        }
-
-        function copyText() {
-            if (!currentTextOutput) return;
-            const tempInput = document.createElement("textarea");
-            tempInput.value = currentTextOutput;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
-            showToast("Copied text to clipboard! 📋");
-        }
-
-        function openAkinatorModal() {
-            playSound('magic');
-            incrementClicks();
-
-            document.getElementById('akiIntroScreen').classList.remove('hidden');
-            document.getElementById('akiQuestionScreen').classList.add('hidden');
-            document.getElementById('akiRevealScreen').classList.add('hidden');
-
-            const modal = document.getElementById('akinatorModal');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            modal.classList.add('opacity-100', 'pointer-events-auto');
-        }
-
-        function closeAkinatorModal() {
-            const modal = document.getElementById('akinatorModal');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            modal.classList.remove('opacity-100', 'pointer-events-auto');
-        }
-
-        function startAkinatorGame() {
-            playSound('click');
-            akiCurrentQIndex = 0;
-            akiCandidates = [...akinatorCharacters];
-
-            document.getElementById('akiIntroScreen').classList.add('hidden');
-            document.getElementById('akiQuestionScreen').classList.remove('hidden');
-
-            renderAkinatorQuestion();
-        }
-
-        function renderAkinatorQuestion() {
-            const q = akiQuestions[akiCurrentQIndex];
-            document.getElementById('akiQNum').innerText = `Question #${akiCurrentQIndex + 1}`;
-            document.getElementById('akiQuestionText').innerText = `"${q.text}"`;
-            
-            const progress = Math.round(((akiCurrentQIndex + 1) / akiQuestions.length) * 100);
-            document.getElementById('akiProgressBar').style.width = `${progress}%`;
-            document.getElementById('akiConfidence').innerText = `Confidence: ${20 + akiCurrentQIndex * 18}%`;
-        }
-
-        function answerAkinator(ans) {
-            playSound('click');
-            const currentQ = akiQuestions[akiCurrentQIndex];
-
-            if (ans === 'yes' || ans === 'probably') {
-                akiCandidates = akiCandidates.filter(c => c[currentQ.key] === true);
-            } else if (ans === 'no') {
-                akiCandidates = akiCandidates.filter(c => c[currentQ.key] === false);
-            }
-
-            akiCurrentQIndex++;
-
-            if (akiCurrentQIndex >= akiQuestions.length || akiCandidates.length <= 1) {
-                revealAkinatorGuess();
-            } else {
-                renderAkinatorQuestion();
-            }
-        }
-
-        function revealAkinatorGuess() {
-            playSound('magic');
-            const winner = akiCandidates.length > 0 ? akiCandidates[0] : akinatorCharacters[0];
-
-            document.getElementById('akiQuestionScreen').classList.add('hidden');
-            document.getElementById('akiRevealScreen').classList.remove('hidden');
-
-            document.getElementById('akiGuessName').innerText = winner.name;
-            document.getElementById('akiGuessDesc').innerText = winner.desc;
-            document.getElementById('akiRevealEmoji').innerText = winner.emoji;
-
-            logHistory('Akinator', 'Mind Read Guess', winner.name);
-        }
-
-        function restartAkinator() {
-            startAkinatorGame();
-        }
-
-        function triggerWildcard() {
-            const choices = [1, 2, 3, 4, 5, 6];
-            const rand = choices[Math.floor(Math.random() * choices.length)];
-
-            if (rand === 1) launchRandomWebsite();
-            else if (rand === 2) launchRandomStreetView();
-            else if (rand === 3) generateGoofySentence();
-            else if (rand === 4) openAkinatorModal();
-            else if (rand === 5) generateWeirdFact();
-            else generateRandomJoke();
-        }
-
-        window.onclick = function(event) {
-            if (event.target === document.getElementById('streetViewModal')) closeStreetViewModal();
-            if (event.target === document.getElementById('websiteModal')) closeWebsiteModal();
-            if (event.target === document.getElementById('akinatorModal')) closeAkinatorModal();
-        };
-    </script>
+    let toastTimeout;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').textContent = msg;
+      toast.classList.remove('translate-x-full', 'opacity-0');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('translate-x-full', 'opacity-0');
+      }, 3200);
+    }
+  </script>
 </body>
 </html>
